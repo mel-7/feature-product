@@ -92,7 +92,7 @@ class FilesController extends Controller
                 $img->save($userStorageDir . '/' . $path); // FHD
             }
 
-            /** 
+            /**
              * Set item array
              */
             if ($request->add_items == 'true') {

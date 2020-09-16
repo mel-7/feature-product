@@ -1,30 +1,33 @@
 <template>
   <v-row>
     <div class="col-12 col-md-4 px-5">
-      <h3 class="font-weight-light mb-5">Organization Settings</h3>
+      <h3 class="font-weight-light mb-5">Watermark Settings</h3>
       <v-card>
         <v-card-text>
           <span class="overline">Preview</span>
           <!-- :src="baseUrl+'/storage/uploads/'+companyId+'/'+file.path" -->
           <v-responsive :aspect-ratio="16/9" class="grey lighten-4 rounded">
-            <v-card-text>
-              <v-img
-                width="100"
-                min-height="50"
-                contain
-                class="grey lighten-4 rounded elevation-0"
-                :src="watermark"
-              >
-                <template v-slot:placeholder>
-                  <v-img
-                    :src="baseUrl+'/images/no-image-placeholder.jpg'"
-                    width="100"
-                    height="50"
-                    cover
-                    class="grey lighten-4"
-                  ></v-img>
-                </template>
-              </v-img>
+            <v-card-text class="pa-0">
+              <div class="d-flex pa-5">
+                <v-img
+                  width="100"
+                  min-height="50"
+                  contain
+                  :class="`${position != '' ? position.value : ''} grey lighten-4 rounded elevation-0`"
+                  :src="watermark"
+                  style="position:absolute;"
+                >
+                  <template v-slot:placeholder>
+                    <v-img
+                      :src="baseUrl+'/images/no-image-placeholder.jpg'"
+                      width="100"
+                      height="50"
+                      cover
+                      class="grey lighten-4"
+                    ></v-img>
+                  </template>
+                </v-img>
+              </div>
             </v-card-text>
           </v-responsive>
         </v-card-text>
@@ -32,16 +35,32 @@
         <v-card-text>
           <form>
             <div class="d-flex">
-              <v-text-field v-model="watermark" outlined label="Watermark" required class="py-0" dense></v-text-field>
+              <v-text-field
+                v-model="watermark"
+                outlined
+                label="Watermark Image"
+                required
+                class="py-0"
+                dense
+              ></v-text-field>
               <v-btn class="mt-2 ml-3" small icon @click="openMediaFiles">
                 <v-icon small>mdi-folder-image</v-icon>
               </v-btn>
             </div>
-            <v-text-field v-model="title" outlined label="Title" required class="py-0" dense></v-text-field>
-            <v-text-field
-              v-model="description"
+            <v-select
+              v-model="position"
+              :items="positions"
+              item-text="label"
+              item-value="value"
+              label="Positions"
+              return-object
               outlined
-              label="Description"
+              dense
+            ></v-select>
+            <v-text-field
+              v-model="offsetSpace"
+              outlined
+              label="Offset space in px"
               required
               class="py-0"
               dense
@@ -69,13 +88,24 @@ export default {
   data() {
     return {
       fetchedwatermark: "",
-      fetchedTitle: "",
-      fetchedDescription: "",
+      fetchedposition: "",
+      fetchedoffsetSpace: "",
 
       watermark: "",
-      title: "",
-      description: "",
+      position: "",
+      offsetSpace: "",
 
+      positions: [
+        { label: "Top Left (default)", value: "top-left" },
+        { label: "Top", value: "top" },
+        { label: "Top Right", value: "top-right" },
+        { label: "Left", value: "left" },
+        { label: "Center", value: "center" },
+        { label: "Right", value: "right" },
+        { label: "Bottom Left", value: "bottom-left" },
+        { label: "Bottom", value: "bottom" },
+        { label: "Bottom Right", value: "bottom-right" },
+      ],
       baseUrl: window.location.origin,
 
       // Media Files
@@ -103,45 +133,47 @@ export default {
     },
     resetFields() {
       this.watermark = this.fetchedwatermark;
-      this.title = this.fetchedTitle;
-      this.description = this.fetchedDescription;
+      this.position = this.fetchedposition;
+      this.offsetSpace = this.fetchedoffsetSpace;
     },
     updateOrg() {
       let data = {
         watermark: this.watermark,
-        title: this.title,
-        description: this.description,
+        position: this.position,
+        offset_space: this.offsetSpace,
       };
-      axios
-        .post("/settings/organization/update", data)
-        .then((response) => {
-          //   this.fetchOrg();
-          console.log(response.data);
-        })
-        .catch((error) => {
-          console.log("Error Fetching Organization");
-          console.log(error);
-        });
+      console.log(data);
+      //   axios
+      //     .post("/settings/organization/update", data)
+      //     .then((response) => {
+      //       //   this.fetchOrg();
+      //       console.log(response.data);
+      //     })
+      //     .catch((error) => {
+      //       console.log("Error Fetching Organization");
+      //       console.log(error);
+      //     });
     },
     fetchOrg() {
-      axios
-        .get("/settings/organization/fetch")
-        .then((response) => {
-          this.fetchedwatermark = response.data.watermark ? response.data.watermark : "";
-          this.fetchedTitle = response.data.title;
-          this.fetchedDescription = response.data.description
-            ? response.data.description
-            : "";
-          this.watermark = response.data.watermark ? response.data.watermark : "";
-          this.title = response.data.title;
-          this.description = response.data.description
-            ? response.data.description
-            : "";
-        })
-        .catch((error) => {
-          console.log("Error Fetching Organization");
-          console.log(error);
-        });
+      console.log("fetch watermark settings");
+      //   axios
+      //     .get("/settings/organization/fetch")
+      //     .then((response) => {
+      //       this.fetchedwatermark = response.data.watermark ? response.data.watermark : "";
+      //       this.fetchedposition = response.data.position;
+      //       this.fetchedoffsetSpace = response.data.offsetSpace
+      //         ? response.data.offsetSpace
+      //         : "";
+      //       this.watermark = response.data.watermark ? response.data.watermark : "";
+      //       this.position = response.data.position;
+      //       this.offsetSpace = response.data.offsetSpace
+      //         ? response.data.offsetSpace
+      //         : "";
+      //     })
+      //     .catch((error) => {
+      //       console.log("Error Fetching Organization");
+      //       console.log(error);
+      //     });
     },
   },
   created() {
@@ -150,5 +182,61 @@ export default {
 };
 </script>
 
-<style>
+<style lang="css">
+.top-left {
+  top: 0;
+  left: 0;
+  right: auto;
+  bottom: auto;
+}
+.top {
+  margin: 0 auto;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: auto;
+}
+.top-right {
+  top: 0;
+  right: 0;
+  left: auto;
+  bottom: auto;
+}
+.left {
+  left: 0;
+  top: auto;
+  right: auto;
+  bottom: auto;
+}
+.center {
+  left: auto;
+  top: auto;
+  right: auto;
+  bottom: auto;
+}
+.right {
+  right: 0;
+  left: auto;
+  top: auto;
+  bottom: auto;
+}
+.bottom-left {
+  left: 0;
+  top: auto;
+  right: auto;
+  bottom: 0;
+}
+.bottom {
+  left: 0;
+  top: auto;
+  right: 0;
+  bottom: 0;
+  margin: 0 auto;
+}
+.bottom-right {
+  left: auto;
+  top: auto;
+  right: 0;
+  bottom: 0;
+}
 </style>
