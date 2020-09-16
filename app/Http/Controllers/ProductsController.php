@@ -40,7 +40,7 @@ class ProductsController extends Controller
                   ->orWhere('slug', '=', $id);
         })->with('user','items','items.media_file','items.hotspot_setting')->get();
 
-        $hotspot = Hotspot::where('product_id', '=', $products[0]->id)->get(); 
+        $hotspot = Hotspot::where('product_id', '=', $products[0]->id)->orderBy("hotspot_for")->get(); 
 
         $videos = Video::where('product_id', '=', $products[0]->id)->get(); 
        
