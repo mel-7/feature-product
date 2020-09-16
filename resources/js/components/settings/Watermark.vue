@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <div class="col-12 col-md-8 px-5">
+    <div class="col-12 col-md-4 px-5">
       <h3 class="font-weight-light mb-5">Organization Settings</h3>
       <v-card>
         <v-card-text>

@@ -31495,7 +31495,7 @@ var render = function() {
     [
       _c(
         "div",
-        { staticClass: "col-12 col-md-8 px-5" },
+        { staticClass: "col-12 col-md-4 px-5" },
         [
           _c("h3", { staticClass: "font-weight-light mb-5" }, [
             _vm._v("Organization Settings")
