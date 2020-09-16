@@ -47,6 +47,9 @@ Route::get('/settings/organization/fetch', 'SettingsController@fetchOrg')->name(
 Route::post('/settings/organization/update', 'SettingsController@updateOrg')->name('settings.update.org');
 Route::get('/settings/get-org-users/{id}', 'SettingsController@getOrgUsers')->name('settings.org.users');
 Route::get('/settings/account', 'BuilderController@index')->name('settings.account');
+Route::get('/settings/account/fetch', 'SettingsController@fetchAccount')->name('settings.fetch.account');
+Route::post('/settings/account/update', 'SettingsController@updateAccount')->name('settings.update.account');
+Route::post('/settings/account/update_password', 'SettingsController@updateAccount_password')->name('settings.update.password');
 Route::get('/settings/companies', 'BuilderController@index')->name('settings.companies');
 Route::get('/settings/teams', 'BuilderController@index')->name('settings.teams');
 Route::post('/settings/team/delete/{id}', 'SettingsController@deleteOrgUser')->name('settings.team.delete');
