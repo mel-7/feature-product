@@ -5954,7 +5954,133 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-/* harmony default export */ __webpack_exports__["default"] = ({});
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    authUser: {
+      type: Object,
+      "default": null
+    }
+  },
+  data: function data() {
+    return {
+      fetchedwatermark: "",
+      fetchedTitle: "",
+      fetchedDescription: "",
+      watermark: "",
+      title: "",
+      description: "",
+      baseUrl: window.location.origin,
+      // Media Files
+      mediaFilesSettings: {
+        dialog: true,
+        dialogStatus: false,
+        user: this.authUser,
+        action: "save",
+        data: null,
+        product: null,
+        itemType: "image",
+        returnUrl: true
+      }
+    };
+  },
+  methods: {
+    mediaResponse: function mediaResponse(v) {
+      this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
+      this.watermark = v != false ? v : this.watermark;
+    },
+    openMediaFiles: function openMediaFiles() {
+      this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
+    },
+    resetFields: function resetFields() {
+      this.watermark = this.fetchedwatermark;
+      this.title = this.fetchedTitle;
+      this.description = this.fetchedDescription;
+    },
+    updateOrg: function updateOrg() {
+      var data = {
+        watermark: this.watermark,
+        title: this.title,
+        description: this.description
+      };
+      axios.post("/settings/organization/update", data).then(function (response) {
+        //   this.fetchOrg();
+        console.log(response.data);
+      })["catch"](function (error) {
+        console.log("Error Fetching Organization");
+        console.log(error);
+      });
+    },
+    fetchOrg: function fetchOrg() {
+      var _this = this;
+
+      axios.get("/settings/organization/fetch").then(function (response) {
+        _this.fetchedwatermark = response.data.watermark ? response.data.watermark : "";
+        _this.fetchedTitle = response.data.title;
+        _this.fetchedDescription = response.data.description ? response.data.description : "";
+        _this.watermark = response.data.watermark ? response.data.watermark : "";
+        _this.title = response.data.title;
+        _this.description = response.data.description ? response.data.description : "";
+      })["catch"](function (error) {
+        console.log("Error Fetching Organization");
+        console.log(error);
+      });
+    }
+  },
+  created: function created() {
+    this.fetchOrg();
+  }
+});
 
 /***/ }),
 
@@ -31368,17 +31494,190 @@ var render = function() {
     "v-row",
     [
       _c(
-        "v-col",
-        { staticClass: "px-5", attrs: { cols: "12" } },
+        "div",
+        { staticClass: "col-12 col-md-8 px-5" },
         [
           _c("h3", { staticClass: "font-weight-light mb-5" }, [
-            _vm._v("Watermark is coming soon.")
+            _vm._v("Organization Settings")
           ]),
           _vm._v(" "),
-          _c("v-card")
+          _c(
+            "v-card",
+            [
+              _c(
+                "v-card-text",
+                [
+                  _c("span", { staticClass: "overline" }, [_vm._v("Preview")]),
+                  _vm._v(" "),
+                  _c(
+                    "v-responsive",
+                    {
+                      staticClass: "grey lighten-4 rounded",
+                      attrs: { "aspect-ratio": 16 / 9 }
+                    },
+                    [
+                      _c(
+                        "v-card-text",
+                        [
+                          _c("v-img", {
+                            staticClass: "grey lighten-4 rounded elevation-0",
+                            attrs: {
+                              width: "100",
+                              "min-height": "50",
+                              contain: "",
+                              src: _vm.watermark
+                            },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "placeholder",
+                                fn: function() {
+                                  return [
+                                    _c("v-img", {
+                                      staticClass: "grey lighten-4",
+                                      attrs: {
+                                        src:
+                                          _vm.baseUrl +
+                                          "/images/no-image-placeholder.jpg",
+                                        width: "100",
+                                        height: "50",
+                                        cover: ""
+                                      }
+                                    })
+                                  ]
+                                },
+                                proxy: true
+                              }
+                            ])
+                          })
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c("v-divider"),
+              _vm._v(" "),
+              _c("v-card-text", [
+                _c(
+                  "form",
+                  [
+                    _c(
+                      "div",
+                      { staticClass: "d-flex" },
+                      [
+                        _c("v-text-field", {
+                          staticClass: "py-0",
+                          attrs: {
+                            outlined: "",
+                            label: "Watermark",
+                            required: "",
+                            dense: ""
+                          },
+                          model: {
+                            value: _vm.watermark,
+                            callback: function($$v) {
+                              _vm.watermark = $$v
+                            },
+                            expression: "watermark"
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c(
+                          "v-btn",
+                          {
+                            staticClass: "mt-2 ml-3",
+                            attrs: { small: "", icon: "" },
+                            on: { click: _vm.openMediaFiles }
+                          },
+                          [
+                            _c("v-icon", { attrs: { small: "" } }, [
+                              _vm._v("mdi-folder-image")
+                            ])
+                          ],
+                          1
+                        )
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c("v-text-field", {
+                      staticClass: "py-0",
+                      attrs: {
+                        outlined: "",
+                        label: "Title",
+                        required: "",
+                        dense: ""
+                      },
+                      model: {
+                        value: _vm.title,
+                        callback: function($$v) {
+                          _vm.title = $$v
+                        },
+                        expression: "title"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("v-text-field", {
+                      staticClass: "py-0",
+                      attrs: {
+                        outlined: "",
+                        label: "Description",
+                        required: "",
+                        dense: ""
+                      },
+                      model: {
+                        value: _vm.description,
+                        callback: function($$v) {
+                          _vm.description = $$v
+                        },
+                        expression: "description"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "d-flex justify-end" },
+                      [
+                        _c(
+                          "v-btn",
+                          {
+                            staticClass: "mr-1",
+                            attrs: { text: "", color: "grey" },
+                            on: { click: _vm.resetFields }
+                          },
+                          [_vm._v("reset")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "v-btn",
+                          {
+                            staticClass: "primary",
+                            on: { click: _vm.updateOrg }
+                          },
+                          [_vm._v("Update")]
+                        )
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                )
+              ])
+            ],
+            1
+          )
         ],
         1
-      )
+      ),
+      _vm._v(" "),
+      _c("media-files", {
+        attrs: { mediaOptions: _vm.mediaFilesSettings },
+        on: { responded: _vm.mediaResponse }
+      })
     ],
     1
   )
