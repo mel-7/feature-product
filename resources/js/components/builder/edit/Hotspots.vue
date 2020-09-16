@@ -7,10 +7,10 @@
           <h3 class="font-weight-light">New Hotspot</h3>
           <v-text-field
             v-model="hotspotTitle"
-            v-on:keyup.enter="submitNewHotspot"
             label="Hotspot Title"
             required
           ></v-text-field>
+            <!-- v-on:keyup.enter="submitNewHotspot" -->
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn text color="grey" @click.prevent="newHotspotDialog = false">Cancel</v-btn>
@@ -34,7 +34,7 @@
            <span>{{item.title.length > 15 ? item.title.substring(0, 15)+'..' : item.title}}</span>
         </template>
         <template v-slot:[`item.actions`]="{ item }">
-          <v-icon small title="Set Hotspot" color="primary" class="mr-2" @click="setHotspot(item)">mdi-plus-thick</v-icon>
+          <v-icon small title="Set Hotspot" color="primary" :class="'mr-2 default-hp hp-'+item.id " @click="setHotspot(item)">mdi-plus-thick</v-icon>
           <v-icon small title="Edit Hotspot" @click="editItem(item)">mdi-dots-vertical</v-icon>
         </template>
       </v-data-table>
@@ -223,7 +223,7 @@ export default {
        axios
         .post("/hotspot/delete/"+this.dialogHotspotId)
         .then((response) => {
-          console.log(response);
+          $("#"+this.dialogHotspotId).remove();
           this.deleteDialog = false;
           setTimeout(() => {
             this.editDialog = false;
@@ -278,6 +278,7 @@ export default {
         .then((response) => {
           // console.log(response);
           this.newHotspotDialog = false;
+          this.hotspotTitle = "";
           this.getAllHotspots();
         })
         .catch((error) => {
@@ -356,24 +357,38 @@ export default {
       };
     },
     setHotspot(h) {
-      // console.log(h)
+    $(".hp-"+h.id).hide();
     if(this.currentPanel == 'interior'){
       this.$emit("emitInteriorHotspot", h);
     }else{
       let hotspotToEmit = {
         id: h.id,
         item_id: this.selectedItem,
-        hotspot_settings: {
-          top: '50%',
-          left: '50%'
-        },
+        hotspot_settings: [{
+            top: '5%',
+            left: '5%',
+            display: 'block',
+            hotspot_id: h.id,
+            item_id: this.selectedItem,
+            hotspot_settings: '{"top":"5%","left":"5%","display":"block"}',
+          }],
         title: h.title
         // hotspotObjectToEmit: h,
       };
-      console.log(hotspotToEmit)
+       
       // console.log(this.selectedItem);
       if (this.selectedItem.length != 0) {
-        this.$emit("emitHotspot", hotspotToEmit);
+       
+        if($("div").hasClass("hotspot-id-"+h.id)){
+          console.log("fffuuuuu"+h.id);
+            $(".hotspot-id-"+h.id).css({
+              left:"5%",
+              top: "5%",
+              display: "block"
+            });
+        }else{
+          this.$emit("emitHotspot", hotspotToEmit);
+        }
         this.toDisableHotspot.push(h.id);
       } else {
         this.setButton.status = false;
@@ -387,7 +402,9 @@ export default {
         .get("/hotspot/by-product/" + this.product + "/" + panel)
         .then((response) => {
           this.itemHotspots = response.data;
-          console.log(this.itemHotspots)
+          console.log(this.itemHotspots);
+          console.log("sdfds")
+        //   console.log(this.itemHotspots)
         })
         .catch((error) => {
           console.log("Error fetching items");

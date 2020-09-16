@@ -9,8 +9,9 @@ class Media_file extends Model
 {
     protected $guarded = [];
 
-    public function item()
-    {
-        return $this->belongsTo(Item::class);
-    }
+    // public function item()
+    // {
+    //     // return $this->belongsTo(Item::class);
+    //     return $this->hasMany(Item::class);
+    // }
 }

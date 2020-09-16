@@ -21,6 +21,7 @@ class CreateMediaFilesTable extends Migration
             $table->string('disk');
             $table->string('path');
             $table->integer('user_id')->unsigned();
+            $table->integer('company_id')->unsigned();
             $table->integer('item_id')->unsigned()->nullable();
             $table->timestamps();
         });

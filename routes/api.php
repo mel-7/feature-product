@@ -18,5 +18,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
-// Route::get('/builder/products/all', 'ProductsController@productsAPI')->name('builder.all.products');
+Route::get('/product/{slug}', 'ProductsController@publicproductsAPI');

@@ -65,40 +65,40 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
         ],
 
-        'temp_uploads' => [
-            'driver' => 'local',
-            'root' => storage_path('temp_uploads'),
-        ],
         'uploads' => [
             'driver' => 'local',
             'root' => storage_path('uploads'),
         ],
 
         // To delete
-        'videos_disk' => [
-            'driver' => 'local',
-            'root' => storage_path('videos'),
-        ],
+        // 'temp_uploads' => [
+        //     'driver' => 'local',
+        //     'root' => storage_path('temp_uploads'),
+        // ],
+        // 'videos_disk' => [
+        //     'driver' => 'local',
+        //     'root' => storage_path('videos'),
+        // ],
 
-        'downloadable_videos' => [
-            'driver' => 'local',
-            'root' => storage_path('downloadable_videos'),
-        ],
+        // 'downloadable_videos' => [
+        //     'driver' => 'local',
+        //     'root' => storage_path('downloadable_videos'),
+        // ],
 
-        'streamable_videos' => [
-            'driver' => 'local',
-            'root' => storage_path('streamable_videos'),
-        ],
+        // 'streamable_videos' => [
+        //     'driver' => 'local',
+        //     'root' => storage_path('streamable_videos'),
+        // ],
 
-        'optimized_videos' => [
-            'driver' => 'local',
-            'root' => storage_path('optimized_videos'),
-        ],
+        // 'optimized_videos' => [
+        //     'driver' => 'local',
+        //     'root' => storage_path('optimized_videos'),
+        // ],
 
-        '360_images' => [
-            'driver' => 'local',
-            'root' => storage_path('360_images'),
-        ],
+        // '360_images' => [
+        //     'driver' => 'local',
+        //     'root' => storage_path('360_images'),
+        // ],
 
     ],
 

@@ -11,19 +11,37 @@
           </v-list-item-content>
         </v-list-item>
         <v-spacer></v-spacer>
+        <!-- Client Settings -->
         <v-subheader class="mt-4 mt-auto grey--text text--darken-1">Settings</v-subheader>
-        <v-list-item link>
+        <v-list-item
+          link
+          v-for="setting in clientSettings"
+          :key="setting.text"
+          :to="setting.location"
+        >
           <v-list-item-action>
-            <v-icon color="grey darken-1">mdi-cog</v-icon>
+            <v-icon color="grey darken-1">{{ setting.icon }}</v-icon>
           </v-list-item-action>
-          <v-list-item-title class="grey--text text--darken-1">Account Settings</v-list-item-title>
+          <v-list-item-title class="grey--text text--darken-1">{{ setting.text }}</v-list-item-title>
+        </v-list-item>
+        <v-subheader class="mt-4 mt-auto grey--text text--darken-1">Admin</v-subheader>
+        <v-list-item
+          link
+          v-for="adminSetting in adminSettings"
+          :key="adminSetting.text"
+          :to="adminSetting.location"
+        >
+          <v-list-item-action>
+            <v-icon color="grey darken-1">{{ adminSetting.icon }}</v-icon>
+          </v-list-item-action>
+          <v-list-item-title class="grey--text text--darken-1">{{ adminSetting.text }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
     <v-app-bar app clipped-left color="indigo darken-4" dense>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" color="white"></v-app-bar-nav-icon>
       <v-toolbar-title class="mr-12 align-center">
-        <span class="title white--text">Gallega Demo</span>
+        <span class="title white--text">Gallega Spinner</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-menu
@@ -80,20 +98,44 @@ export default {
         {
           icon: "mdi-view-dashboard",
           text: "Dashboard",
-          location: "/builder/dashboard",
+          location: "/dashboard",
         },
         {
           icon: "mdi-diamond-stone",
           text: "Products",
           location: "/builder/products",
         },
-        { icon: "mdi-cloud-upload-outline", text: "Upload Video", location: "/builder/product/upload-video" },
-        // { icon: "mdi-playlist-play", text: "Playlists" },
-        // { icon: "mdi-clock", text: "Watch Later" },
+        // { icon: "mdi-cloud-upload-outline", text: "Upload Video", location: "/builder/product/upload-video" },
+        // { icon: "mdi-cloud-upload-outline", text: "Upload Video", location: "/builder/product/upload-video" },
       ],
-      items2: [
-        { picture: 28, text: "Joseph" },
-        { picture: 38, text: "Apple" },
+      clientSettings: [
+        {
+          icon: "mdi-watermark",
+          text: "Watermark",
+          location: "/settings/watermark",
+        },
+        {
+          icon: "mdi-star",
+          text: "Organization",
+          location: "/settings/organization",
+        },
+        {
+          icon: "mdi-account-group",
+          text: "Teams",
+          location: "/settings/teams",
+        },
+        {
+          icon: "mdi-account",
+          text: "Account",
+          location: "/settings/account",
+        },
+      ],
+      adminSettings: [
+        {
+          icon: "mdi-account-group",
+          text: "Companies",
+          location: "/settings/companies",
+        },
       ],
     };
   },

@@ -13,14 +13,22 @@ class CreateVideosTable extends Migration
      */
     public function up()
     {
+        // Schema::create('videos', function (Blueprint $table) {
+        //     $table->increments('id');
+        //     $table->string('title');
+        //     $table->string('original_name');
+        //     $table->string('disk');
+        //     $table->string('path');
+        //     $table->datetime('converted_for_downloading_at')->nullable();
+        //     $table->datetime('converted_for_streaming_at')->nullable();
+        //     $table->timestamps();
+        // });
+
         Schema::create('videos', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->string('title');
-            $table->string('original_name');
-            $table->string('disk');
-            $table->string('path');
-            $table->datetime('converted_for_downloading_at')->nullable();
-            $table->datetime('converted_for_streaming_at')->nullable();
+            $table->string('video_path')->nullable();
+            $table->unsignedBigInteger('product_id');
             $table->timestamps();
         });
     }

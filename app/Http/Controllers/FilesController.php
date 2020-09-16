@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 
@@ -25,6 +26,7 @@ class FilesController extends Controller
 
     public function upload(Request $request)
     {
+        // dd($request->item_type);
         // Validate request
         // $this->validate($request, [
         //     'file' => 'required|image|mimes:jpeg,png,jpg|max:204800',
@@ -35,28 +37,34 @@ class FilesController extends Controller
         $itemsArray = array();
         $fileArray = array();
 
-        $uploadKey = Carbon::now();
+        $uploadKey = Carbon::now()->format('YmdHis');
         // $uploadKey = "";
         // $uploadKey = Str::random();
 
         // $userId = auth()->id();
-        $userStorage = '/public/uploads/user-' . auth()->id();
+        $user = Auth::user();
+        $companyId = $user->company_id;
+        $userStorage = '/public/uploads/' . $companyId;
         if (!Storage::exists($userStorage)) {
             Storage::makeDirectory($userStorage, 0755, true);
         }
 
         // Wrap the files to collection
-        $images = Collection::wrap(request()->file('file'));
+        $files = Collection::wrap(request()->file('file'));
 
         // Do something on each files uploaded
-        $images->each(function ($image, $key) use (&$userStorage, &$itemsArray, &$fileArray, &$request, &$uploadKey) {
+        $files->each(function ($file, $key) use (&$companyId, &$userStorage, &$itemsArray, &$fileArray, &$request, &$uploadKey) {
             $userStorageDir = storage_path() . '/app' . $userStorage;
-            $fileName = $image->getClientOriginalName();
+            // $fileName = $uploadKey."-".$file->getClientOriginalName();
+            $fileName = $file->getClientOriginalName();
             $title = pathinfo($fileName, PATHINFO_FILENAME);
-            $extn = $image->getClientOriginalExtension();
-            // $fname = $image->getClientOriginalName();
+            $extn = $file->getClientOriginalExtension();
+            $slugTitle = Str::slug($title, '-');
+            $path = $slugTitle."-".$uploadKey.".".$extn;
+            // $path = Str::slug($uploadKey."-".$fileName, "-"); // Added upload key to avoid replacing of duplicated filenames
+            // $fname = $file->getClientOriginalName();
             // $fileName = substr($name,0,6).'-'.auth()->id().'-'.$randomName;
-            // $imageExtensions = array('jpeg','jpg','png','JPEG','JPG','PNG');
+            // $fileExtensions = array('jpeg','jpg','png','JPEG','JPG','PNG');
             $jpgExtensions = array('jpeg', 'jpg', 'JPEG', 'JPG');
             $pngExtensions = array('png', 'PNG');
             $format = 'jpg';
@@ -64,71 +72,104 @@ class FilesController extends Controller
                 $format = 'png';
             }
 
-            // $img = Image::make($image)->fit(3840,2160); // UHD
-            $img = Image::make($image);
-            // if ($request->item_type == "360") {
-            //     // Optimize 360 images only
-            //     $img->fit(1920, 1080);
-            //     $img->encode($format, 50);
-            // }
-            $img->save($userStorageDir . '/' . $fileName); // FHD
+            // Check file if image or video
+            if($request->item_type == 'video'){
+                // dd('vidoeeasdasdas');
+                $file->move('storage/uploads/'.$companyId.'/', $path); // add user id
+                // dd($userStorageDir);
+                // $path = $request->file('slide')->storeAs('public/videos/',$fileNameToStore);
+                // $img->save($userStorageDir . '/' . $path); // FHD
+            }else{
+                // File Optimization
+                // $img = Image::make($file)->fit(3840,2160); // UHD
+                $img = Image::make($file);
+                // if ($request->item_type == "360") {
+                //     // Optimize 360 images only
+                //     $img->fit(1920, 1080);
+                //     $img->encode($format, 50);
+                // }
+                $img->save($userStorageDir . '/' . $path); // FHD
+            }
 
+            /** 
+             * Set item array
+             */
             if ($request->add_items == 'true') {
                 array_push($itemsArray, array(
                     'item_type' => $request->item_type,
                     'product_id' => $request->product,
-                    'created_at' => $uploadKey,
+                    'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
                 ));
             }
 
-            // Prepare object before saving
+            /**
+             * Set file array
+             */
+            $mediaFileType = "";
+            if($request->item_type == 'video'){
+                $mediaFileType = "video";
+            }else{
+                $mediaFileType = "image";
+            }
             array_push($fileArray, array(
-                'file_type' => 'image',
+                'file_type' => $mediaFileType,
                 'title' => $title,
-                'original_name' => Str::slug($title, '-'),
+                'original_name' => $slugTitle."-".$uploadKey,
                 'disk' => 'uploads',
-                'path' => $fileName,
+                'path' => $path,
                 'user_id' => auth()->id(),
+                'company_id' => $companyId,
                 'item_id' => null,
                 'created_at' => Carbon::now(),
             ));
         });
+        // 'path' => $uploadKey.".".$extn, // title-date.extension,
+        // 'path' => $fileName,
+        // 'path' => Str::slug($title, '-')."-".$uploadKey.".".$extn, // title-date.extension,
 
         // Save to Items table
-        if ($request->add_items == 'true') {
-            Item::insert($itemsArray);
-            $recentlySavedItems = Item::where([
-                'product_id' => $request->product,
-                'created_at' => $uploadKey,
-            ])->get();
+        // if ($request->add_items == 'true') {
+        //     Item::insert($itemsArray);
+        //     $recentlySavedItems = Item::where([
+        //         'product_id' => $request->product,
+        //         'created_at' => $uploadKey,
+        //     ])->get();
 
-            // Prepare Media_files object before saving Set Connection
-            foreach ($recentlySavedItems as $key => $item) {
-                $fileArray[$key]['item_id'] = $item->id;
-            }
-        }
+        //     // Prepare Media_files object before saving Set Connection
+        //     foreach ($recentlySavedItems as $key => $item) {
+        //         $fileArray[$key]['item_id'] = $item->id;
+        //     }
+        // }
 
         // Save the files to Media_files table
         Media_file::insert($fileArray);
 
-        // Get the files by name
-        // $recentlySavedFiles = Media_file::whereIn('title', $fileNames )->get();
 
-        // // Prepare items
-        // $itemsArray = array();
-        // foreach ($recentlySavedFiles as $file) {
-        //     array_push($itemsArray, array(
-        //         'item_type' => '360',
-        //         'product_id' => $request->product,
-        //         'Media_files_id' => $file->id,
-        //         'created_at' => Carbon::now(),
-        //         'updated_at' => Carbon::now()
-        //     ));
-        // }
+        // If addItems == true in UploadZone component
+        if ($request->add_items == 'true') {
 
-        // // Save to Items table
-        // Item::insert($itemsArray);
+            // Get the files by original_name
+            $originaNamesArray = array_column($fileArray, 'original_name');
+            $recentlySavedFiles = Media_file::whereIn('original_name', $originaNamesArray )->get();
+
+            // Prepare items
+            // $toInsertItemsArray = array();
+            // foreach ($recentlySavedFiles as $file) {
+                // array_push($toInsertItemsArray, array(
+                //     'item_type' => '360',
+                //     'product_id' => $request->product,
+                //     'media_file_id' => $file->id,
+                //     'created_at' => Carbon::now(),
+                //     'updated_at' => Carbon::now()
+                // ));
+                // }
+            foreach ($recentlySavedFiles as $key => $file) {
+                $itemsArray[$key]['media_file_id'] = $file->id;
+            }
+            // Save to Items table
+            Item::insert($itemsArray);
+        }
 
         // Return response
         return response()->json([
@@ -146,8 +187,8 @@ class FilesController extends Controller
     {
         $m = Media_file::where('path', $path)->firstOrFail();
         if (isset($m)) {
-            $image = storage_path() . '/uploads/user-1/1/' . $path;
-            return response()->file($image, array('Content-Type' => 'image/jpeg'));
+            $file = storage_path() . '/uploads/user-1/1/' . $path;
+            return response()->file($file, array('Content-Type' => 'image/jpeg'));
         } else {
             return abort('403');
         }
@@ -155,7 +196,8 @@ class FilesController extends Controller
 
     public function getUserFilesByID($id)
     {
-        $files = Media_file::where(['user_id' => 1])->orderBy('created_at', 'DESC')->paginate(200);
+        $companyId = Auth::user()->company_id;
+        $files = Media_file::where(['company_id' => $companyId])->orderBy('created_at', 'DESC')->paginate(200);
         return response()->json($files, 200);
     }
 }

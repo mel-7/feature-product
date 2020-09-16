@@ -17,12 +17,17 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
+// Auth::routes();
+Auth::routes([
+    'register' => false, // Registration Routes...
+    'reset' => false, // Password Reset Routes...
+    'verify' => false, // Email Verification Routes...
+]);
 
+Route::get('/dashboard', 'BuilderController@index')->name('builder.dashboard');
 Route::get('/builder', 'BuilderController@index')->name('builder');
-Route::get('/builder/dashboard', 'BuilderController@index')->name('builder.dashboard');
 Route::get('/builder/product/new', 'BuilderController@index')->name('builder.new.product');
-Route::get('/builder/product/edit/{id}', 'BuilderController@edit')->name('builder.edit.product');
+Route::get('/builder/product/edit/{id}', 'BuilderController@edit')->name('builder.edit.product'); //->middleware('can:accessCompanyPages');
 Route::get('/builder/products', 'BuilderController@index')->name('builder.products');
 
 Route::get('/builder/products/all', 'ProductsController@productsAPI')->name('builder.all.products');
@@ -32,25 +37,36 @@ Route::get('/builder/product/upload-video', 'BuilderController@index')->name('bu
 Route::post('/video/store', 'VideoController@store')->name('upload.video');
 
 Route::get('/builder/scenes/product/{id}', 'ScenesController@scenesByProductId')->name('builder.scenes.by.product.id');
-
 Route::post('/builder/scene/store', 'ScenesController@store')->name('builder.store.scene');
 
+// Settings
+Route::get('/settings/account', 'BuilderController@index')->name('settings.watermark');
+Route::get('/settings/watermark', 'BuilderController@index')->name('settings.watermark');
+Route::get('/settings/organization', 'BuilderController@index')->name('settings.organization');
+Route::get('/settings/organization/fetch', 'SettingsController@fetchOrg')->name('settings.fetch.org');
+Route::post('/settings/organization/update', 'SettingsController@updateOrg')->name('settings.update.org');
+Route::get('/settings/get-org-users/{id}', 'SettingsController@getOrgUsers')->name('settings.org.users');
+Route::get('/settings/account', 'BuilderController@index')->name('settings.account');
+Route::get('/settings/companies', 'BuilderController@index')->name('settings.companies');
+Route::get('/settings/teams', 'BuilderController@index')->name('settings.teams');
+Route::post('/settings/team/delete/{id}', 'SettingsController@deleteOrgUser')->name('settings.team.delete');
+Route::post('/settings/team/update/{id}', 'SettingsController@updateOrgUser')->name('settings.team.update');
 
 Route::get('/product/{slug}', 'ProductsController@show')->name('single.product');
 
 // Media_files
 Route::post('/files/upload', 'FilesController@upload')->name('upload');
-Route::get('/files/fetch', 'FilesController@getItemImages')->name('fetch.item.files');
-// Route::get('/display/file/{msgid}/{extn}/{filename}', 'FileController@show')->name('file.show');
-Route::get('/display/file/{path}', 'FilesController@showImage')->name('show.file');
-Route::get('/user/files/{id}', 'FilesController@getUserFilesByID')->name('get.user.files');
 
+Route::get('/files/fetch', 'FilesController@getItemImages')->name('fetch.item.files'); // has static
+Route::get('/display/file/{path}', 'FilesController@showImage')->name('show.file'); // has static
+
+Route::get('/user/files/{id}', 'FilesController@getUserFilesByID')->name('get.user.files');
 
 // Items Controller
 Route::get('/items/by-product/{id}', 'ItemsController@getItemsByProduct')->name('items.by.product');
 Route::post('/item/delete/{id}', 'ItemsController@destroy')->name('items.delete');
 // Save or replace depending on the request data
-Route::post('/item/save/{data}', 'ItemsController@saveItem')->name('items.save');
+Route::post('/item/save', 'ItemsController@saveItem')->name('items.save');
 
 // Panorama
 Route::get('/item/scenes/by-product/{id}', 'ItemsController@getScenesByProductId')->name('item.scenes');
@@ -67,3 +83,9 @@ Route::post('/hotspot/setting/delete', 'HotspotsController@deleteSetting')->name
 Route::get('/hotspot/product/{id}', 'HotspotsController@getProductHotspots')->name('hotspot.product');
 
 Route::get('/hotspot/all/interior/{id}', 'HotspotsController@getAllInteriorHotspotsByProductId')->name('hotspot.all.interior');
+
+// Videos
+Route::post('/video/save', 'VideosController@store')->name('video.save');
+Route::post('/video/update/{id}', 'VideosController@update')->name('video.update');
+Route::post('/video/delete/{id}', 'VideosController@destroy')->name('video.delete');
+Route::get('/video/all/{id}', 'VideosController@fetchAllVideos')->name('video.all');

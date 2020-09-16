@@ -17,7 +17,7 @@ class CreateItemsTable extends Migration
             $table->id();
             $table->string('item_type');
             $table->integer('product_id')->unsigned();
-            // $table->text('upload_key')->nullable();
+            $table->unsignedBigInteger('media_file_id');
             $table->timestamps();
         });
     }

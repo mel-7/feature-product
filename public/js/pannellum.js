@@ -1760,6 +1760,12 @@ function createHotSpot(hs) {
     else
         div.className += ' pnlm-hotspot pnlm-sprite pnlm-' + escapeHTML(hs.type);
 
+    if (hs.id)
+    div.setAttribute('id',hs.id);
+
+    if (hs.ids)
+    div.setAttribute('data-ids',hs.ids);
+
     var span = document.createElement('span');
     if (hs.text)
         span.innerHTML = escapeHTML(hs.text);

@@ -30,20 +30,46 @@
           </v-btn>
         </v-card-title>
         <v-card-text class="blue-grey lighten-5 pt-3" v-show="tabItem == 'upload'">
-          <upload-zone :add-items="false" @uploaded="uploadZoneResponse" />
+          <upload-zone :add-items="false" :item-type="mediaOptions.itemType" @uploaded="uploadZoneResponse" />
         </v-card-text>
         <v-card-text class="blue-grey lighten-5 pt-3" v-show="tabItem == 'mediafiles'">
           <v-row class="px-2">
             <v-col v-for="file in files" :key="file.id" cols="2" class="pa-2">
               <v-card
                 @click="selectFile(file)"
-                :class="`pa-1 elevation-0 ${selected.includes(file.id) == true || selected.includes(file.path) == true ? 'primary dark' : 'transparent'}`"
+                :class="`pa-1 elevation-0 ${selected.includes(file.id) == true || selected.includes(file.path) == true ? 'primary' : 'transparent'}`"
               >
                 <v-img
-                  :src="baseUrl+'/storage/uploads/user-'+userId+'/'+file.path"
-                  max-height="200"
+                  v-if="file.file_type == 'image'"
+                  :src="baseUrl+'/storage/uploads/'+companyId+'/'+file.path"
+                  max-height="130"
+                  min-height="120"
                   contain
-                  class="grey darken-4"
+                  class="grey lighten-4"
+                >
+                  <template v-slot:placeholder>
+                    <v-img
+                      :src="baseUrl+'/images/no-image-placeholder.jpg'"
+                      max-height="130"
+                      min-height="120"
+                      cover
+                      class="grey lighten-4"
+                    ></v-img>
+                  </template>
+                  <v-icon
+                    v-if="selected.includes(file.id) == true"
+                    class="primary"
+                    dark
+                    small
+                  >mdi-check</v-icon>
+                </v-img>
+                <v-img
+                  v-else
+                  :src="baseUrl+'/images/video-placeholder.jpg'"
+                  max-height="130"
+                  min-height="120"
+                  cover
+                  class="grey lighten-4"
                 >
                   <v-icon
                     v-if="selected.includes(file.id) == true"
@@ -63,7 +89,7 @@
         <v-card-actions v-if="tabItem == 'mediafiles'">
           <v-spacer></v-spacer>
           <v-btn color="grey" text @click="closeMediaDialog">Cancel</v-btn>
-          <v-btn color="primary" text @click="submitSelected()">Select</v-btn>
+          <v-btn color="primary" text @click="submitSelected">Select</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -93,6 +119,7 @@ export default {
   data() {
     return {
       tabItem: "upload",
+      companyId: this.mediaOptions.user.company_id,
       userId: this.mediaOptions.user.id,
       files: [],
       baseUrl: window.location.origin,
@@ -157,19 +184,17 @@ export default {
       }
     },
     submitSelected() {
-      // Save to Item Table
-
       // If only needs to return the url of the selected image
       if (this.return_url == true) {
         let toReturlUrl =
           this.baseUrl +
-          "/storage/uploads/user-" +
-          this.userId +
+          "/storage/uploads/" +this.companyId +
           "/" +
           this.selected[0];
         this.$emit("responded", toReturlUrl);
         this.selected = [];
       } else {
+        // Save to Item Table
         // Replace Item 360 Image
         let data = {
           selected: this.selected,
@@ -181,17 +206,18 @@ export default {
           product: this.mediaOptions.product ? this.mediaOptions.product : null,
         };
         axios
-          .post("/item/save/" + JSON.stringify(data))
+          .post("/item/save", data)
           .then((response) => {
             // console.log(response.data);
             if (response.data.status == "success") {
               this.$emit("responded", response.data);
               this.selected = [];
             }
+            console.log(response.data);
           })
           .catch((error) => {
             this.selected = [];
-            console.log("Error Fetching Files");
+            console.log("Error Saving Setting File to Item");
             console.log(error);
           });
       }
@@ -205,11 +231,12 @@ export default {
         axios
           .get("/user/files/" + this.userId)
           .then((response) => {
-            console.log("requested");
+            console.log("Media Files has been loaded");
             this.files = Object.assign({}, response.data.data);
+            console.log(this.files);
           })
           .catch((error) => {
-            console.log("Error Fetching Files");
+            console.log("Error Fetching Files in getUserFiles");
             console.log(error);
           });
       }

@@ -18,7 +18,8 @@ class CreateProductsTable extends Migration
             $table->string('title');
             $table->string('slug')->unique();
             $table->boolean('status')->default(false);
-            $table->unsignedInteger('author')->nullable();
+            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('company_id');
             $table->timestamps();
         });
     }

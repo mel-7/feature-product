@@ -57,7 +57,7 @@ export default {
         autoProcessQueue: false,
         maxFiles: 100,
         parallelUploads: 100,
-        maxFilesize: 1,
+        maxFilesize: this.itemType == 'video' ? 30 : this.itemType == 'panorama' ? 3 : 1,
         timeout: 180000,
         previewTemplate: this.dropzoneTemplate(),
         clickable: ".open-uploader",
