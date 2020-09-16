@@ -29007,7 +29007,7 @@ var render = function() {
         { staticClass: "px-5", attrs: { cols: "12" } },
         [
           _c("h3", { staticClass: "font-weight-light mb-5" }, [
-            _vm._v("Dashboard is coming soon.")
+            _vm._v("Dashboard is coming soonsssssss.")
           ]),
           _vm._v(" "),
           _c("v-card")
