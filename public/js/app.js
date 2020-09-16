@@ -5531,6 +5531,9 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vee_validate_dist_rules__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vee-validate/dist/rules */ "./node_modules/vee-validate/dist/rules.js");
+/* harmony import */ var vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vee-validate/dist/vee-validate.full */ "./node_modules/vee-validate/dist/vee-validate.full.js");
+/* harmony import */ var vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_1__);
 //
 //
 //
@@ -5540,7 +5543,148 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-/* harmony default export */ __webpack_exports__["default"] = ({});
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    ValidationProvider: vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_1__["ValidationProvider"],
+    ValidationObserver: vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_1__["ValidationObserver"]
+  },
+  props: {
+    authUser: {
+      type: Object,
+      "default": null
+    }
+  },
+  data: function data() {
+    return {
+      show1: false,
+      passwordError: "",
+      fetchedname: "",
+      fetchedphone: "",
+      name: "",
+      phone: "",
+      password: "",
+      confirmpass: "",
+      baseUrl: window.location.origin
+    };
+  },
+  methods: {
+    resetFields: function resetFields() {
+      this.name = this.fetchedname;
+      this.phone = this.fetchedphone;
+    },
+    postFunction: function postFunction(data, controller) {
+      var _this = this;
+
+      axios.post(controller, data).then(function (response) {
+        _this.passwordError = "";
+      })["catch"](function (error) {
+        console.log("Error Fetching account");
+        console.log(error);
+      });
+    },
+    updatePassword: function updatePassword() {
+      this.$refs.updatepass.validate();
+
+      if (this.password !== this.confirmpass) {
+        this.passwordError = "Password did not match!";
+        return false;
+      }
+
+      var data = {
+        password: this.password
+      };
+      this.postFunction(data, "/settings/account/update_password");
+    },
+    updateAccount: function updateAccount() {
+      this.$refs.observer.validate();
+      var data = {
+        name: this.name,
+        phone: this.phone
+      };
+      this.postFunction(data, "/settings/account/update");
+    },
+    fetchAccount: function fetchAccount() {
+      var _this2 = this;
+
+      axios.get("/settings/account/fetch").then(function (response) {
+        _this2.fetchedname = response.data.name;
+        _this2.fetchedphone = response.data.phone ? response.data.phone : "";
+        _this2.name = response.data.name;
+        _this2.phone = response.data.phone ? response.data.phone : "";
+      })["catch"](function (error) {
+        console.log("Error Fetching account");
+        console.log(error);
+      });
+    }
+  },
+  created: function created() {
+    this.fetchAccount();
+  }
+});
 
 /***/ }),
 
@@ -24671,6 +24815,746 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 /***/ }),
 
+/***/ "./node_modules/vee-validate/dist/rules.js":
+/*!*************************************************!*\
+  !*** ./node_modules/vee-validate/dist/rules.js ***!
+  \*************************************************/
+/*! exports provided: alpha, alpha_dash, alpha_num, alpha_spaces, between, confirmed, digits, dimensions, email, excluded, ext, image, integer, is, is_not, length, max, max_value, mimes, min, min_value, numeric, oneOf, regex, required, required_if, size */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "alpha", function() { return alpha$1; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "alpha_dash", function() { return alpha_dash; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "alpha_num", function() { return alpha_num; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "alpha_spaces", function() { return alpha_spaces; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "between", function() { return between; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "confirmed", function() { return confirmed; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "digits", function() { return digits; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "dimensions", function() { return dimensions; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "email", function() { return email; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "excluded", function() { return excluded; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ext", function() { return ext; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "image", function() { return image; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "integer", function() { return integer; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "is", function() { return is; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "is_not", function() { return is_not; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "length", function() { return length; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "max", function() { return max; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "max_value", function() { return max_value; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mimes", function() { return mimes; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "min", function() { return min; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "min_value", function() { return min_value; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "numeric", function() { return numeric; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "oneOf", function() { return oneOf; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "regex", function() { return regex; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "required", function() { return required; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "required_if", function() { return required_if; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "size", function() { return size; });
+/**
+  * vee-validate v3.3.9
+  * (c) 2020 Abdelrahman Awad
+  * @license MIT
+  */
+/**
+ * Some Alpha Regex helpers.
+ * https://github.com/chriso/validator.js/blob/master/src/lib/alpha.js
+ */
+/* eslint-disable no-misleading-character-class */
+var alpha = {
+    en: /^[A-Z]*$/i,
+    cs: /^[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]*$/i,
+    da: /^[A-ZÆØÅ]*$/i,
+    de: /^[A-ZÄÖÜß]*$/i,
+    es: /^[A-ZÁÉÍÑÓÚÜ]*$/i,
+    fa: /^[ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰپژگچکی]*$/,
+    fr: /^[A-ZÀÂÆÇÉÈÊËÏÎÔŒÙÛÜŸ]*$/i,
+    it: /^[A-Z\xC0-\xFF]*$/i,
+    lt: /^[A-ZĄČĘĖĮŠŲŪŽ]*$/i,
+    nl: /^[A-ZÉËÏÓÖÜ]*$/i,
+    hu: /^[A-ZÁÉÍÓÖŐÚÜŰ]*$/i,
+    pl: /^[A-ZĄĆĘŚŁŃÓŻŹ]*$/i,
+    pt: /^[A-ZÃÁÀÂÇÉÊÍÕÓÔÚÜ]*$/i,
+    ro: /^[A-ZĂÂÎŞŢ]*$/i,
+    ru: /^[А-ЯЁ]*$/i,
+    sk: /^[A-ZÁÄČĎÉÍĹĽŇÓŔŠŤÚÝŽ]*$/i,
+    sr: /^[A-ZČĆŽŠĐ]*$/i,
+    sv: /^[A-ZÅÄÖ]*$/i,
+    tr: /^[A-ZÇĞİıÖŞÜ]*$/i,
+    uk: /^[А-ЩЬЮЯЄІЇҐ]*$/i,
+    ar: /^[ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ]*$/,
+    az: /^[A-ZÇƏĞİıÖŞÜ]*$/i,
+    el: /^[Α-ώ]*$/i
+};
+var alphaSpaces = {
+    en: /^[A-Z\s]*$/i,
+    cs: /^[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ\s]*$/i,
+    da: /^[A-ZÆØÅ\s]*$/i,
+    de: /^[A-ZÄÖÜß\s]*$/i,
+    es: /^[A-ZÁÉÍÑÓÚÜ\s]*$/i,
+    fa: /^[ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰپژگچکی]*$/,
+    fr: /^[A-ZÀÂÆÇÉÈÊËÏÎÔŒÙÛÜŸ\s]*$/i,
+    it: /^[A-Z\xC0-\xFF\s]*$/i,
+    lt: /^[A-ZĄČĘĖĮŠŲŪŽ\s]*$/i,
+    nl: /^[A-ZÉËÏÓÖÜ\s]*$/i,
+    hu: /^[A-ZÁÉÍÓÖŐÚÜŰ\s]*$/i,
+    pl: /^[A-ZĄĆĘŚŁŃÓŻŹ\s]*$/i,
+    pt: /^[A-ZÃÁÀÂÇÉÊÍÕÓÔÚÜ\s]*$/i,
+    ro: /^[A-ZĂÂÎŞŢ\s]*$/i,
+    ru: /^[А-ЯЁ\s]*$/i,
+    sk: /^[A-ZÁÄČĎÉÍĹĽŇÓŔŠŤÚÝŽ\s]*$/i,
+    sr: /^[A-ZČĆŽŠĐ\s]*$/i,
+    sv: /^[A-ZÅÄÖ\s]*$/i,
+    tr: /^[A-ZÇĞİıÖŞÜ\s]*$/i,
+    uk: /^[А-ЩЬЮЯЄІЇҐ\s]*$/i,
+    ar: /^[ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ\s]*$/,
+    az: /^[A-ZÇƏĞİıÖŞÜ\s]*$/i,
+    el: /^[Α-ώ\s]*$/i
+};
+var alphanumeric = {
+    en: /^[0-9A-Z]*$/i,
+    cs: /^[0-9A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]*$/i,
+    da: /^[0-9A-ZÆØÅ]$/i,
+    de: /^[0-9A-ZÄÖÜß]*$/i,
+    es: /^[0-9A-ZÁÉÍÑÓÚÜ]*$/i,
+    fa: /^[ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰپژگچکی]*$/,
+    fr: /^[0-9A-ZÀÂÆÇÉÈÊËÏÎÔŒÙÛÜŸ]*$/i,
+    it: /^[0-9A-Z\xC0-\xFF]*$/i,
+    lt: /^[0-9A-ZĄČĘĖĮŠŲŪŽ]*$/i,
+    hu: /^[0-9A-ZÁÉÍÓÖŐÚÜŰ]*$/i,
+    nl: /^[0-9A-ZÉËÏÓÖÜ]*$/i,
+    pl: /^[0-9A-ZĄĆĘŚŁŃÓŻŹ]*$/i,
+    pt: /^[0-9A-ZÃÁÀÂÇÉÊÍÕÓÔÚÜ]*$/i,
+    ro: /^[0-9A-ZĂÂÎŞŢ]*$/i,
+    ru: /^[0-9А-ЯЁ]*$/i,
+    sk: /^[0-9A-ZÁÄČĎÉÍĹĽŇÓŔŠŤÚÝŽ]*$/i,
+    sr: /^[0-9A-ZČĆŽŠĐ]*$/i,
+    sv: /^[0-9A-ZÅÄÖ]*$/i,
+    tr: /^[0-9A-ZÇĞİıÖŞÜ]*$/i,
+    uk: /^[0-9А-ЩЬЮЯЄІЇҐ]*$/i,
+    ar: /^[٠١٢٣٤٥٦٧٨٩0-9ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ]*$/,
+    az: /^[0-9A-ZÇƏĞİıÖŞÜ]*$/i,
+    el: /^[0-9Α-ώ]*$/i
+};
+var alphaDash = {
+    en: /^[0-9A-Z_-]*$/i,
+    cs: /^[0-9A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ_-]*$/i,
+    da: /^[0-9A-ZÆØÅ_-]*$/i,
+    de: /^[0-9A-ZÄÖÜß_-]*$/i,
+    es: /^[0-9A-ZÁÉÍÑÓÚÜ_-]*$/i,
+    fa: /^[ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰپژگچکی]*$/,
+    fr: /^[0-9A-ZÀÂÆÇÉÈÊËÏÎÔŒÙÛÜŸ_-]*$/i,
+    it: /^[0-9A-Z\xC0-\xFF_-]*$/i,
+    lt: /^[0-9A-ZĄČĘĖĮŠŲŪŽ_-]*$/i,
+    nl: /^[0-9A-ZÉËÏÓÖÜ_-]*$/i,
+    hu: /^[0-9A-ZÁÉÍÓÖŐÚÜŰ_-]*$/i,
+    pl: /^[0-9A-ZĄĆĘŚŁŃÓŻŹ_-]*$/i,
+    pt: /^[0-9A-ZÃÁÀÂÇÉÊÍÕÓÔÚÜ_-]*$/i,
+    ro: /^[0-9A-ZĂÂÎŞŢ_-]*$/i,
+    ru: /^[0-9А-ЯЁ_-]*$/i,
+    sk: /^[0-9A-ZÁÄČĎÉÍĹĽŇÓŔŠŤÚÝŽ_-]*$/i,
+    sr: /^[0-9A-ZČĆŽŠĐ_-]*$/i,
+    sv: /^[0-9A-ZÅÄÖ_-]*$/i,
+    tr: /^[0-9A-ZÇĞİıÖŞÜ_-]*$/i,
+    uk: /^[0-9А-ЩЬЮЯЄІЇҐ_-]*$/i,
+    ar: /^[٠١٢٣٤٥٦٧٨٩0-9ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ_-]*$/,
+    az: /^[0-9A-ZÇƏĞİıÖŞÜ_-]*$/i,
+    el: /^[0-9Α-ώ_-]*$/i
+};
+
+var validate = function (value, _a) {
+    var _b = (_a === void 0 ? {} : _a).locale, locale = _b === void 0 ? '' : _b;
+    if (Array.isArray(value)) {
+        return value.every(function (val) { return validate(val, { locale: locale }); });
+    }
+    // Match at least one locale.
+    if (!locale) {
+        return Object.keys(alpha).some(function (loc) { return alpha[loc].test(value); });
+    }
+    return (alpha[locale] || alpha.en).test(value);
+};
+var params = [
+    {
+        name: 'locale'
+    }
+];
+var alpha$1 = {
+    validate: validate,
+    params: params
+};
+
+var validate$1 = function (value, _a) {
+    var _b = (_a === void 0 ? {} : _a).locale, locale = _b === void 0 ? '' : _b;
+    if (Array.isArray(value)) {
+        return value.every(function (val) { return validate$1(val, { locale: locale }); });
+    }
+    // Match at least one locale.
+    if (!locale) {
+        return Object.keys(alphaDash).some(function (loc) { return alphaDash[loc].test(value); });
+    }
+    return (alphaDash[locale] || alphaDash.en).test(value);
+};
+var params$1 = [
+    {
+        name: 'locale'
+    }
+];
+var alpha_dash = {
+    validate: validate$1,
+    params: params$1
+};
+
+var validate$2 = function (value, _a) {
+    var _b = (_a === void 0 ? {} : _a).locale, locale = _b === void 0 ? '' : _b;
+    if (Array.isArray(value)) {
+        return value.every(function (val) { return validate$2(val, { locale: locale }); });
+    }
+    // Match at least one locale.
+    if (!locale) {
+        return Object.keys(alphanumeric).some(function (loc) { return alphanumeric[loc].test(value); });
+    }
+    return (alphanumeric[locale] || alphanumeric.en).test(value);
+};
+var params$2 = [
+    {
+        name: 'locale'
+    }
+];
+var alpha_num = {
+    validate: validate$2,
+    params: params$2
+};
+
+var validate$3 = function (value, _a) {
+    var _b = (_a === void 0 ? {} : _a).locale, locale = _b === void 0 ? '' : _b;
+    if (Array.isArray(value)) {
+        return value.every(function (val) { return validate$3(val, { locale: locale }); });
+    }
+    // Match at least one locale.
+    if (!locale) {
+        return Object.keys(alphaSpaces).some(function (loc) { return alphaSpaces[loc].test(value); });
+    }
+    return (alphaSpaces[locale] || alphaSpaces.en).test(value);
+};
+var params$3 = [
+    {
+        name: 'locale'
+    }
+];
+var alpha_spaces = {
+    validate: validate$3,
+    params: params$3
+};
+
+var validate$4 = function (value, _a) {
+    var _b = _a === void 0 ? {} : _a, min = _b.min, max = _b.max;
+    if (Array.isArray(value)) {
+        return value.every(function (val) { return !!validate$4(val, { min: min, max: max }); });
+    }
+    return Number(min) <= value && Number(max) >= value;
+};
+var params$4 = [
+    {
+        name: 'min'
+    },
+    {
+        name: 'max'
+    }
+];
+var between = {
+    validate: validate$4,
+    params: params$4
+};
+
+var validate$5 = function (value, _a) {
+    var target = _a.target;
+    return String(value) === String(target);
+};
+var params$5 = [
+    {
+        name: 'target',
+        isTarget: true
+    }
+];
+var confirmed = {
+    validate: validate$5,
+    params: params$5
+};
+
+var validate$6 = function (value, _a) {
+    var length = _a.length;
+    if (Array.isArray(value)) {
+        return value.every(function (val) { return validate$6(val, { length: length }); });
+    }
+    var strVal = String(value);
+    return /^[0-9]*$/.test(strVal) && strVal.length === length;
+};
+var params$6 = [
+    {
+        name: 'length',
+        cast: function (value) {
+            return Number(value);
+        }
+    }
+];
+var digits = {
+    validate: validate$6,
+    params: params$6
+};
+
+var validateImage = function (file, width, height) {
+    var URL = window.URL || window.webkitURL;
+    return new Promise(function (resolve) {
+        var image = new Image();
+        image.onerror = function () { return resolve(false); };
+        image.onload = function () { return resolve(image.width === width && image.height === height); };
+        image.src = URL.createObjectURL(file);
+    });
+};
+var validate$7 = function (files, _a) {
+    var width = _a.width, height = _a.height;
+    var list = [];
+    files = Array.isArray(files) ? files : [files];
+    for (var i = 0; i < files.length; i++) {
+        // if file is not an image, reject.
+        if (!/\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(files[i].name)) {
+            return Promise.resolve(false);
+        }
+        list.push(files[i]);
+    }
+    return Promise.all(list.map(function (file) { return validateImage(file, width, height); })).then(function (values) {
+        return values.every(function (v) { return v; });
+    });
+};
+var params$7 = [
+    {
+        name: 'width',
+        cast: function (value) {
+            return Number(value);
+        }
+    },
+    {
+        name: 'height',
+        cast: function (value) {
+            return Number(value);
+        }
+    }
+];
+var dimensions = {
+    validate: validate$7,
+    params: params$7
+};
+
+var validate$8 = function (value, _a) {
+    var multiple = (_a === void 0 ? {} : _a).multiple;
+    // eslint-disable-next-line
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (multiple && !Array.isArray(value)) {
+        value = String(value)
+            .split(',')
+            .map(function (emailStr) { return emailStr.trim(); });
+    }
+    if (Array.isArray(value)) {
+        return value.every(function (val) { return re.test(String(val)); });
+    }
+    return re.test(String(value));
+};
+var params$8 = [
+    {
+        name: 'multiple',
+        default: false
+    }
+];
+var email = {
+    validate: validate$8,
+    params: params$8
+};
+
+function isNullOrUndefined(value) {
+    return value === null || value === undefined;
+}
+function isEmptyArray(arr) {
+    return Array.isArray(arr) && arr.length === 0;
+}
+function isCallable(fn) {
+    return typeof fn === 'function';
+}
+
+function includes(collection, item) {
+    return collection.indexOf(item) !== -1;
+}
+/**
+ * Converts an array-like object to array, provides a simple polyfill for Array.from
+ */
+function toArray(arrayLike) {
+    if (isCallable(Array.from)) {
+        return Array.from(arrayLike);
+    }
+    /* istanbul ignore next */
+    return _copyArray(arrayLike);
+}
+/* istanbul ignore next */
+function _copyArray(arrayLike) {
+    var array = [];
+    var length = arrayLike.length;
+    for (var i = 0; i < length; i++) {
+        array.push(arrayLike[i]);
+    }
+    return array;
+}
+
+var validate$9 = function (value, options) {
+    if (Array.isArray(value)) {
+        return value.every(function (val) { return validate$9(val, options); });
+    }
+    return toArray(options).some(function (item) {
+        // eslint-disable-next-line
+        return item == value;
+    });
+};
+var oneOf = {
+    validate: validate$9
+};
+
+var validate$a = function (value, args) {
+    return !validate$9(value, args);
+};
+var excluded = {
+    validate: validate$a
+};
+
+var validate$b = function (files, extensions) {
+    var regex = new RegExp(".(" + extensions.join('|') + ")$", 'i');
+    if (Array.isArray(files)) {
+        return files.every(function (file) { return regex.test(file.name); });
+    }
+    return regex.test(files.name);
+};
+var ext = {
+    validate: validate$b
+};
+
+var validate$c = function (files) {
+    var regex = /\.(jpg|svg|jpeg|png|bmp|gif|webp)$/i;
+    if (Array.isArray(files)) {
+        return files.every(function (file) { return regex.test(file.name); });
+    }
+    return regex.test(files.name);
+};
+var image = {
+    validate: validate$c
+};
+
+var validate$d = function (value) {
+    if (Array.isArray(value)) {
+        return value.every(function (val) { return /^-?[0-9]+$/.test(String(val)); });
+    }
+    return /^-?[0-9]+$/.test(String(value));
+};
+var integer = {
+    validate: validate$d
+};
+
+var validate$e = function (value, _a) {
+    var other = _a.other;
+    return value === other;
+};
+var params$9 = [
+    {
+        name: 'other'
+    }
+];
+var is = {
+    validate: validate$e,
+    params: params$9
+};
+
+var validate$f = function (value, _a) {
+    var other = _a.other;
+    return value !== other;
+};
+var params$a = [
+    {
+        name: 'other'
+    }
+];
+var is_not = {
+    validate: validate$f,
+    params: params$a
+};
+
+var validate$g = function (value, _a) {
+    var length = _a.length;
+    if (isNullOrUndefined(value)) {
+        return false;
+    }
+    if (typeof value === 'number') {
+        value = String(value);
+    }
+    if (!value.length) {
+        value = toArray(value);
+    }
+    return value.length === length;
+};
+var params$b = [
+    {
+        name: 'length',
+        cast: function (value) { return Number(value); }
+    }
+];
+var length = {
+    validate: validate$g,
+    params: params$b
+};
+
+var validate$h = function (value, _a) {
+    var length = _a.length;
+    if (isNullOrUndefined(value)) {
+        return length >= 0;
+    }
+    if (Array.isArray(value)) {
+        return value.every(function (val) { return validate$h(val, { length: length }); });
+    }
+    return String(value).length <= length;
+};
+var params$c = [
+    {
+        name: 'length',
+        cast: function (value) {
+            return Number(value);
+        }
+    }
+];
+var max = {
+    validate: validate$h,
+    params: params$c
+};
+
+var validate$i = function (value, _a) {
+    var max = _a.max;
+    if (isNullOrUndefined(value) || value === '') {
+        return false;
+    }
+    if (Array.isArray(value)) {
+        return value.length > 0 && value.every(function (val) { return validate$i(val, { max: max }); });
+    }
+    return Number(value) <= max;
+};
+var params$d = [
+    {
+        name: 'max',
+        cast: function (value) {
+            return Number(value);
+        }
+    }
+];
+var max_value = {
+    validate: validate$i,
+    params: params$d
+};
+
+var validate$j = function (files, mimes) {
+    var regex = new RegExp(mimes.join('|').replace('*', '.+') + "$", 'i');
+    if (Array.isArray(files)) {
+        return files.every(function (file) { return regex.test(file.type); });
+    }
+    return regex.test(files.type);
+};
+var mimes = {
+    validate: validate$j
+};
+
+var validate$k = function (value, _a) {
+    var length = _a.length;
+    if (isNullOrUndefined(value)) {
+        return false;
+    }
+    if (Array.isArray(value)) {
+        return value.every(function (val) { return validate$k(val, { length: length }); });
+    }
+    return String(value).length >= length;
+};
+var params$e = [
+    {
+        name: 'length',
+        cast: function (value) {
+            return Number(value);
+        }
+    }
+];
+var min = {
+    validate: validate$k,
+    params: params$e
+};
+
+var validate$l = function (value, _a) {
+    var min = _a.min;
+    if (isNullOrUndefined(value) || value === '') {
+        return false;
+    }
+    if (Array.isArray(value)) {
+        return value.length > 0 && value.every(function (val) { return validate$l(val, { min: min }); });
+    }
+    return Number(value) >= min;
+};
+var params$f = [
+    {
+        name: 'min',
+        cast: function (value) {
+            return Number(value);
+        }
+    }
+];
+var min_value = {
+    validate: validate$l,
+    params: params$f
+};
+
+var ar = /^[٠١٢٣٤٥٦٧٨٩]+$/;
+var en = /^[0-9]+$/;
+var validate$m = function (value) {
+    var testValue = function (val) {
+        var strValue = String(val);
+        return en.test(strValue) || ar.test(strValue);
+    };
+    if (Array.isArray(value)) {
+        return value.every(testValue);
+    }
+    return testValue(value);
+};
+var numeric = {
+    validate: validate$m
+};
+
+var validate$n = function (value, _a) {
+    var regex = _a.regex;
+    if (Array.isArray(value)) {
+        return value.every(function (val) { return validate$n(val, { regex: regex }); });
+    }
+    return regex.test(String(value));
+};
+var params$g = [
+    {
+        name: 'regex',
+        cast: function (value) {
+            if (typeof value === 'string') {
+                return new RegExp(value);
+            }
+            return value;
+        }
+    }
+];
+var regex = {
+    validate: validate$n,
+    params: params$g
+};
+
+var validate$o = function (value, _a) {
+    var allowFalse = (_a === void 0 ? { allowFalse: true } : _a).allowFalse;
+    var result = {
+        valid: false,
+        required: true
+    };
+    if (isNullOrUndefined(value) || isEmptyArray(value)) {
+        return result;
+    }
+    // incase a field considers `false` as an empty value like checkboxes.
+    if (value === false && !allowFalse) {
+        return result;
+    }
+    result.valid = !!String(value).trim().length;
+    return result;
+};
+var computesRequired = true;
+var params$h = [
+    {
+        name: 'allowFalse',
+        default: true
+    }
+];
+var required = {
+    validate: validate$o,
+    params: params$h,
+    computesRequired: computesRequired
+};
+
+var testEmpty = function (value) {
+    return isEmptyArray(value) || includes([false, null, undefined], value) || !String(value).trim().length;
+};
+var validate$p = function (value, _a) {
+    var target = _a.target, values = _a.values;
+    var required;
+    if (values && values.length) {
+        if (!Array.isArray(values) && typeof values === 'string') {
+            values = [values];
+        }
+        // eslint-disable-next-line
+        required = values.some(function (val) { return val == String(target).trim(); });
+    }
+    else {
+        required = !testEmpty(target);
+    }
+    if (!required) {
+        return {
+            valid: true,
+            required: required
+        };
+    }
+    return {
+        valid: !testEmpty(value),
+        required: required
+    };
+};
+var params$i = [
+    {
+        name: 'target',
+        isTarget: true
+    },
+    {
+        name: 'values'
+    }
+];
+var computesRequired$1 = true;
+var required_if = {
+    validate: validate$p,
+    params: params$i,
+    computesRequired: computesRequired$1
+};
+
+var validate$q = function (files, _a) {
+    var size = _a.size;
+    if (isNaN(size)) {
+        return false;
+    }
+    var nSize = size * 1024;
+    if (!Array.isArray(files)) {
+        return files.size <= nSize;
+    }
+    for (var i = 0; i < files.length; i++) {
+        if (files[i].size > nSize) {
+            return false;
+        }
+    }
+    return true;
+};
+var params$j = [
+    {
+        name: 'size',
+        cast: function (value) {
+            return Number(value);
+        }
+    }
+];
+var size = {
+    validate: validate$q,
+    params: params$j
+};
+
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vee-validate/dist/vee-validate.full.js":
 /*!*************************************************************!*\
   !*** ./node_modules/vee-validate/dist/vee-validate.full.js ***!
@@ -30723,24 +31607,260 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "v-row",
-    [
-      _c(
-        "v-col",
-        { staticClass: "px-5", attrs: { cols: "12" } },
-        [
-          _c("h3", { staticClass: "font-weight-light mb-5" }, [
-            _vm._v("Account setting is coming soon.")
-          ]),
-          _vm._v(" "),
-          _c("v-card")
-        ],
-        1
-      )
-    ],
-    1
-  )
+  return _c("v-row", [
+    _c(
+      "div",
+      { staticClass: "col-12 col-md-6 px-5" },
+      [
+        _c("h3", { staticClass: "font-weight-light mb-5" }, [
+          _vm._v("Account Settings")
+        ]),
+        _vm._v(" "),
+        _c(
+          "v-card",
+          [
+            _c(
+              "v-card-text",
+              [
+                _c("ValidationObserver", { ref: "observer" }, [
+                  _c(
+                    "form",
+                    { attrs: { method: "post" } },
+                    [
+                      _c("ValidationProvider", {
+                        attrs: { name: "Name", rules: "required|min:5" },
+                        scopedSlots: _vm._u([
+                          {
+                            key: "default",
+                            fn: function(ref) {
+                              var errors = ref.errors
+                              return [
+                                _c("v-text-field", {
+                                  staticClass: "py-0",
+                                  attrs: {
+                                    outlined: "",
+                                    label: "Name",
+                                    "error-messages": errors,
+                                    required: "",
+                                    dense: ""
+                                  },
+                                  model: {
+                                    value: _vm.name,
+                                    callback: function($$v) {
+                                      _vm.name = $$v
+                                    },
+                                    expression: "name"
+                                  }
+                                })
+                              ]
+                            }
+                          }
+                        ])
+                      }),
+                      _vm._v(" "),
+                      _c("ValidationProvider", {
+                        attrs: { name: "Phone", rules: "required|min:10" },
+                        scopedSlots: _vm._u([
+                          {
+                            key: "default",
+                            fn: function(ref) {
+                              var errors = ref.errors
+                              return [
+                                _c("v-text-field", {
+                                  staticClass: "py-0",
+                                  attrs: {
+                                    outlined: "",
+                                    label: "Phone",
+                                    "error-messages": errors,
+                                    required: "",
+                                    dense: ""
+                                  },
+                                  model: {
+                                    value: _vm.phone,
+                                    callback: function($$v) {
+                                      _vm.phone = $$v
+                                    },
+                                    expression: "phone"
+                                  }
+                                })
+                              ]
+                            }
+                          }
+                        ])
+                      }),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        { staticClass: "d-flex justify-end" },
+                        [
+                          _c(
+                            "v-btn",
+                            {
+                              staticClass: "mr-1",
+                              attrs: { text: "", color: "grey" },
+                              on: { click: _vm.resetFields }
+                            },
+                            [_vm._v("reset")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-btn",
+                            {
+                              staticClass: "primary",
+                              on: { click: _vm.updateAccount }
+                            },
+                            [_vm._v("Update")]
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ])
+              ],
+              1
+            )
+          ],
+          1
+        )
+      ],
+      1
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      { staticClass: "col-12 col-md-4 px-5" },
+      [
+        _c("h3", { staticClass: "font-weight-light mb-5" }, [
+          _vm._v("Change Password")
+        ]),
+        _vm._v(" "),
+        _c(
+          "v-card",
+          [
+            _c(
+              "v-card-text",
+              [
+                _c("ValidationObserver", { ref: "updatepass" }, [
+                  _c(
+                    "form",
+                    [
+                      _c("ValidationProvider", {
+                        attrs: { name: "Password", rules: "required|min:8" },
+                        scopedSlots: _vm._u([
+                          {
+                            key: "default",
+                            fn: function(ref) {
+                              var errors = ref.errors
+                              return [
+                                _c("v-text-field", {
+                                  staticClass: "py-0",
+                                  attrs: {
+                                    "append-icon": _vm.show1
+                                      ? "mdi-eye"
+                                      : "mdi-eye-off",
+                                    "error-messages": errors,
+                                    type: _vm.show1 ? "text" : "password",
+                                    outlined: "",
+                                    label: "New Password",
+                                    required: "",
+                                    dense: ""
+                                  },
+                                  on: {
+                                    "click:append": function($event) {
+                                      _vm.show1 = !_vm.show1
+                                    }
+                                  },
+                                  model: {
+                                    value: _vm.password,
+                                    callback: function($$v) {
+                                      _vm.password = $$v
+                                    },
+                                    expression: "password"
+                                  }
+                                })
+                              ]
+                            }
+                          }
+                        ])
+                      }),
+                      _vm._v(" "),
+                      _c("ValidationProvider", {
+                        attrs: {
+                          name: "Confirm Password",
+                          rules: "required|min:8"
+                        },
+                        scopedSlots: _vm._u([
+                          {
+                            key: "default",
+                            fn: function(ref) {
+                              var errors = ref.errors
+                              return [
+                                _c("v-text-field", {
+                                  staticClass: "py-0",
+                                  attrs: {
+                                    "append-icon": _vm.show1
+                                      ? "mdi-eye"
+                                      : "mdi-eye-off",
+                                    "error-messages":
+                                      _vm.passwordError == ""
+                                        ? errors
+                                        : _vm.passwordError,
+                                    type: _vm.show1 ? "text" : "password",
+                                    outlined: "",
+                                    label: "Confirm Password",
+                                    required: "",
+                                    dense: ""
+                                  },
+                                  on: {
+                                    "click:append": function($event) {
+                                      _vm.show1 = !_vm.show1
+                                    }
+                                  },
+                                  model: {
+                                    value: _vm.confirmpass,
+                                    callback: function($$v) {
+                                      _vm.confirmpass = $$v
+                                    },
+                                    expression: "confirmpass"
+                                  }
+                                })
+                              ]
+                            }
+                          }
+                        ])
+                      }),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        { staticClass: "d-flex justify-end" },
+                        [
+                          _c(
+                            "v-btn",
+                            {
+                              staticClass: "primary",
+                              on: { click: _vm.updatePassword }
+                            },
+                            [_vm._v("Change Password")]
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ])
+              ],
+              1
+            )
+          ],
+          1
+        )
+      ],
+      1
+    )
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true

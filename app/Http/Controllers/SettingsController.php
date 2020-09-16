@@ -6,6 +6,7 @@ use App\User;
 use App\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class SettingsController extends Controller
 {
@@ -21,6 +22,33 @@ class SettingsController extends Controller
     {
         $company = Company::where('id', Auth::user()->company_id)->firstOrFail();
         return response()->json($company, 200);
+    }
+
+    public function fetchAccount()
+    {
+        $account = User::where('id', Auth::user()->id)->firstOrFail();
+        return response()->json($account, 200);
+    }
+
+    public function updateAccount_password(Request $request)
+    {   
+        
+        $request['password'] = Hash::make($request->password);
+         
+        $account = User::where('id', Auth::user()->id)->first(); 
+        $account->update($this->validatePassword());
+        return response()->json([
+            'message' => 'Account has been updated.',
+        ], 200);
+    }
+
+    public function updateAccount(Request $request)
+    {
+        $account = User::where('id', Auth::user()->id)->first(); 
+        $account->update($this->validateAccountequest());
+        return response()->json([
+            'message' => 'Account has been updated.',
+        ], 200);
     }
 
     public function getOrgUsers($id)
@@ -78,6 +106,14 @@ class SettingsController extends Controller
             'phone' => [''],
             'role' => ['integer'],
         ]);
+    } 
+    
+    public function validatePassword()
+    {
+        return request()->validate([ 
+            'password' => ['required', 'min:8']             
+        ]);
+
     }
 
     public function validateOrgRequest()
@@ -88,6 +124,14 @@ class SettingsController extends Controller
             'description' => [''],
         ]);
 
+    }
+
+    public function validateAccountequest(){
+        return request()->validate([
+           
+            'name' => ['required', 'min:5', 'max:80', 'string'],
+            'phone' => [''],
+        ]);
     }
 
     public function hasOneAdmin()
