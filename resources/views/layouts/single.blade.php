@@ -426,7 +426,7 @@ margin: 15px;
 @media (max-width:576px) {
     .container {
         height: 275px;
-    }
+    } 
 
     .center-con { bottom: 35px; height: 40px;width: 35%; left: 38%; } 
     .round-container{ left: 30%; width: 144px; }
