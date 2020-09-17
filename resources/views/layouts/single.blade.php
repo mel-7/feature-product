@@ -120,7 +120,10 @@
             animation: cd-pulse 2s infinite;
         }
  
-        
+       .icon-360 {position: absolute;
+    top: 0;
+    margin: 30px;} 
+
 @-webkit-keyframes cd-pulse {
   0% {
     -webkit-transform: scale(1);
