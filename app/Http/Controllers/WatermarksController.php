@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
@@ -39,22 +40,23 @@ class WatermarksController extends Controller
     public function store(Request $request)
     {
         $companyId = Auth::user()->company_id;
-        // $imagePath = URL::to('/').'/storage/uploads/'.$companyId.'/'.$request['watermark'];
-        $imagePath = Storage::disk('uploads')->get($request->watermark);
-        dd($imagePath);
-        $imagePath = storage_path('uploads'.'/'.$companyId.'/'.$request->watermark);
-        // dd($imagePath);
-        // ->get($request->watermark)
-       
+        $uploadDate = Carbon::now()->format('YmdHis');
+
         // Create Director if does not exist
         $userStorage = '/public/uploads/' . $companyId.'/watermark';
         if (!Storage::exists($userStorage)) {
             Storage::makeDirectory($userStorage, 0755, true);
         }
         $userWatermakrStorageDir = storage_path() . '/app' . $userStorage;
-        $watermark = Image::make($imagePath);     
-        dd($watermark);
-        $watermark->save($userWatermakrStorageDir . '/' . $request->watermark);
+        $watermark = Image::make(public_path('storage/uploads/'.$companyId.'/'.$request->watermark));
+        // $watermark->encode('png');
+        // $watermark->encode('png')->trim();
+        // $watermark->encode('jpg');
+        $watermark->resize($request->image_width, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        $watermark->opacity($request->image_opacity);
+        $watermark->save($userWatermakrStorageDir . '/' .$uploadDate.'-'.$request->watermark);
 
         // Return response
         return response()->json([
