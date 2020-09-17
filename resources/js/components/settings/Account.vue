@@ -35,7 +35,7 @@
       <v-card>
         <v-card-text>
            <ValidationObserver ref="updatepass" >
-          <form>
+          <v-form  v-model="valid" >
              <ValidationProvider v-slot="{ errors }" name="Password" rules="required|min:8">
                 <v-text-field
                 v-model="password"
@@ -56,16 +56,28 @@
                 outlined label="Confirm Password" required class="py-0" dense 
                 @click:append="show1 = !show1"
               ></v-text-field> 
-             </ValidationProvider>
+             </ValidationProvider> 
+
             <div class="d-flex justify-end"> 
-              <v-btn class="primary" @click="updatePassword">Change Password</v-btn>
+              <v-btn class="primary" :disabled="!valid"   @click="updatePassword">Change Password</v-btn>
             </div>
-          </form>
+          </v-form>
            </ValidationObserver>
         </v-card-text>
       </v-card>
     </div>
     
+   <v-snackbar
+      v-model="snackbar" 
+      :color="color" 
+      :right="x === 'right'"
+      :timeout="timeout"
+      :top="y === 'top'"
+      :vertical="mode === 'vertical'"
+    >
+      {{ text }}  
+    </v-snackbar>
+
   </v-row>
 </template>
 
@@ -86,6 +98,7 @@ export default {
   },
   data() {
     return {
+      valid: false,
       show1: false,
       passwordError: "",
       fetchedname: "",
@@ -95,8 +108,25 @@ export default {
       password: "",
       confirmpass: "",
       baseUrl: window.location.origin,
- 
+      color: '',
+      mode: 'vertical',
+      snackbar: false,
+      text: '',
+      timeout: 5000,
+      x: '',
+      y: '',
     };
+  },
+   watch: {
+    confirmpass: function (val) {
+      if(this.password !== val){ 
+        this.passwordError = "Password did not match!";
+        this.valid = false;
+      }else{ 
+        this.valid = true;
+         this.passwordError = "";
+      }
+    } 
   },
   methods: { 
     resetFields() {
@@ -105,12 +135,17 @@ export default {
       this.phone = this.fetchedphone;
     },
 
-    postFunction(data, controller){
-      
+    postFunction(data, controller){ 
       axios
         .post(controller, data)
         .then((response) => {
+         
             this.passwordError = ""; 
+            this.snackbar = true;
+            this.color = "success";
+            this.x = "right";
+            this.y = "top";
+            this.text = "Success";
         })
         .catch((error) => {
           console.log("Error Fetching account");
@@ -119,29 +154,26 @@ export default {
     },
 
     updatePassword(){
-      this.$refs.updatepass.validate()
-      if(this.password !== this.confirmpass){
-        this.passwordError = "Password did not match!";
-        return false;
-      }
-      
-       let data = { 
+      this.$refs.updatepass.validate(); 
+   
+      let data = { 
         password: this.password      
       };
-
+      if(this.password == null || this.password == "" || this.confirmpass == "" || this.confirmpass == null) { return false; }
+ 
       this.postFunction(data, "/settings/account/update_password");
+     
 
     },
     updateAccount() {
      
        this.$refs.observer.validate()
 
-      let data = {
-        
+      let data = { 
         name: this.name,
         phone: this.phone,
       };
-
+      console.log(data);
       this.postFunction(data, "/settings/account/update");
        
     },
@@ -167,7 +199,7 @@ export default {
     },
   },
   created() {
-    this.fetchAccount();
+    this.fetchAccount(); 
   },
 };
 </script>

@@ -22,6 +22,7 @@
             <thead>
               <tr>
                 <th class="text-left">Product Name</th>
+                <th class="text-left">slug</th>
                 <th class="text-left">Status</th>
                 <th class="text-center">Embed</th>
                 <th class="text-right">Actions</th>
@@ -30,6 +31,7 @@
             <tbody>
               <tr v-for="item in products" :key="item.name">
                 <td>{{ item.title }}</td>
+                 <td>{{ item.slug }}</td>
                 <td
                   :class="`${item.status == 1 ? 'green--text' : 'blue--text'} text-left`"
                 >{{ item.status == 1 ? 'active' : 'inactive' }}</td>
