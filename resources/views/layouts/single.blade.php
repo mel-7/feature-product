@@ -428,7 +428,11 @@ margin: 15px;
         height: 275px;
     } 
 
-    .center-con { bottom: 35px; height: 40px;width: 35%; left: 38%; } 
+    .center-con {
+      bottom: 35px;
+    height: 40px;
+    width: 50%;
+    left: 28%;} 
     .round-container{ left: 30%; width: 144px; }
     .round-label{ font-size:12px;}
     .round{ width: 25px; height: 25px; }
