@@ -3190,6 +3190,7 @@ __webpack_require__.r(__webpack_exports__);
       mediaLoading: false,
       tab: null,
       return_url: this.mediaOptions.returnUrl ? this.mediaOptions.returnUrl : false,
+      return_path: this.mediaOptions.returnPath ? this.mediaOptions.returnPath : false,
       submitAction: this.mediaOptions.action ? this.mediaOptions.action : "save",
       // Selected File
       multiple: this.mediaOptions.multiple ? this.mediaOptions.multiple : false,
@@ -3216,7 +3217,7 @@ __webpack_require__.r(__webpack_exports__);
       if (this.multiple == false) {
         if (this.selected.length < 1) {
           // If Return URL used in hotspot images
-          if (this.return_url == true) {
+          if (this.return_url == true || this.return_path == true) {
             this.selected.push(file.path);
           } else {
             this.selected.push(i);
@@ -3246,7 +3247,10 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       // If only needs to return the url of the selected image
-      if (this.return_url == true) {
+      if (this.return_path == true) {
+        this.$emit("responded", this.selected[0]);
+        this.selected = [];
+      } else if (this.return_url == true) {
         var toReturlUrl = this.baseUrl + "/storage/uploads/" + this.companyId + "/" + this.selected[0];
         this.$emit("responded", toReturlUrl);
         this.selected = [];
@@ -3286,8 +3290,7 @@ __webpack_require__.r(__webpack_exports__);
       if (this.selected.length == 0) {
         axios.get("/user/files/" + this.userId).then(function (response) {
           console.log("Media Files has been loaded");
-          _this2.files = Object.assign({}, response.data.data);
-          console.log(_this2.files);
+          _this2.files = Object.assign({}, response.data.data); // console.log(this.files);
         })["catch"](function (error) {
           console.log("Error Fetching Files in getUserFiles");
           console.log(error);
@@ -6089,6 +6092,9 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vee_validate_dist_rules__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vee-validate/dist/rules */ "./node_modules/vee-validate/dist/rules.js");
+/* harmony import */ var vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vee-validate/dist/vee-validate.full */ "./node_modules/vee-validate/dist/vee-validate.full.js");
+/* harmony import */ var vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_1__);
 //
 //
 //
@@ -6168,7 +6174,36 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    ValidationProvider: vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_1__["ValidationProvider"],
+    ValidationObserver: vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_1__["ValidationObserver"]
+  },
   props: {
     authUser: {
       type: Object,
@@ -6181,10 +6216,12 @@ __webpack_require__.r(__webpack_exports__);
       fetchedposition: "",
       fetchedoffsetSpace: "",
       watermark: "",
+      imageWidth: "300",
+      imageOpacity: 50,
       position: "",
-      offsetSpace: "",
+      offsetSpace: "15",
       positions: [{
-        label: "Top Left (default)",
+        label: "Top Left",
         value: "top-left"
       }, {
         label: "Top",
@@ -6196,7 +6233,7 @@ __webpack_require__.r(__webpack_exports__);
         label: "Left",
         value: "left"
       }, {
-        label: "Center",
+        label: "Center (default)",
         value: "center"
       }, {
         label: "Right",
@@ -6221,14 +6258,15 @@ __webpack_require__.r(__webpack_exports__);
         data: null,
         product: null,
         itemType: "image",
-        returnUrl: true
+        returnUrl: false,
+        returnPath: true
       }
     };
   },
   methods: {
     mediaResponse: function mediaResponse(v) {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
-      this.watermark = v != false ? v : this.watermark;
+      this.watermark = v ? v : this.watermark;
     },
     openMediaFiles: function openMediaFiles() {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
@@ -6238,25 +6276,25 @@ __webpack_require__.r(__webpack_exports__);
       this.position = this.fetchedposition;
       this.offsetSpace = this.fetchedoffsetSpace;
     },
-    updateOrg: function updateOrg() {
+    saveWatermark: function saveWatermark() {
       var data = {
         watermark: this.watermark,
-        position: this.position,
+        image_width: this.imageWidth,
+        image_opacity: this.imageOpacity,
+        position: this.position.value,
         offset_space: this.offsetSpace
       };
-      console.log(data); //   axios
-      //     .post("/settings/organization/update", data)
-      //     .then((response) => {
-      //       //   this.fetchOrg();
-      //       console.log(response.data);
-      //     })
-      //     .catch((error) => {
-      //       console.log("Error Fetching Organization");
-      //       console.log(error);
-      //     });
+      console.log(data);
+      axios.post("/settings/watermark/save", data).then(function (response) {
+        //   this.fetchOrg();
+        console.log(response.data);
+      })["catch"](function (error) {
+        console.log("Error Fetching Organization");
+        console.log(error);
+      });
     },
-    fetchOrg: function fetchOrg() {
-      console.log("fetch watermark settings"); //   axios
+    fetchOrg: function fetchOrg() {// console.log("fetch watermark settings");
+      //   axios
       //     .get("/settings/organization/fetch")
       //     .then((response) => {
       //       this.fetchedwatermark = response.data.watermark ? response.data.watermark : "";
@@ -6278,6 +6316,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   created: function created() {
     this.fetchOrg();
+    this.position = this.positions[4];
   }
 });
 
@@ -6390,7 +6429,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.top-left {\n  top: 0;\n  left: 0;\n  right: auto;\n  bottom: auto;\n}\n.top {\n  margin: 0 auto;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: auto;\n}\n.top-right {\n  top: 0;\n  right: 0;\n  left: auto;\n  bottom: auto;\n}\n.left {\n  left: 0;\n  top: auto;\n  right: auto;\n  bottom: auto;\n}\n.center {\n  left: auto;\n  top: auto;\n  right: auto;\n  bottom: auto;\n}\n.right {\n  right: 0;\n  left: auto;\n  top: auto;\n  bottom: auto;\n}\n.bottom-left {\n  left: 0;\n  top: auto;\n  right: auto;\n  bottom: 0;\n}\n.bottom {\n  left: 0;\n  top: auto;\n  right: 0;\n  bottom: 0;\n  margin: 0 auto;\n}\n.bottom-right {\n  left: auto;\n  top: auto;\n  right: 0;\n  bottom: 0;\n}\n", ""]);
+exports.push([module.i, "\n.top-left {\r\n  top: 0;\r\n  left: 0;\r\n  right: auto;\r\n  bottom: auto;\n}\n.top {\r\n  margin-left: 0 !important;\r\n  margin-right: 0 !important;\r\n  top: 0;\r\n  left: 50%;\r\n  right: auto;\r\n  bottom: auto;\r\n  transform: translateX(-50%);\n}\n.top-right {\r\n  top: 0;\r\n  right: 0;\r\n  left: auto;\r\n  bottom: auto;\n}\n.left {\r\n  margin-top: 0 !important;\r\n  margin-bottom: 0 !important;\r\n  left: 0;\r\n  top: 50%;\r\n  right: auto;\r\n  bottom: auto;\r\n  transform: translateY(-50%);\n}\n.center {\r\n  margin: 0 !important;\r\n  left: 50%;\r\n  top: 50%;\r\n  right: auto;\r\n  bottom: auto;\r\n  transform: translate(-50%, -50%);\n}\n.right {\r\n  margin-top: 0 !important;\r\n  margin-bottom: 0 !important;\r\n  left: auto;\r\n  top: 50%;\r\n  right: 0;\r\n  bottom: auto;\r\n  transform: translateY(-50%);\n}\n.bottom-left {\r\n  left: 0;\r\n  top: auto;\r\n  right: auto;\r\n  bottom: 0;\n}\n.bottom {\r\n  margin-left: 0 !important;\r\n  margin-right: 0 !important;\r\n  top: auto;\r\n  left: 50%;\r\n  right: auto;\r\n  bottom: 0;\r\n  transform: translateX(-50%);\n}\n.bottom-right {\r\n  left: auto;\r\n  top: auto;\r\n  right: 0;\r\n  bottom: 0;\n}\r\n", ""]);
 
 // exports
 
@@ -32733,172 +32772,298 @@ var render = function() {
                 [
                   _c("span", { staticClass: "overline" }, [_vm._v("Preview")]),
                   _vm._v(" "),
-                  _c(
-                    "v-responsive",
-                    {
-                      staticClass: "grey lighten-4 rounded",
-                      attrs: { "aspect-ratio": 16 / 9 }
-                    },
-                    [
-                      _c("v-card-text", { staticClass: "pa-0" }, [
-                        _c(
-                          "div",
-                          { staticClass: "d-flex pa-5" },
-                          [
-                            _c("v-img", {
-                              class:
-                                (_vm.position != "" ? _vm.position.value : "") +
-                                " grey lighten-4 rounded elevation-0",
-                              staticStyle: { position: "absolute" },
-                              attrs: {
-                                width: "100",
-                                "min-height": "50",
-                                contain: "",
-                                src: _vm.watermark
+                  _c("v-card-text", { staticClass: "grey lighten-4 pa-0" }, [
+                    _c(
+                      "div",
+                      {
+                        staticStyle: {
+                          position: "relative",
+                          width: "100%",
+                          height: "100%",
+                          "padding-bottom": "75%"
+                        }
+                      },
+                      [
+                        _c("v-img", {
+                          class:
+                            (_vm.position != "" ? _vm.position.value : "") +
+                            " grey lighten-4 rounded elevation-0",
+                          style:
+                            "position:absolute; margin:" +
+                            _vm.offsetSpace +
+                            "px;opacity: " +
+                            (_vm.imageOpacity == 100
+                              ? "1"
+                              : _vm.imageOpacity < 10
+                              ? ".0" + _vm.imageOpacity
+                              : "." + _vm.imageOpacity) +
+                            ";",
+                          attrs: {
+                            width: "100",
+                            "min-height": "50",
+                            contain: "",
+                            src: _vm.watermark
+                              ? _vm.baseUrl +
+                                "/storage/uploads/" +
+                                _vm.authUser.company_id +
+                                "/" +
+                                _vm.watermark
+                              : ""
+                          },
+                          scopedSlots: _vm._u([
+                            {
+                              key: "placeholder",
+                              fn: function() {
+                                return [
+                                  _c("v-img", {
+                                    staticClass: "grey lighten-4",
+                                    attrs: {
+                                      src:
+                                        _vm.baseUrl +
+                                        "/images/no-image-placeholder.jpg",
+                                      width: "100",
+                                      height: "50",
+                                      cover: ""
+                                    }
+                                  })
+                                ]
                               },
-                              scopedSlots: _vm._u([
-                                {
-                                  key: "placeholder",
-                                  fn: function() {
-                                    return [
-                                      _c("v-img", {
-                                        staticClass: "grey lighten-4",
-                                        attrs: {
-                                          src:
-                                            _vm.baseUrl +
-                                            "/images/no-image-placeholder.jpg",
-                                          width: "100",
-                                          height: "50",
-                                          cover: ""
-                                        }
-                                      })
-                                    ]
-                                  },
-                                  proxy: true
-                                }
-                              ])
-                            })
-                          ],
-                          1
-                        )
-                      ])
-                    ],
-                    1
-                  )
+                              proxy: true
+                            }
+                          ])
+                        })
+                      ],
+                      1
+                    )
+                  ])
                 ],
                 1
               ),
               _vm._v(" "),
               _c("v-divider"),
               _vm._v(" "),
-              _c("v-card-text", [
-                _c(
-                  "form",
-                  [
+              _c(
+                "v-card-text",
+                [
+                  _c("ValidationObserver", { ref: "observer" }, [
                     _c(
-                      "div",
-                      { staticClass: "d-flex" },
+                      "form",
                       [
-                        _c("v-text-field", {
-                          staticClass: "py-0",
+                        _c("ValidationProvider", {
+                          attrs: { name: "Name", rules: "required" },
+                          scopedSlots: _vm._u([
+                            {
+                              key: "default",
+                              fn: function(ref) {
+                                var errors = ref.errors
+                                return [
+                                  _c(
+                                    "div",
+                                    { staticClass: "d-flex" },
+                                    [
+                                      _c("v-text-field", {
+                                        attrs: {
+                                          outlined: "",
+                                          label: "Watermark Image",
+                                          required: "",
+                                          "error-messages": errors,
+                                          dense: "",
+                                          readonly: ""
+                                        },
+                                        model: {
+                                          value: _vm.watermark,
+                                          callback: function($$v) {
+                                            _vm.watermark = $$v
+                                          },
+                                          expression: "watermark"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          staticClass: "mt-2 ml-3",
+                                          attrs: { small: "", icon: "" },
+                                          on: { click: _vm.openMediaFiles }
+                                        },
+                                        [
+                                          _c(
+                                            "v-icon",
+                                            { attrs: { small: "" } },
+                                            [_vm._v("mdi-folder-image")]
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  )
+                                ]
+                              }
+                            }
+                          ])
+                        }),
+                        _vm._v(" "),
+                        _c("v-select", {
                           attrs: {
+                            items: _vm.positions,
+                            "item-text": "label",
+                            "item-value": "value",
+                            label: "Position",
+                            "return-object": "",
                             outlined: "",
-                            label: "Watermark Image",
-                            required: "",
                             dense: ""
                           },
                           model: {
-                            value: _vm.watermark,
+                            value: _vm.position,
                             callback: function($$v) {
-                              _vm.watermark = $$v
+                              _vm.position = $$v
                             },
-                            expression: "watermark"
+                            expression: "position"
                           }
                         }),
                         _vm._v(" "),
-                        _c(
-                          "v-btn",
-                          {
-                            staticClass: "mt-2 ml-3",
-                            attrs: { small: "", icon: "" },
-                            on: { click: _vm.openMediaFiles }
+                        _c("ValidationProvider", {
+                          attrs: {
+                            name: "Width",
+                            rules:
+                              "required|numeric|min_value:50|max_value:1366"
                           },
+                          scopedSlots: _vm._u([
+                            {
+                              key: "default",
+                              fn: function(ref) {
+                                var errors = ref.errors
+                                return [
+                                  _c("v-text-field", {
+                                    attrs: {
+                                      type: "number",
+                                      outlined: "",
+                                      "error-messages": errors,
+                                      label: "Width (px)",
+                                      required: "",
+                                      dense: ""
+                                    },
+                                    model: {
+                                      value: _vm.imageWidth,
+                                      callback: function($$v) {
+                                        _vm.imageWidth = $$v
+                                      },
+                                      expression: "imageWidth"
+                                    }
+                                  })
+                                ]
+                              }
+                            }
+                          ])
+                        }),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          { staticClass: "d-flex" },
                           [
-                            _c("v-icon", { attrs: { small: "" } }, [
-                              _vm._v("mdi-folder-image")
-                            ])
+                            _c(
+                              "div",
+                              {
+                                staticClass: "subtitle-1",
+                                staticStyle: { width: "120px" }
+                              },
+                              [
+                                _vm._v(
+                                  "\n                Offset:\n                "
+                                ),
+                                _c(
+                                  "strong",
+                                  { staticClass: "primary--text ml-auto" },
+                                  [_vm._v(_vm._s(_vm.offsetSpace) + "px")]
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("v-slider", {
+                              staticClass: "pt-0",
+                              attrs: { min: "1", max: "100" },
+                              model: {
+                                value: _vm.offsetSpace,
+                                callback: function($$v) {
+                                  _vm.offsetSpace = $$v
+                                },
+                                expression: "offsetSpace"
+                              }
+                            })
+                          ],
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          { staticClass: "d-flex" },
+                          [
+                            _c(
+                              "div",
+                              {
+                                staticClass: "subtitle-1",
+                                staticStyle: { width: "120px" }
+                              },
+                              [
+                                _vm._v(
+                                  "\n                Opacity:\n                "
+                                ),
+                                _c(
+                                  "strong",
+                                  { staticClass: "primary--text ml-auto" },
+                                  [_vm._v(_vm._s(_vm.imageOpacity) + "%")]
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("v-slider", {
+                              staticClass: "pt-0",
+                              attrs: { min: "1", max: "100" },
+                              model: {
+                                value: _vm.imageOpacity,
+                                callback: function($$v) {
+                                  _vm.imageOpacity = $$v
+                                },
+                                expression: "imageOpacity"
+                              }
+                            })
+                          ],
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          { staticClass: "d-flex justify-end" },
+                          [
+                            _c(
+                              "v-btn",
+                              {
+                                staticClass: "mr-1",
+                                attrs: { text: "", color: "grey" },
+                                on: { click: _vm.resetFields }
+                              },
+                              [_vm._v("reset")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "v-btn",
+                              {
+                                staticClass: "primary",
+                                on: { click: _vm.saveWatermark }
+                              },
+                              [_vm._v("Save")]
+                            )
                           ],
                           1
                         )
                       ],
                       1
-                    ),
-                    _vm._v(" "),
-                    _c("v-select", {
-                      attrs: {
-                        items: _vm.positions,
-                        "item-text": "label",
-                        "item-value": "value",
-                        label: "Positions",
-                        "return-object": "",
-                        outlined: "",
-                        dense: ""
-                      },
-                      model: {
-                        value: _vm.position,
-                        callback: function($$v) {
-                          _vm.position = $$v
-                        },
-                        expression: "position"
-                      }
-                    }),
-                    _vm._v(" "),
-                    _c("v-text-field", {
-                      staticClass: "py-0",
-                      attrs: {
-                        outlined: "",
-                        label: "Offset space in px",
-                        required: "",
-                        dense: ""
-                      },
-                      model: {
-                        value: _vm.offsetSpace,
-                        callback: function($$v) {
-                          _vm.offsetSpace = $$v
-                        },
-                        expression: "offsetSpace"
-                      }
-                    }),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      { staticClass: "d-flex justify-end" },
-                      [
-                        _c(
-                          "v-btn",
-                          {
-                            staticClass: "mr-1",
-                            attrs: { text: "", color: "grey" },
-                            on: { click: _vm.resetFields }
-                          },
-                          [_vm._v("reset")]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "v-btn",
-                          {
-                            staticClass: "primary",
-                            on: { click: _vm.updateOrg }
-                          },
-                          [_vm._v("Update")]
-                        )
-                      ],
-                      1
                     )
-                  ],
-                  1
-                )
-              ])
+                  ])
+                ],
+                1
+              )
             ],
             1
           )
@@ -93578,8 +93743,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

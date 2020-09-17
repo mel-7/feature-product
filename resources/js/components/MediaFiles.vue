@@ -130,6 +130,9 @@ export default {
       return_url: this.mediaOptions.returnUrl
         ? this.mediaOptions.returnUrl
         : false,
+      return_path: this.mediaOptions.returnPath
+        ? this.mediaOptions.returnPath
+        : false,
 
       submitAction: this.mediaOptions.action
         ? this.mediaOptions.action
@@ -159,7 +162,7 @@ export default {
       if (this.multiple == false) {
         if (this.selected.length < 1) {
           // If Return URL used in hotspot images
-          if (this.return_url == true) {
+          if (this.return_url == true || this.return_path == true) {
             this.selected.push(file.path);
           } else {
             this.selected.push(i);
@@ -185,7 +188,10 @@ export default {
     },
     submitSelected() {
       // If only needs to return the url of the selected image
-      if (this.return_url == true) {
+       if (this.return_path == true) {
+        this.$emit("responded", this.selected[0]);
+        this.selected = [];
+      } else if (this.return_url == true) {
         let toReturlUrl =
           this.baseUrl +
           "/storage/uploads/" +this.companyId +
@@ -233,7 +239,7 @@ export default {
           .then((response) => {
             console.log("Media Files has been loaded");
             this.files = Object.assign({}, response.data.data);
-            console.log(this.files);
+            // console.log(this.files);
           })
           .catch((error) => {
             console.log("Error Fetching Files in getUserFiles");

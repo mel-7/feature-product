@@ -41,6 +41,7 @@ Route::post('/builder/scene/store', 'ScenesController@store')->name('builder.sto
 
 // Settings
 Route::get('/settings/account', 'BuilderController@index')->name('settings.watermark');
+Route::post('/settings/watermark/save', 'WatermarksController@store')->name('settings.watermark.save');
 Route::get('/settings/watermark', 'BuilderController@index')->name('settings.watermark');
 Route::get('/settings/organization', 'BuilderController@index')->name('settings.organization');
 Route::get('/settings/organization/fetch', 'SettingsController@fetchOrg')->name('settings.fetch.org');

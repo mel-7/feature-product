@@ -88,6 +88,7 @@ class FilesController extends Controller
                 //     $img->fit(1920, 1080);
                 //     $img->encode($format, 50);
                 // }
+
                 $img->insert('images/gallega-logo-watermark.png', 'bottom-right', 10, 10);
                 $img->save($userStorageDir . '/' . $path); // FHD
             }
