@@ -224,6 +224,9 @@
   max-width: 1200px;
  
 }
+
+.hp-contents{ position: absolute;bottom: 0; padding:10px; color: #fff;margin-bottom: 7px;width: 50%;text-align: center;background: rgb(14 14 14 / 30%); }
+.hp-contents a.c-color { text-decoration: none; color: #e4b327; }
 .close:hover, .close:focus{
   color: #dcae05;
   border-color: #dcae05;
@@ -252,6 +255,7 @@
 
 .mySlides {
   display: none;
+  background: #000;
 }
 
 .cursor {
