@@ -127,17 +127,21 @@ margin: 15px;
 
 .icon-360 img{ width: 50%; }
 
-.round-container{position: absolute;
-    left: 40%;}
+.round-container{ 
+  margin: 0 auto;
+    width: 210px;
+    }
 .center-con {
-  width: 100%;
+  width: 24%;
+    left: 38%;
     bottom: 65px;
     height: 50px;
     position: absolute;
+    margin: 0 auto;
     padding-top: 7px;
     background: rgb(14 14 14 / 50%);
 } 
-
+.label-360{ position: relative; }
 .round {
   border: 2px solid #fff;
     width: 35px;
@@ -158,7 +162,7 @@ margin: 15px;
     width:100%; cursor: pointer; position: absolute;
 }
 
-#cta .arrow{left: 3%;}
+#cta .arrow{left: 2%;}
 .arrow {position: absolute; bottom: 0;  margin-left:0px; width: 12px; height: 12px; background-size: contain; top:10px;}
 .segunda{margin-left: 8px;}
 .next-arrow {
@@ -411,13 +415,21 @@ margin: 15px;
     .slick-initialized { visibility: visible; }
     .container{width: 100%;  max-width: 1366px; height:768px; padding:0}
 
+@media (max-width:970px) {
+  .center-con { bottom: 35px; height: 40px;width: 40%; left: 30%; } 
+  .round-container{ left: 30%; width: 144px; }
+    .round-label{ font-size:12px;}
+    .round{ width: 25px; height: 25px; }
+    .arrow{ top:7px;width: 8px; height: 8px;}
+}
+ 
 @media (max-width:576px) {
     .container {
         height: 275px;
     }
 
-    .center-con { bottom: 30px; height: 40px; } 
-    .round-container{ left: 30%; }
+    .center-con { bottom: 35px; height: 40px;width: 35%; left: 38%; } 
+    .round-container{ left: 30%; width: 144px; }
     .round-label{ font-size:12px;}
     .round{ width: 25px; height: 25px; }
     .arrow{ top:7px;width: 8px; height: 8px;}

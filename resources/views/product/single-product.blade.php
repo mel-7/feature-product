@@ -18,7 +18,7 @@
       </div>
     </div> 
 
-    <div class="label-360" style='position:relative'>
+    <div class="label-360">
       <div class="center-con">
         <div class="round-container">
               <div class="round-label"> Drag to view 360&deg;</div>
