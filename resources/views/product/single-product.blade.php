@@ -8,7 +8,7 @@
           <div class="spritespin"></div>
         
           <ul id="hp-draggable" class="hp-draggable-ext">  </ul>
-          
+          <div class="icon-360"> <img src="{{URL::to('/')}}/images/360image.png"></div>
         </div>
       </div>
       <div class="interior">
