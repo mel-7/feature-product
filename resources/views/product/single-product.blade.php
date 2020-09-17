@@ -17,6 +17,21 @@
         </div>
       </div>
     </div> 
+
+    <div class="label-360" style='position:relative'>
+      <div class="center-con">
+        <div class="round-container">
+              <div class="round-label"> Drag to view 360&deg;</div>
+              <div class="round"> 
+                  <div id="cta">
+                      <span class="arrow primera next-arrow "></span>
+                      <span class="arrow segunda next-arrow"></span>
+                  </div>
+              </div>
+        </div>   
+      </div>
+    </div>
+
     <div class="content-action">
       <div class="open-exterior active">exterior</div>
       <div class="open-interior">interior</div>

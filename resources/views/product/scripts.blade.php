@@ -236,6 +236,7 @@ var slideIndex = 1;
                 let imagesArray = imgs;   
              
                 function init360(){ 
+                 
 
                 api = $(".spritespin")
                 .spritespin({
@@ -261,8 +262,7 @@ var slideIndex = 1;
                              
                               if (conf_hotspots[data.frame] && conf_hotspots[data.frame].hotspot_setting.length > 0) {  
                                  
-                                Object.keys(conf_hotspots[data.frame].hotspot_setting).map(function (ii) {   
-                                  console.log(conf_hotspots[data.frame].hotspot_setting[ii]);
+                                Object.keys(conf_hotspots[data.frame].hotspot_setting).map(function (ii) {    
                                     $('#'+conf_hotspots[data.frame].hotspot_setting[ii].hpID).css({ 
                                         top: conf_hotspots[data.frame].hotspot_setting[ii].top,
                                         left: conf_hotspots[data.frame].hotspot_setting[ii].left,
@@ -273,6 +273,12 @@ var slideIndex = 1;
                               }
                             }); 
                         }
+                        
+                         if($("div").hasClass("label-360")){
+                            $(".label-360").fadeOut("slow", function(e){
+                              $(this).remove();
+                            });
+                         }
                     },
                     onInit: function (e) { 
                       $('#hp-draggable li').hide();
@@ -302,8 +308,8 @@ var slideIndex = 1;
                 })
                 .spritespin("api");  
               }
-              init360();
-                
+              init360(); 
+
                 if(data.hpItems.length > 0){
                   $(".photos.img").show();
                 }
@@ -343,6 +349,12 @@ var slideIndex = 1;
                             var rw = $(this).attr('data-ids');
                             hideVideo();
                             openModal();currentSlide(rw); 
+
+                            if($("div").hasClass("label-360")){
+                                $(".label-360").fadeOut("slow", function(e){
+                                  $(this).remove();
+                                });
+                            }
                       }); 
                       
                       
@@ -369,6 +381,12 @@ var slideIndex = 1;
                         $interiorBtn.addClass("active");
                         $interior.show();
                         $exterior.hide(); 
+
+                        if($("div").hasClass("label-360")){
+                            $(".label-360").fadeOut("slow", function(e){
+                              $(this).remove();
+                            });
+                         }
                       });
                       $exteriorBtn.on("click", function () {
                         hideVideo();
@@ -376,7 +394,8 @@ var slideIndex = 1;
                         $exteriorBtn.addClass("active");
                         $interiorBtn.removeClass("active");
                         $interior.hide();
-                        $exterior.show();
+                        $exterior.show(); 
+
                       });
             }
         }); 
