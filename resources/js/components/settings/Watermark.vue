@@ -32,6 +32,7 @@
         <v-card-text>
           <ValidationObserver ref="observer">
             <form>
+              <v-switch v-model="watermarkOn" :label="`Water mark is ${watermarkOn == true ? 'active' : 'disabled'}`"></v-switch>
               <ValidationProvider v-slot="{ errors }" name="Name" rules="required">
                 <div class="d-flex">
                   <v-text-field
@@ -123,7 +124,10 @@ export default {
       fetchedwatermark: "",
       fetchedposition: "",
       fetchedoffsetSpace: "",
+      fetchedImageWidth: "",
+      fetchedImageOpacity: "",
 
+      watermarkOn: false,
       watermark: "",
       imageWidth: "300",
       imageOpacity: 50,
@@ -181,41 +185,43 @@ export default {
         offset_space: this.offsetSpace,
       };
       console.log(data);
-        axios
-          .post("/settings/watermark/save", data)
-          .then((response) => {
-            //   this.fetchOrg();
-            console.log(response.data);
-          })
-          .catch((error) => {
-            console.log("Error Fetching Organization");
-            console.log(error);
-          });
+      axios
+        .post("/settings/watermark/save", data)
+        .then((response) => {
+          //   this.fetchOrg();
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.log("Error saving Watermark");
+          console.log(error);
+        });
     },
-    fetchOrg() {
-      // console.log("fetch watermark settings");
-      //   axios
-      //     .get("/settings/organization/fetch")
-      //     .then((response) => {
-      //       this.fetchedwatermark = response.data.watermark ? response.data.watermark : "";
-      //       this.fetchedposition = response.data.position;
-      //       this.fetchedoffsetSpace = response.data.offsetSpace
-      //         ? response.data.offsetSpace
-      //         : "";
-      //       this.watermark = response.data.watermark ? response.data.watermark : "";
-      //       this.position = response.data.position;
-      //       this.offsetSpace = response.data.offsetSpace
-      //         ? response.data.offsetSpace
-      //         : "";
-      //     })
-      //     .catch((error) => {
-      //       console.log("Error Fetching Organization");
-      //       console.log(error);
-      //     });
+    fetchedCompanyWatermark() {
+      axios
+        .get("/settings/watermark/fetch")
+        .then((response) => {
+          let w = response.data;
+          this.fetchedwatermark = "watermark/" + w.path;
+          this.fetchedposition = w.position;
+          this.fetchedoffsetSpace = w.offset_space;
+          this.fetchedImageWidth = w.image_width;
+          this.fetchedImageOpacity = w.image_opacity;
+
+          this.watermark = "watermark/" + w.path;
+          this.imageWidth = w.image_width;
+          this.imageOpacity = w.image_opacity;
+          this.position = w.position;
+          this.offsetSpace = w.offset_space;
+          console.log(w);
+        })
+        .catch((error) => {
+          console.log("Error fetching Watermark");
+          console.log(error);
+        });
     },
   },
   created() {
-    this.fetchOrg();
+    this.fetchedCompanyWatermark();
     this.position = this.positions[4];
   },
 };

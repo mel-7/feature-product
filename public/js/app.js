@@ -6197,6 +6197,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -6215,6 +6216,9 @@ __webpack_require__.r(__webpack_exports__);
       fetchedwatermark: "",
       fetchedposition: "",
       fetchedoffsetSpace: "",
+      fetchedImageWidth: "",
+      fetchedImageOpacity: "",
+      watermarkOn: false,
       watermark: "",
       imageWidth: "300",
       imageOpacity: 50,
@@ -6289,33 +6293,34 @@ __webpack_require__.r(__webpack_exports__);
         //   this.fetchOrg();
         console.log(response.data);
       })["catch"](function (error) {
-        console.log("Error Fetching Organization");
+        console.log("Error saving Watermark");
         console.log(error);
       });
     },
-    fetchOrg: function fetchOrg() {// console.log("fetch watermark settings");
-      //   axios
-      //     .get("/settings/organization/fetch")
-      //     .then((response) => {
-      //       this.fetchedwatermark = response.data.watermark ? response.data.watermark : "";
-      //       this.fetchedposition = response.data.position;
-      //       this.fetchedoffsetSpace = response.data.offsetSpace
-      //         ? response.data.offsetSpace
-      //         : "";
-      //       this.watermark = response.data.watermark ? response.data.watermark : "";
-      //       this.position = response.data.position;
-      //       this.offsetSpace = response.data.offsetSpace
-      //         ? response.data.offsetSpace
-      //         : "";
-      //     })
-      //     .catch((error) => {
-      //       console.log("Error Fetching Organization");
-      //       console.log(error);
-      //     });
+    fetchedCompanyWatermark: function fetchedCompanyWatermark() {
+      var _this = this;
+
+      axios.get("/settings/watermark/fetch").then(function (response) {
+        var w = response.data;
+        _this.fetchedwatermark = "watermark/" + w.path;
+        _this.fetchedposition = w.position;
+        _this.fetchedoffsetSpace = w.offset_space;
+        _this.fetchedImageWidth = w.image_width;
+        _this.fetchedImageOpacity = w.image_opacity;
+        _this.watermark = "watermark/" + w.path;
+        _this.imageWidth = w.image_width;
+        _this.imageOpacity = w.image_opacity;
+        _this.position = w.position;
+        _this.offsetSpace = w.offset_space;
+        console.log(w);
+      })["catch"](function (error) {
+        console.log("Error fetching Watermark");
+        console.log(error);
+      });
     }
   },
   created: function created() {
-    this.fetchOrg();
+    this.fetchedCompanyWatermark();
     this.position = this.positions[4];
   }
 });
@@ -6429,7 +6434,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.top-left {\r\n  top: 0;\r\n  left: 0;\r\n  right: auto;\r\n  bottom: auto;\n}\n.top {\r\n  margin-left: 0 !important;\r\n  margin-right: 0 !important;\r\n  top: 0;\r\n  left: 50%;\r\n  right: auto;\r\n  bottom: auto;\r\n  transform: translateX(-50%);\n}\n.top-right {\r\n  top: 0;\r\n  right: 0;\r\n  left: auto;\r\n  bottom: auto;\n}\n.left {\r\n  margin-top: 0 !important;\r\n  margin-bottom: 0 !important;\r\n  left: 0;\r\n  top: 50%;\r\n  right: auto;\r\n  bottom: auto;\r\n  transform: translateY(-50%);\n}\n.center {\r\n  margin: 0 !important;\r\n  left: 50%;\r\n  top: 50%;\r\n  right: auto;\r\n  bottom: auto;\r\n  transform: translate(-50%, -50%);\n}\n.right {\r\n  margin-top: 0 !important;\r\n  margin-bottom: 0 !important;\r\n  left: auto;\r\n  top: 50%;\r\n  right: 0;\r\n  bottom: auto;\r\n  transform: translateY(-50%);\n}\n.bottom-left {\r\n  left: 0;\r\n  top: auto;\r\n  right: auto;\r\n  bottom: 0;\n}\n.bottom {\r\n  margin-left: 0 !important;\r\n  margin-right: 0 !important;\r\n  top: auto;\r\n  left: 50%;\r\n  right: auto;\r\n  bottom: 0;\r\n  transform: translateX(-50%);\n}\n.bottom-right {\r\n  left: auto;\r\n  top: auto;\r\n  right: 0;\r\n  bottom: 0;\n}\r\n", ""]);
+exports.push([module.i, "\n.top-left {\n  top: 0;\n  left: 0;\n  right: auto;\n  bottom: auto;\n}\n.top {\n  margin-left: 0 !important;\n  margin-right: 0 !important;\n  top: 0;\n  left: 50%;\n  right: auto;\n  bottom: auto;\n  transform: translateX(-50%);\n}\n.top-right {\n  top: 0;\n  right: 0;\n  left: auto;\n  bottom: auto;\n}\n.left {\n  margin-top: 0 !important;\n  margin-bottom: 0 !important;\n  left: 0;\n  top: 50%;\n  right: auto;\n  bottom: auto;\n  transform: translateY(-50%);\n}\n.center {\n  margin: 0 !important;\n  left: 50%;\n  top: 50%;\n  right: auto;\n  bottom: auto;\n  transform: translate(-50%, -50%);\n}\n.right {\n  margin-top: 0 !important;\n  margin-bottom: 0 !important;\n  left: auto;\n  top: 50%;\n  right: 0;\n  bottom: auto;\n  transform: translateY(-50%);\n}\n.bottom-left {\n  left: 0;\n  top: auto;\n  right: auto;\n  bottom: 0;\n}\n.bottom {\n  margin-left: 0 !important;\n  margin-right: 0 !important;\n  top: auto;\n  left: 50%;\n  right: auto;\n  bottom: 0;\n  transform: translateX(-50%);\n}\n.bottom-right {\n  left: auto;\n  top: auto;\n  right: 0;\n  bottom: 0;\n}\n", ""]);
 
 // exports
 
@@ -32849,6 +32854,21 @@ var render = function() {
                     _c(
                       "form",
                       [
+                        _c("v-switch", {
+                          attrs: {
+                            label:
+                              "Water mark is " +
+                              (_vm.watermarkOn == true ? "active" : "disabled")
+                          },
+                          model: {
+                            value: _vm.watermarkOn,
+                            callback: function($$v) {
+                              _vm.watermarkOn = $$v
+                            },
+                            expression: "watermarkOn"
+                          }
+                        }),
+                        _vm._v(" "),
                         _c("ValidationProvider", {
                           attrs: { name: "Name", rules: "required" },
                           scopedSlots: _vm._u([

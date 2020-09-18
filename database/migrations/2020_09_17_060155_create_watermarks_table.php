@@ -21,6 +21,7 @@ class CreateWatermarksTable extends Migration
             $table->string('image_width')->default('600');
             $table->string('image_opacity')->default('50');
             $table->unsignedInteger('company_id');
+            $table->boolean('status')->default(false);
             $table->timestamps();
         });
     }
