@@ -5,14 +5,16 @@
       <v-card>
         <v-card-text>
           <div class="row">
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-6" style="position:relative;">
+              <v-overlay absolute :value="loading" color="white" opacity=".75">
+                <v-progress-circular indeterminate color="primary"></v-progress-circular>
+              </v-overlay>
               <ValidationObserver ref="observer">
                 <form class="d-flex flex-column" style="height:100%;">
                   <div class="d-flex">
                     <v-switch
                       v-model="watermarkOn"
                       :label="`${watermarkOn == true ? 'Enabled' : 'Disabled' }`"
-                      inset
                       class="mt-0"
                     ></v-switch>
                   </div>
@@ -32,17 +34,18 @@
                       </v-btn>
                     </div>
                   </ValidationProvider>
-                  <v-select
-                    v-model="position"
-                    :items="positions"
-                    item-text="label"
-                    item-value="value"
-                    label="Position"
-                    return-object
-                    outlined
-                    dense
-                    class="mb-0"
-                  ></v-select>
+                  <div>
+                    <v-select
+                      v-model="position"
+                      :items="positions"
+                      item-text="label"
+                      item-value="value"
+                      label="Position"
+                      return-object
+                      outlined
+                      dense
+                    ></v-select>
+                  </div>
                   <ValidationProvider
                     v-slot="{ errors }"
                     name="Width"
@@ -56,7 +59,6 @@
                       label="Width (px)"
                       required
                       dense
-                      class="mt-0"
                     ></v-text-field>
                   </ValidationProvider>
                   <div class="d-flex">
@@ -73,6 +75,8 @@
                     </div>
                     <v-slider v-model="imageOpacity" min="1" max="100" class="pt-0"></v-slider>
                   </div>
+                  <v-spacer></v-spacer>
+                  <v-divider class="mb-5"></v-divider>
                   <div class="d-flex justify-end mt-auto">
                     <v-btn
                       class="mr-auto"
@@ -141,6 +145,9 @@ export default {
   },
   data() {
     return {
+      // ui
+      loading: false,
+
       fetchedwatermark: "",
       fetchedposition: "",
       fetchedoffsetSpace: "",
@@ -218,6 +225,7 @@ export default {
         });
     },
     saveWatermark() {
+      this.loading = true;
       let data = {
         media_file_id: this.selectedImage.id,
         watermark: this.watermark.replace("watermark/", ""),
@@ -232,16 +240,20 @@ export default {
         .then((response) => {
           //   this.fetchOrg();
           console.log(response.data);
+          this.loading = false;
         })
         .catch((error) => {
+          this.loading = false;
           console.log("Error saving Watermark");
           console.log(error);
         });
     },
     fetchedCompanyWatermark() {
+      this.loading = true;
       axios
         .get("/settings/watermark/fetch")
         .then((response) => {
+          this.loading = false;
           let w = response.data;
           console.log(w);
           if (Object.keys(w).length != 0) {

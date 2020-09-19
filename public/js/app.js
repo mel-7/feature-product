@@ -6234,6 +6234,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -6249,6 +6253,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      // ui
+      loading: false,
       fetchedwatermark: "",
       fetchedposition: "",
       fetchedoffsetSpace: "",
@@ -6336,6 +6342,9 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     saveWatermark: function saveWatermark() {
+      var _this2 = this;
+
+      this.loading = true;
       var data = {
         media_file_id: this.selectedImage.id,
         watermark: this.watermark.replace("watermark/", ""),
@@ -6348,33 +6357,37 @@ __webpack_require__.r(__webpack_exports__);
       axios.post("/settings/watermark/save", data).then(function (response) {
         //   this.fetchOrg();
         console.log(response.data);
+        _this2.loading = false;
       })["catch"](function (error) {
+        _this2.loading = false;
         console.log("Error saving Watermark");
         console.log(error);
       });
     },
     fetchedCompanyWatermark: function fetchedCompanyWatermark() {
-      var _this2 = this;
+      var _this3 = this;
 
+      this.loading = true;
       axios.get("/settings/watermark/fetch").then(function (response) {
+        _this3.loading = false;
         var w = response.data;
         console.log(w);
 
         if (Object.keys(w).length != 0) {
-          _this2.fetchedwatermark = w.media_file.path;
-          _this2.fetchedposition = w.position;
-          _this2.fetchedoffsetSpace = w.offset_space;
-          _this2.fetchedImageWidth = w.image_width;
-          _this2.fetchedImageOpacity = w.image_opacity;
-          _this2.fetchedWatermarkOn = w.status;
-          _this2.selectedImage = w.media_file;
-          _this2.watermarkId = w.id;
-          _this2.watermarkOn = w.status;
-          _this2.watermark = w.media_file.path;
-          _this2.imageWidth = w.image_width;
-          _this2.imageOpacity = w.image_opacity;
-          _this2.position = w.position;
-          _this2.offsetSpace = w.offset_space;
+          _this3.fetchedwatermark = w.media_file.path;
+          _this3.fetchedposition = w.position;
+          _this3.fetchedoffsetSpace = w.offset_space;
+          _this3.fetchedImageWidth = w.image_width;
+          _this3.fetchedImageOpacity = w.image_opacity;
+          _this3.fetchedWatermarkOn = w.status;
+          _this3.selectedImage = w.media_file;
+          _this3.watermarkId = w.id;
+          _this3.watermarkOn = w.status;
+          _this3.watermark = w.media_file.path;
+          _this3.imageWidth = w.image_width;
+          _this3.imageOpacity = w.image_opacity;
+          _this3.position = w.position;
+          _this3.offsetSpace = w.offset_space;
         } else {
           console.log("Watermark is not set");
         }
@@ -6501,7 +6514,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.top-left {\r\n  top: 0;\r\n  left: 0;\r\n  right: auto;\r\n  bottom: auto;\n}\n.top {\r\n  margin-left: 0 !important;\r\n  margin-right: 0 !important;\r\n  top: 0;\r\n  left: 50%;\r\n  right: auto;\r\n  bottom: auto;\r\n  transform: translateX(-50%);\n}\n.top-right {\r\n  top: 0;\r\n  right: 0;\r\n  left: auto;\r\n  bottom: auto;\n}\n.left {\r\n  margin-top: 0 !important;\r\n  margin-bottom: 0 !important;\r\n  left: 0;\r\n  top: 50%;\r\n  right: auto;\r\n  bottom: auto;\r\n  transform: translateY(-50%);\n}\n.center {\r\n  margin: 0 !important;\r\n  left: 50%;\r\n  top: 50%;\r\n  right: auto;\r\n  bottom: auto;\r\n  transform: translate(-50%, -50%);\n}\n.right {\r\n  margin-top: 0 !important;\r\n  margin-bottom: 0 !important;\r\n  left: auto;\r\n  top: 50%;\r\n  right: 0;\r\n  bottom: auto;\r\n  transform: translateY(-50%);\n}\n.bottom-left {\r\n  left: 0;\r\n  top: auto;\r\n  right: auto;\r\n  bottom: 0;\n}\n.bottom {\r\n  margin-left: 0 !important;\r\n  margin-right: 0 !important;\r\n  top: auto;\r\n  left: 50%;\r\n  right: auto;\r\n  bottom: 0;\r\n  transform: translateX(-50%);\n}\n.bottom-right {\r\n  left: auto;\r\n  top: auto;\r\n  right: 0;\r\n  bottom: 0;\n}\r\n", ""]);
+exports.push([module.i, "\n.top-left {\n  top: 0;\n  left: 0;\n  right: auto;\n  bottom: auto;\n}\n.top {\n  margin-left: 0 !important;\n  margin-right: 0 !important;\n  top: 0;\n  left: 50%;\n  right: auto;\n  bottom: auto;\n  transform: translateX(-50%);\n}\n.top-right {\n  top: 0;\n  right: 0;\n  left: auto;\n  bottom: auto;\n}\n.left {\n  margin-top: 0 !important;\n  margin-bottom: 0 !important;\n  left: 0;\n  top: 50%;\n  right: auto;\n  bottom: auto;\n  transform: translateY(-50%);\n}\n.center {\n  margin: 0 !important;\n  left: 50%;\n  top: 50%;\n  right: auto;\n  bottom: auto;\n  transform: translate(-50%, -50%);\n}\n.right {\n  margin-top: 0 !important;\n  margin-bottom: 0 !important;\n  left: auto;\n  top: 50%;\n  right: 0;\n  bottom: auto;\n  transform: translateY(-50%);\n}\n.bottom-left {\n  left: 0;\n  top: auto;\n  right: auto;\n  bottom: 0;\n}\n.bottom {\n  margin-left: 0 !important;\n  margin-right: 0 !important;\n  top: auto;\n  left: 50%;\n  right: auto;\n  bottom: 0;\n  transform: translateX(-50%);\n}\n.bottom-right {\n  left: auto;\n  top: auto;\n  right: 0;\n  bottom: 0;\n}\n", ""]);
 
 // exports
 
@@ -32846,8 +32859,29 @@ var render = function() {
                 _c("div", { staticClass: "row" }, [
                   _c(
                     "div",
-                    { staticClass: "col-12 col-md-6" },
+                    {
+                      staticClass: "col-12 col-md-6",
+                      staticStyle: { position: "relative" }
+                    },
                     [
+                      _c(
+                        "v-overlay",
+                        {
+                          attrs: {
+                            absolute: "",
+                            value: _vm.loading,
+                            color: "white",
+                            opacity: ".75"
+                          }
+                        },
+                        [
+                          _c("v-progress-circular", {
+                            attrs: { indeterminate: "", color: "primary" }
+                          })
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
                       _c("ValidationObserver", { ref: "observer" }, [
                         _c(
                           "form",
@@ -32867,8 +32901,7 @@ var render = function() {
                                       "" +
                                       (_vm.watermarkOn == true
                                         ? "Enabled"
-                                        : "Disabled"),
-                                    inset: ""
+                                        : "Disabled")
                                   },
                                   model: {
                                     value: _vm.watermarkOn,
@@ -32937,25 +32970,30 @@ var render = function() {
                               ])
                             }),
                             _vm._v(" "),
-                            _c("v-select", {
-                              staticClass: "mb-0",
-                              attrs: {
-                                items: _vm.positions,
-                                "item-text": "label",
-                                "item-value": "value",
-                                label: "Position",
-                                "return-object": "",
-                                outlined: "",
-                                dense: ""
-                              },
-                              model: {
-                                value: _vm.position,
-                                callback: function($$v) {
-                                  _vm.position = $$v
-                                },
-                                expression: "position"
-                              }
-                            }),
+                            _c(
+                              "div",
+                              [
+                                _c("v-select", {
+                                  attrs: {
+                                    items: _vm.positions,
+                                    "item-text": "label",
+                                    "item-value": "value",
+                                    label: "Position",
+                                    "return-object": "",
+                                    outlined: "",
+                                    dense: ""
+                                  },
+                                  model: {
+                                    value: _vm.position,
+                                    callback: function($$v) {
+                                      _vm.position = $$v
+                                    },
+                                    expression: "position"
+                                  }
+                                })
+                              ],
+                              1
+                            ),
                             _vm._v(" "),
                             _c("ValidationProvider", {
                               attrs: {
@@ -32970,7 +33008,6 @@ var render = function() {
                                     var errors = ref.errors
                                     return [
                                       _c("v-text-field", {
-                                        staticClass: "mt-0",
                                         attrs: {
                                           type: "number",
                                           outlined: "",
@@ -33066,6 +33103,10 @@ var render = function() {
                               ],
                               1
                             ),
+                            _vm._v(" "),
+                            _c("v-spacer"),
+                            _vm._v(" "),
+                            _c("v-divider", { staticClass: "mb-5" }),
                             _vm._v(" "),
                             _c(
                               "div",
@@ -93878,8 +93919,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
