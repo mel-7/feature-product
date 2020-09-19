@@ -3160,6 +3160,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -3194,7 +3198,8 @@ __webpack_require__.r(__webpack_exports__);
       submitAction: this.mediaOptions.action ? this.mediaOptions.action : "save",
       // Selected File
       multiple: this.mediaOptions.multiple ? this.mediaOptions.multiple : false,
-      selected: []
+      selected: [],
+      selectedObject: []
     };
   },
   methods: {
@@ -3211,16 +3216,21 @@ __webpack_require__.r(__webpack_exports__);
       this.tabItem = "upload";
     },
     selectFile: function selectFile(file) {
-      // console.log(file)
-      var i = file.id;
+      var i = file.id; // Select single file
 
       if (this.multiple == false) {
         if (this.selected.length < 1) {
-          // If Return URL used in hotspot images
-          if (this.return_url == true || this.return_path == true) {
+          if (this.mediaOptions.returnObject) {
+            // Used in watermark
             this.selected.push(file.path);
+            this.selectedObject = file;
           } else {
-            this.selected.push(i);
+            // If Return URL used in hotspot images
+            if (this.return_url == true || this.return_path == true) {
+              this.selected.push(file.path);
+            } else {
+              this.selected.push(i);
+            }
           }
         } else {
           var index = this.selected.indexOf(i);
@@ -3228,7 +3238,8 @@ __webpack_require__.r(__webpack_exports__);
           if (index > -1) {
             this.selected.pop(i);
           }
-        }
+        } // Select multiple files
+
       } else {
         if (this.selected.includes(i)) {
           // if already exist pop out
@@ -3246,7 +3257,12 @@ __webpack_require__.r(__webpack_exports__);
     submitSelected: function submitSelected() {
       var _this = this;
 
-      // If only needs to return the url of the selected image
+      if (this.mediaOptions.returnObject) {
+        this.$emit("responded", this.selectedObject);
+        this.selected = [];
+      } // If only needs to return the url of the selected image
+
+
       if (this.return_path == true) {
         this.$emit("responded", this.selected[0]);
         this.selected = [];
@@ -6198,6 +6214,26 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -6218,11 +6254,13 @@ __webpack_require__.r(__webpack_exports__);
       fetchedoffsetSpace: "",
       fetchedImageWidth: "",
       fetchedImageOpacity: "",
+      selectedImage: [],
+      watermarkId: null,
       watermarkOn: false,
       watermark: "",
       imageWidth: "300",
       imageOpacity: 50,
-      position: "",
+      position: "center",
       offsetSpace: "15",
       positions: [{
         label: "Top Left",
@@ -6263,14 +6301,16 @@ __webpack_require__.r(__webpack_exports__);
         product: null,
         itemType: "image",
         returnUrl: false,
-        returnPath: true
+        returnPath: false,
+        returnObject: true
       }
     };
   },
   methods: {
     mediaResponse: function mediaResponse(v) {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
-      this.watermark = v ? v : this.watermark;
+      this.selectedImage = v;
+      this.watermark = v ? v.path : this.watermark;
     },
     openMediaFiles: function openMediaFiles() {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
@@ -6280,15 +6320,31 @@ __webpack_require__.r(__webpack_exports__);
       this.position = this.fetchedposition;
       this.offsetSpace = this.fetchedoffsetSpace;
     },
+    deleteWatermark: function deleteWatermark() {
+      var _this = this;
+
+      axios.post("/settings/watermark/delete/" + this.watermarkId).then(function (response) {
+        _this.watermarkOn = false;
+        _this.watermark = "";
+        _this.position = _this.positions[4];
+        _this.offsetSpace = "15";
+        _this.imageOpacity = 50;
+        _this.imageWidth = "300";
+      })["catch"](function (error) {
+        console.log("Error deleting Watermark settings");
+        console.log(error);
+      });
+    },
     saveWatermark: function saveWatermark() {
       var data = {
-        watermark: this.watermark,
+        media_file_id: this.selectedImage.id,
+        watermark: this.watermark.replace("watermark/", ""),
         image_width: this.imageWidth,
         image_opacity: this.imageOpacity,
-        position: this.position.value,
-        offset_space: this.offsetSpace
+        position: this.position.value ? this.position.value : this.position,
+        offset_space: this.offsetSpace,
+        status: this.watermarkOn
       };
-      console.log(data);
       axios.post("/settings/watermark/save", data).then(function (response) {
         //   this.fetchOrg();
         console.log(response.data);
@@ -6298,21 +6354,30 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     fetchedCompanyWatermark: function fetchedCompanyWatermark() {
-      var _this = this;
+      var _this2 = this;
 
       axios.get("/settings/watermark/fetch").then(function (response) {
         var w = response.data;
-        _this.fetchedwatermark = "watermark/" + w.path;
-        _this.fetchedposition = w.position;
-        _this.fetchedoffsetSpace = w.offset_space;
-        _this.fetchedImageWidth = w.image_width;
-        _this.fetchedImageOpacity = w.image_opacity;
-        _this.watermark = "watermark/" + w.path;
-        _this.imageWidth = w.image_width;
-        _this.imageOpacity = w.image_opacity;
-        _this.position = w.position;
-        _this.offsetSpace = w.offset_space;
         console.log(w);
+
+        if (Object.keys(w).length != 0) {
+          _this2.fetchedwatermark = w.media_file.path;
+          _this2.fetchedposition = w.position;
+          _this2.fetchedoffsetSpace = w.offset_space;
+          _this2.fetchedImageWidth = w.image_width;
+          _this2.fetchedImageOpacity = w.image_opacity;
+          _this2.fetchedWatermarkOn = w.status;
+          _this2.selectedImage = w.media_file;
+          _this2.watermarkId = w.id;
+          _this2.watermarkOn = w.status;
+          _this2.watermark = w.media_file.path;
+          _this2.imageWidth = w.image_width;
+          _this2.imageOpacity = w.image_opacity;
+          _this2.position = w.position;
+          _this2.offsetSpace = w.offset_space;
+        } else {
+          console.log("Watermark is not set");
+        }
       })["catch"](function (error) {
         console.log("Error fetching Watermark");
         console.log(error);
@@ -6321,6 +6386,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   created: function created() {
     this.fetchedCompanyWatermark();
+  },
+  mounted: function mounted() {
     this.position = this.positions[4];
   }
 });
@@ -6434,7 +6501,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.top-left {\n  top: 0;\n  left: 0;\n  right: auto;\n  bottom: auto;\n}\n.top {\n  margin-left: 0 !important;\n  margin-right: 0 !important;\n  top: 0;\n  left: 50%;\n  right: auto;\n  bottom: auto;\n  transform: translateX(-50%);\n}\n.top-right {\n  top: 0;\n  right: 0;\n  left: auto;\n  bottom: auto;\n}\n.left {\n  margin-top: 0 !important;\n  margin-bottom: 0 !important;\n  left: 0;\n  top: 50%;\n  right: auto;\n  bottom: auto;\n  transform: translateY(-50%);\n}\n.center {\n  margin: 0 !important;\n  left: 50%;\n  top: 50%;\n  right: auto;\n  bottom: auto;\n  transform: translate(-50%, -50%);\n}\n.right {\n  margin-top: 0 !important;\n  margin-bottom: 0 !important;\n  left: auto;\n  top: 50%;\n  right: 0;\n  bottom: auto;\n  transform: translateY(-50%);\n}\n.bottom-left {\n  left: 0;\n  top: auto;\n  right: auto;\n  bottom: 0;\n}\n.bottom {\n  margin-left: 0 !important;\n  margin-right: 0 !important;\n  top: auto;\n  left: 50%;\n  right: auto;\n  bottom: 0;\n  transform: translateX(-50%);\n}\n.bottom-right {\n  left: auto;\n  top: auto;\n  right: 0;\n  bottom: 0;\n}\n", ""]);
+exports.push([module.i, "\n.top-left {\r\n  top: 0;\r\n  left: 0;\r\n  right: auto;\r\n  bottom: auto;\n}\n.top {\r\n  margin-left: 0 !important;\r\n  margin-right: 0 !important;\r\n  top: 0;\r\n  left: 50%;\r\n  right: auto;\r\n  bottom: auto;\r\n  transform: translateX(-50%);\n}\n.top-right {\r\n  top: 0;\r\n  right: 0;\r\n  left: auto;\r\n  bottom: auto;\n}\n.left {\r\n  margin-top: 0 !important;\r\n  margin-bottom: 0 !important;\r\n  left: 0;\r\n  top: 50%;\r\n  right: auto;\r\n  bottom: auto;\r\n  transform: translateY(-50%);\n}\n.center {\r\n  margin: 0 !important;\r\n  left: 50%;\r\n  top: 50%;\r\n  right: auto;\r\n  bottom: auto;\r\n  transform: translate(-50%, -50%);\n}\n.right {\r\n  margin-top: 0 !important;\r\n  margin-bottom: 0 !important;\r\n  left: auto;\r\n  top: 50%;\r\n  right: 0;\r\n  bottom: auto;\r\n  transform: translateY(-50%);\n}\n.bottom-left {\r\n  left: 0;\r\n  top: auto;\r\n  right: auto;\r\n  bottom: 0;\n}\n.bottom {\r\n  margin-left: 0 !important;\r\n  margin-right: 0 !important;\r\n  top: auto;\r\n  left: 50%;\r\n  right: auto;\r\n  bottom: 0;\r\n  transform: translateX(-50%);\n}\n.bottom-right {\r\n  left: auto;\r\n  top: auto;\r\n  right: 0;\r\n  bottom: 0;\n}\r\n", ""]);
 
 // exports
 
@@ -29042,7 +29109,10 @@ var render = function() {
                                         },
                                         [
                                           _vm._v(" "),
-                                          _vm.selected.includes(file.id) == true
+                                          _vm.selected.includes(file.id) ==
+                                            true ||
+                                          _vm.selected.includes(file.path) ==
+                                            true
                                             ? _c(
                                                 "v-icon",
                                                 {
@@ -32763,7 +32833,7 @@ var render = function() {
     [
       _c(
         "div",
-        { staticClass: "col-12 col-md-4 px-5" },
+        { staticClass: "col-12 px-5" },
         [
           _c("h3", { staticClass: "font-weight-light mb-5" }, [
             _vm._v("Watermark Settings")
@@ -32772,318 +32842,363 @@ var render = function() {
           _c(
             "v-card",
             [
-              _c(
-                "v-card-text",
-                [
-                  _c("span", { staticClass: "overline" }, [_vm._v("Preview")]),
-                  _vm._v(" "),
-                  _c("v-card-text", { staticClass: "grey lighten-4 pa-0" }, [
-                    _c(
-                      "div",
-                      {
-                        staticStyle: {
-                          position: "relative",
-                          width: "100%",
-                          height: "100%",
-                          "padding-bottom": "75%"
-                        }
-                      },
-                      [
-                        _c("v-img", {
-                          class:
-                            (_vm.position != "" ? _vm.position.value : "") +
-                            " grey lighten-4 rounded elevation-0",
-                          style:
-                            "position:absolute; margin:" +
-                            _vm.offsetSpace +
-                            "px;opacity: " +
-                            (_vm.imageOpacity == 100
-                              ? "1"
-                              : _vm.imageOpacity < 10
-                              ? ".0" + _vm.imageOpacity
-                              : "." + _vm.imageOpacity) +
-                            ";",
-                          attrs: {
-                            width: "100",
-                            "min-height": "50",
-                            contain: "",
-                            src: _vm.watermark
-                              ? _vm.baseUrl +
-                                "/storage/uploads/" +
-                                _vm.authUser.company_id +
-                                "/" +
-                                _vm.watermark
-                              : ""
+              _c("v-card-text", [
+                _c("div", { staticClass: "row" }, [
+                  _c(
+                    "div",
+                    { staticClass: "col-12 col-md-6" },
+                    [
+                      _c("ValidationObserver", { ref: "observer" }, [
+                        _c(
+                          "form",
+                          {
+                            staticClass: "d-flex flex-column",
+                            staticStyle: { height: "100%" }
                           },
-                          scopedSlots: _vm._u([
-                            {
-                              key: "placeholder",
-                              fn: function() {
-                                return [
-                                  _c("v-img", {
-                                    staticClass: "grey lighten-4",
-                                    attrs: {
-                                      src:
-                                        _vm.baseUrl +
-                                        "/images/no-image-placeholder.jpg",
-                                      width: "100",
-                                      height: "50",
-                                      cover: ""
-                                    }
-                                  })
-                                ]
-                              },
-                              proxy: true
-                            }
-                          ])
-                        })
-                      ],
-                      1
-                    )
-                  ])
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c("v-divider"),
-              _vm._v(" "),
-              _c(
-                "v-card-text",
-                [
-                  _c("ValidationObserver", { ref: "observer" }, [
-                    _c(
-                      "form",
-                      [
-                        _c("v-switch", {
-                          attrs: {
-                            label:
-                              "Water mark is " +
-                              (_vm.watermarkOn == true ? "active" : "disabled")
-                          },
-                          model: {
-                            value: _vm.watermarkOn,
-                            callback: function($$v) {
-                              _vm.watermarkOn = $$v
-                            },
-                            expression: "watermarkOn"
-                          }
-                        }),
-                        _vm._v(" "),
-                        _c("ValidationProvider", {
-                          attrs: { name: "Name", rules: "required" },
-                          scopedSlots: _vm._u([
-                            {
-                              key: "default",
-                              fn: function(ref) {
-                                var errors = ref.errors
-                                return [
-                                  _c(
-                                    "div",
-                                    { staticClass: "d-flex" },
-                                    [
-                                      _c("v-text-field", {
-                                        attrs: {
-                                          outlined: "",
-                                          label: "Watermark Image",
-                                          required: "",
-                                          "error-messages": errors,
-                                          dense: "",
-                                          readonly: ""
-                                        },
-                                        model: {
-                                          value: _vm.watermark,
-                                          callback: function($$v) {
-                                            _vm.watermark = $$v
-                                          },
-                                          expression: "watermark"
-                                        }
-                                      }),
-                                      _vm._v(" "),
+                          [
+                            _c(
+                              "div",
+                              { staticClass: "d-flex" },
+                              [
+                                _c("v-switch", {
+                                  staticClass: "mt-0",
+                                  attrs: {
+                                    label:
+                                      "" +
+                                      (_vm.watermarkOn == true
+                                        ? "Enabled"
+                                        : "Disabled"),
+                                    inset: ""
+                                  },
+                                  model: {
+                                    value: _vm.watermarkOn,
+                                    callback: function($$v) {
+                                      _vm.watermarkOn = $$v
+                                    },
+                                    expression: "watermarkOn"
+                                  }
+                                })
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c("ValidationProvider", {
+                              attrs: { name: "Name", rules: "required" },
+                              scopedSlots: _vm._u([
+                                {
+                                  key: "default",
+                                  fn: function(ref) {
+                                    var errors = ref.errors
+                                    return [
                                       _c(
-                                        "v-btn",
-                                        {
-                                          staticClass: "mt-2 ml-3",
-                                          attrs: { small: "", icon: "" },
-                                          on: { click: _vm.openMediaFiles }
-                                        },
+                                        "div",
+                                        { staticClass: "d-flex" },
                                         [
+                                          _c("v-text-field", {
+                                            attrs: {
+                                              outlined: "",
+                                              label: "Watermark Image",
+                                              required: "",
+                                              "error-messages": errors,
+                                              dense: "",
+                                              readonly: ""
+                                            },
+                                            model: {
+                                              value: _vm.watermark,
+                                              callback: function($$v) {
+                                                _vm.watermark = $$v
+                                              },
+                                              expression: "watermark"
+                                            }
+                                          }),
+                                          _vm._v(" "),
                                           _c(
-                                            "v-icon",
-                                            { attrs: { small: "" } },
-                                            [_vm._v("mdi-folder-image")]
+                                            "v-btn",
+                                            {
+                                              staticClass: "mt-2 ml-3",
+                                              attrs: { small: "", icon: "" },
+                                              on: { click: _vm.openMediaFiles }
+                                            },
+                                            [
+                                              _c(
+                                                "v-icon",
+                                                { attrs: { small: "" } },
+                                                [_vm._v("mdi-folder-image")]
+                                              )
+                                            ],
+                                            1
                                           )
                                         ],
                                         1
                                       )
-                                    ],
-                                    1
-                                  )
-                                ]
+                                    ]
+                                  }
+                                }
+                              ])
+                            }),
+                            _vm._v(" "),
+                            _c("v-select", {
+                              staticClass: "mb-0",
+                              attrs: {
+                                items: _vm.positions,
+                                "item-text": "label",
+                                "item-value": "value",
+                                label: "Position",
+                                "return-object": "",
+                                outlined: "",
+                                dense: ""
+                              },
+                              model: {
+                                value: _vm.position,
+                                callback: function($$v) {
+                                  _vm.position = $$v
+                                },
+                                expression: "position"
                               }
-                            }
-                          ])
-                        }),
-                        _vm._v(" "),
-                        _c("v-select", {
-                          attrs: {
-                            items: _vm.positions,
-                            "item-text": "label",
-                            "item-value": "value",
-                            label: "Position",
-                            "return-object": "",
-                            outlined: "",
-                            dense: ""
-                          },
-                          model: {
-                            value: _vm.position,
-                            callback: function($$v) {
-                              _vm.position = $$v
-                            },
-                            expression: "position"
-                          }
-                        }),
-                        _vm._v(" "),
-                        _c("ValidationProvider", {
-                          attrs: {
-                            name: "Width",
-                            rules:
-                              "required|numeric|min_value:50|max_value:1366"
-                          },
-                          scopedSlots: _vm._u([
-                            {
-                              key: "default",
-                              fn: function(ref) {
-                                var errors = ref.errors
-                                return [
-                                  _c("v-text-field", {
-                                    attrs: {
-                                      type: "number",
-                                      outlined: "",
-                                      "error-messages": errors,
-                                      label: "Width (px)",
-                                      required: "",
-                                      dense: ""
+                            }),
+                            _vm._v(" "),
+                            _c("ValidationProvider", {
+                              attrs: {
+                                name: "Width",
+                                rules:
+                                  "required|numeric|min_value:50|max_value:1366"
+                              },
+                              scopedSlots: _vm._u([
+                                {
+                                  key: "default",
+                                  fn: function(ref) {
+                                    var errors = ref.errors
+                                    return [
+                                      _c("v-text-field", {
+                                        staticClass: "mt-0",
+                                        attrs: {
+                                          type: "number",
+                                          outlined: "",
+                                          "error-messages": errors,
+                                          label: "Width (px)",
+                                          required: "",
+                                          dense: ""
+                                        },
+                                        model: {
+                                          value: _vm.imageWidth,
+                                          callback: function($$v) {
+                                            _vm.imageWidth = $$v
+                                          },
+                                          expression: "imageWidth"
+                                        }
+                                      })
+                                    ]
+                                  }
+                                }
+                              ])
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              { staticClass: "d-flex" },
+                              [
+                                _c(
+                                  "div",
+                                  {
+                                    staticClass: "subtitle-1",
+                                    staticStyle: { width: "120px" }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                    Offset:\n                    "
+                                    ),
+                                    _c(
+                                      "strong",
+                                      { staticClass: "primary--text ml-auto" },
+                                      [_vm._v(_vm._s(_vm.offsetSpace) + "px")]
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c("v-slider", {
+                                  staticClass: "pt-0",
+                                  attrs: { min: "1", max: "100" },
+                                  model: {
+                                    value: _vm.offsetSpace,
+                                    callback: function($$v) {
+                                      _vm.offsetSpace = $$v
                                     },
-                                    model: {
-                                      value: _vm.imageWidth,
-                                      callback: function($$v) {
-                                        _vm.imageWidth = $$v
-                                      },
-                                      expression: "imageWidth"
-                                    }
-                                  })
-                                ]
-                              }
-                            }
-                          ])
-                        }),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "d-flex" },
-                          [
+                                    expression: "offsetSpace"
+                                  }
+                                })
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
                             _c(
                               "div",
-                              {
-                                staticClass: "subtitle-1",
-                                staticStyle: { width: "120px" }
-                              },
+                              { staticClass: "d-flex" },
                               [
-                                _vm._v(
-                                  "\n                Offset:\n                "
-                                ),
                                 _c(
-                                  "strong",
-                                  { staticClass: "primary--text ml-auto" },
-                                  [_vm._v(_vm._s(_vm.offsetSpace) + "px")]
-                                )
-                              ]
+                                  "div",
+                                  {
+                                    staticClass: "subtitle-1",
+                                    staticStyle: { width: "120px" }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                    Opacity:\n                    "
+                                    ),
+                                    _c(
+                                      "strong",
+                                      { staticClass: "primary--text ml-auto" },
+                                      [_vm._v(_vm._s(_vm.imageOpacity) + "%")]
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c("v-slider", {
+                                  staticClass: "pt-0",
+                                  attrs: { min: "1", max: "100" },
+                                  model: {
+                                    value: _vm.imageOpacity,
+                                    callback: function($$v) {
+                                      _vm.imageOpacity = $$v
+                                    },
+                                    expression: "imageOpacity"
+                                  }
+                                })
+                              ],
+                              1
                             ),
                             _vm._v(" "),
-                            _c("v-slider", {
-                              staticClass: "pt-0",
-                              attrs: { min: "1", max: "100" },
-                              model: {
-                                value: _vm.offsetSpace,
-                                callback: function($$v) {
-                                  _vm.offsetSpace = $$v
-                                },
-                                expression: "offsetSpace"
-                              }
-                            })
-                          ],
-                          1
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "d-flex" },
-                          [
                             _c(
                               "div",
-                              {
-                                staticClass: "subtitle-1",
-                                staticStyle: { width: "120px" }
-                              },
+                              { staticClass: "d-flex justify-end mt-auto" },
                               [
-                                _vm._v(
-                                  "\n                Opacity:\n                "
-                                ),
                                 _c(
-                                  "strong",
-                                  { staticClass: "primary--text ml-auto" },
-                                  [_vm._v(_vm._s(_vm.imageOpacity) + "%")]
+                                  "v-btn",
+                                  {
+                                    staticClass: "mr-auto",
+                                    attrs: {
+                                      text: "",
+                                      color: "red",
+                                      title: "Delete Watermark Settings"
+                                    },
+                                    on: { click: _vm.deleteWatermark }
+                                  },
+                                  [_vm._v("Delete")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "v-btn",
+                                  {
+                                    staticClass: "mr-1",
+                                    attrs: { text: "", color: "grey" },
+                                    on: { click: _vm.resetFields }
+                                  },
+                                  [_vm._v("reset")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "v-btn",
+                                  {
+                                    staticClass: "primary",
+                                    on: { click: _vm.saveWatermark }
+                                  },
+                                  [_vm._v("Save")]
                                 )
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c("v-slider", {
-                              staticClass: "pt-0",
-                              attrs: { min: "1", max: "100" },
-                              model: {
-                                value: _vm.imageOpacity,
-                                callback: function($$v) {
-                                  _vm.imageOpacity = $$v
-                                },
-                                expression: "imageOpacity"
-                              }
-                            })
-                          ],
-                          1
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "d-flex justify-end" },
-                          [
-                            _c(
-                              "v-btn",
-                              {
-                                staticClass: "mr-1",
-                                attrs: { text: "", color: "grey" },
-                                on: { click: _vm.resetFields }
-                              },
-                              [_vm._v("reset")]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "v-btn",
-                              {
-                                staticClass: "primary",
-                                on: { click: _vm.saveWatermark }
-                              },
-                              [_vm._v("Save")]
+                              ],
+                              1
                             )
                           ],
                           1
                         )
-                      ],
-                      1
-                    )
-                  ])
-                ],
-                1
-              )
+                      ])
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "col-12 col-md-6" },
+                    [
+                      _c("span", { staticClass: "overline" }, [
+                        _vm._v("Preview")
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "v-card-text",
+                        { staticClass: "grey lighten-4 pa-0" },
+                        [
+                          _c(
+                            "div",
+                            {
+                              staticStyle: {
+                                position: "relative",
+                                width: "100%",
+                                height: "100%",
+                                "padding-bottom": "75%"
+                              }
+                            },
+                            [
+                              _c("v-img", {
+                                class:
+                                  (_vm.position.value
+                                    ? _vm.position.value
+                                    : _vm.position) +
+                                  " grey lighten-4 rounded elevation-0",
+                                style:
+                                  "position:absolute; margin:" +
+                                  _vm.offsetSpace +
+                                  "px;opacity: " +
+                                  (_vm.imageOpacity == 100
+                                    ? "1"
+                                    : _vm.imageOpacity < 10
+                                    ? ".0" + _vm.imageOpacity
+                                    : "." + _vm.imageOpacity) +
+                                  ";",
+                                attrs: {
+                                  width: "100",
+                                  "min-height": "50",
+                                  contain: "",
+                                  src:
+                                    _vm.watermark == ""
+                                      ? _vm.baseUrl +
+                                        "/images/no-image-placeholder.jpg"
+                                      : _vm.baseUrl +
+                                        "/storage/uploads/" +
+                                        _vm.authUser.company_id +
+                                        "/" +
+                                        _vm.watermark
+                                },
+                                scopedSlots: _vm._u([
+                                  {
+                                    key: "placeholder",
+                                    fn: function() {
+                                      return [
+                                        _c("v-img", {
+                                          staticClass: "grey lighten-4",
+                                          attrs: {
+                                            src:
+                                              _vm.baseUrl +
+                                              "/images/no-image-placeholder.jpg",
+                                            width: "100",
+                                            height: "50",
+                                            cover: ""
+                                          }
+                                        })
+                                      ]
+                                    },
+                                    proxy: true
+                                  }
+                                ])
+                              })
+                            ],
+                            1
+                          )
+                        ]
+                      )
+                    ],
+                    1
+                  )
+                ])
+              ])
             ],
             1
           )
@@ -93763,8 +93878,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

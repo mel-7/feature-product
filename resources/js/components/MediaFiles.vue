@@ -30,7 +30,11 @@
           </v-btn>
         </v-card-title>
         <v-card-text class="blue-grey lighten-5 pt-3" v-show="tabItem == 'upload'">
-          <upload-zone :add-items="false" :item-type="mediaOptions.itemType" @uploaded="uploadZoneResponse" />
+          <upload-zone
+            :add-items="false"
+            :item-type="mediaOptions.itemType"
+            @uploaded="uploadZoneResponse"
+          />
         </v-card-text>
         <v-card-text class="blue-grey lighten-5 pt-3" v-show="tabItem == 'mediafiles'">
           <v-row class="px-2">
@@ -57,7 +61,7 @@
                     ></v-img>
                   </template>
                   <v-icon
-                    v-if="selected.includes(file.id) == true"
+                    v-if="selected.includes(file.id) == true || selected.includes(file.path) == true"
                     class="primary"
                     dark
                     small
@@ -140,6 +144,8 @@ export default {
       // Selected File
       multiple: this.mediaOptions.multiple ? this.mediaOptions.multiple : false,
       selected: [],
+      selectedObject: [],
+
     };
   },
   methods: {
@@ -156,16 +162,22 @@ export default {
       this.tabItem = "upload";
     },
     selectFile(file) {
-      // console.log(file)
       let i = file.id;
 
+      // Select single file
       if (this.multiple == false) {
         if (this.selected.length < 1) {
-          // If Return URL used in hotspot images
-          if (this.return_url == true || this.return_path == true) {
+          if (this.mediaOptions.returnObject) {
+            // Used in watermark
             this.selected.push(file.path);
+            this.selectedObject = file;
           } else {
-            this.selected.push(i);
+            // If Return URL used in hotspot images
+            if (this.return_url == true || this.return_path == true) {
+              this.selected.push(file.path);
+            } else {
+              this.selected.push(i);
+            }
           }
         } else {
           let index = this.selected.indexOf(i);
@@ -173,6 +185,7 @@ export default {
             this.selected.pop(i);
           }
         }
+        // Select multiple files
       } else {
         if (this.selected.includes(i)) {
           // if already exist pop out
@@ -187,14 +200,19 @@ export default {
       }
     },
     submitSelected() {
+      if (this.mediaOptions.returnObject) {
+        this.$emit("responded", this.selectedObject);
+        this.selected = [];
+      }
       // If only needs to return the url of the selected image
-       if (this.return_path == true) {
+      if (this.return_path == true) {
         this.$emit("responded", this.selected[0]);
         this.selected = [];
       } else if (this.return_url == true) {
         let toReturlUrl =
           this.baseUrl +
-          "/storage/uploads/" +this.companyId +
+          "/storage/uploads/" +
+          this.companyId +
           "/" +
           this.selected[0];
         this.$emit("responded", toReturlUrl);

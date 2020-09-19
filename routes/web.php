@@ -41,6 +41,7 @@ Route::post('/builder/scene/store', 'ScenesController@store')->name('builder.sto
 
 // Settings
 Route::get('/settings/account', 'BuilderController@index')->name('settings.watermark');
+Route::post('/settings/watermark/delete/{id}', 'WatermarksController@destroy')->name('settings.watermark.delete');
 Route::post('/settings/watermark/save', 'WatermarksController@store')->name('settings.watermark.save');
 Route::get('/settings/watermark/fetch', 'WatermarksController@fetchWatermark')->name('settings.fetch.watermark');
 Route::get('/settings/watermark', 'BuilderController@index')->name('settings.watermark');

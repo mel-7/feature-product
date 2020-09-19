@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Item;
+use App\Watermark;
 use App\Media_file;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -52,8 +53,11 @@ class FilesController extends Controller
         // Wrap the files to collection
         $files = Collection::wrap(request()->file('file'));
 
+        // Get the Company's Watermark settings
+        $watermark = Watermark::where('company_id', $companyId)->first();
+
         // Do something on each files uploaded
-        $files->each(function ($file, $key) use (&$companyId, &$userStorage, &$itemsArray, &$fileArray, &$request, &$uploadKey) {
+        $files->each(function ($file, $key) use (&$watermark, &$companyId, &$userStorage, &$itemsArray, &$fileArray, &$request, &$uploadKey) {
             $userStorageDir = storage_path() . '/app' . $userStorage;
             // $fileName = $uploadKey."-".$file->getClientOriginalName();
             $fileName = $file->getClientOriginalName();
@@ -89,8 +93,11 @@ class FilesController extends Controller
                 //     $img->encode($format, 50);
                 // }
 
-                $img->insert('images/gallega-logo-watermark.png', 'bottom-right', 10, 10);
-                $img->save($userStorageDir . '/' . $path); // FHD
+                if($watermark && $watermark->status == true){
+                    $img->insert('storage/uploads/'.$companyId.'/watermark/'.$watermark->path, $watermark->position, $watermark->offset_space, $watermark->offset_space);
+                }
+
+                $img->save($userStorageDir . '/' . $path); // Save to directory
             }
 
             /**

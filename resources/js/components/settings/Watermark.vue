@@ -1,99 +1,119 @@
 <template>
   <v-row>
-    <div class="col-12 col-md-4 px-5">
+    <div class="col-12 px-5">
       <h3 class="font-weight-light mb-5">Watermark Settings</h3>
       <v-card>
         <v-card-text>
-          <span class="overline">Preview</span>
-          <v-card-text class="grey lighten-4 pa-0">
-            <div style="position:relative;width:100%;height:100%;padding-bottom:75%;">
-              <v-img
-                width="100"
-                min-height="50"
-                contain
-                :class="`${position != '' ? position.value : ''} grey lighten-4 rounded elevation-0`"
-                :src="watermark ? baseUrl+'/storage/uploads/'+authUser.company_id+'/'+ watermark : ''"
-                :style="`position:absolute; margin:${offsetSpace}px;opacity: ${imageOpacity == 100 ? '1' : imageOpacity < 10 ? '.0'+imageOpacity : '.'+imageOpacity};`"
-              >
-                <template v-slot:placeholder>
-                  <v-img
-                    :src="baseUrl+'/images/no-image-placeholder.jpg'"
-                    width="100"
-                    height="50"
-                    cover
-                    class="grey lighten-4"
-                  ></v-img>
-                </template>
-              </v-img>
-            </div>
-          </v-card-text>
-        </v-card-text>
-        <v-divider></v-divider>
-        <v-card-text>
-          <ValidationObserver ref="observer">
-            <form>
-              <v-switch v-model="watermarkOn" :label="`Water mark is ${watermarkOn == true ? 'active' : 'disabled'}`"></v-switch>
-              <ValidationProvider v-slot="{ errors }" name="Name" rules="required">
-                <div class="d-flex">
-                  <v-text-field
-                    v-model="watermark"
+          <div class="row">
+            <div class="col-12 col-md-6">
+              <ValidationObserver ref="observer">
+                <form class="d-flex flex-column" style="height:100%;">
+                  <div class="d-flex">
+                    <v-switch
+                      v-model="watermarkOn"
+                      :label="`${watermarkOn == true ? 'Enabled' : 'Disabled' }`"
+                      inset
+                      class="mt-0"
+                    ></v-switch>
+                  </div>
+                  <ValidationProvider v-slot="{ errors }" name="Name" rules="required">
+                    <div class="d-flex">
+                      <v-text-field
+                        v-model="watermark"
+                        outlined
+                        label="Watermark Image"
+                        required
+                        :error-messages="errors"
+                        dense
+                        readonly
+                      ></v-text-field>
+                      <v-btn class="mt-2 ml-3" small icon @click="openMediaFiles">
+                        <v-icon small>mdi-folder-image</v-icon>
+                      </v-btn>
+                    </div>
+                  </ValidationProvider>
+                  <v-select
+                    v-model="position"
+                    :items="positions"
+                    item-text="label"
+                    item-value="value"
+                    label="Position"
+                    return-object
                     outlined
-                    label="Watermark Image"
-                    required
-                    :error-messages="errors"
                     dense
-                    readonly
-                  ></v-text-field>
-                  <v-btn class="mt-2 ml-3" small icon @click="openMediaFiles">
-                    <v-icon small>mdi-folder-image</v-icon>
-                  </v-btn>
+                    class="mb-0"
+                  ></v-select>
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    name="Width"
+                    rules="required|numeric|min_value:50|max_value:1366"
+                  >
+                    <v-text-field
+                      type="number"
+                      v-model="imageWidth"
+                      outlined
+                      :error-messages="errors"
+                      label="Width (px)"
+                      required
+                      dense
+                      class="mt-0"
+                    ></v-text-field>
+                  </ValidationProvider>
+                  <div class="d-flex">
+                    <div class="subtitle-1" style="width:120px">
+                      Offset:
+                      <strong class="primary--text ml-auto">{{offsetSpace}}px</strong>
+                    </div>
+                    <v-slider v-model="offsetSpace" min="1" max="100" class="pt-0"></v-slider>
+                  </div>
+                  <div class="d-flex">
+                    <div class="subtitle-1" style="width:120px">
+                      Opacity:
+                      <strong class="primary--text ml-auto">{{imageOpacity}}%</strong>
+                    </div>
+                    <v-slider v-model="imageOpacity" min="1" max="100" class="pt-0"></v-slider>
+                  </div>
+                  <div class="d-flex justify-end mt-auto">
+                    <v-btn
+                      class="mr-auto"
+                      text
+                      color="red"
+                      title="Delete Watermark Settings"
+                      @click="deleteWatermark"
+                    >Delete</v-btn>
+                    <v-btn class="mr-1" text color="grey" @click="resetFields">reset</v-btn>
+                    <v-btn class="primary" @click="saveWatermark">Save</v-btn>
+                  </div>
+                </form>
+              </ValidationObserver>
+            </div>
+            <div class="col-12 col-md-6">
+              <span class="overline">Preview</span>
+              <v-card-text class="grey lighten-4 pa-0">
+                <div style="position:relative;width:100%;height:100%;padding-bottom:75%;">
+                  <v-img
+                    width="100"
+                    min-height="50"
+                    contain
+                    :class="`${position.value ? position.value : position } grey lighten-4 rounded elevation-0`"
+                    :src="watermark == '' ? baseUrl+'/images/no-image-placeholder.jpg': baseUrl+'/storage/uploads/'+authUser.company_id+'/'+ watermark"
+                    :style="`position:absolute; margin:${offsetSpace}px;opacity: ${imageOpacity == 100 ? '1' : imageOpacity < 10 ? '.0'+imageOpacity : '.'+imageOpacity};`"
+                  >
+                    <!-- baseUrl+'/storage/uploads/'+authUser.company_id+'/'+ watermark :  -->
+                    <template v-slot:placeholder>
+                      <v-img
+                        :src="baseUrl+'/images/no-image-placeholder.jpg'"
+                        width="100"
+                        height="50"
+                        cover
+                        class="grey lighten-4"
+                      ></v-img>
+                    </template>
+                  </v-img>
                 </div>
-              </ValidationProvider>
-              <v-select
-                v-model="position"
-                :items="positions"
-                item-text="label"
-                item-value="value"
-                label="Position"
-                return-object
-                outlined
-                dense
-              ></v-select>
-              <ValidationProvider
-                v-slot="{ errors }"
-                name="Width"
-                rules="required|numeric|min_value:50|max_value:1366"
-              >
-                <v-text-field
-                  type="number"
-                  v-model="imageWidth"
-                  outlined
-                  :error-messages="errors"
-                  label="Width (px)"
-                  required
-                  dense
-                ></v-text-field>
-              </ValidationProvider>
-              <div class="d-flex">
-                <div class="subtitle-1" style="width:120px">
-                  Offset:
-                  <strong class="primary--text ml-auto">{{offsetSpace}}px</strong>
-                </div>
-                <v-slider v-model="offsetSpace" min="1" max="100" class="pt-0"></v-slider>
-              </div>
-              <div class="d-flex">
-                <div class="subtitle-1" style="width:120px">
-                  Opacity:
-                  <strong class="primary--text ml-auto">{{imageOpacity}}%</strong>
-                </div>
-                <v-slider v-model="imageOpacity" min="1" max="100" class="pt-0"></v-slider>
-              </div>
-              <div class="d-flex justify-end">
-                <v-btn class="mr-1" text color="grey" @click="resetFields">reset</v-btn>
-                <v-btn class="primary" @click="saveWatermark">Save</v-btn>
-              </div>
-            </form>
-          </ValidationObserver>
+              </v-card-text>
+            </div>
+          </div>
         </v-card-text>
       </v-card>
     </div>
@@ -127,11 +147,14 @@ export default {
       fetchedImageWidth: "",
       fetchedImageOpacity: "",
 
+      selectedImage: [],
+
+      watermarkId: null,
       watermarkOn: false,
       watermark: "",
       imageWidth: "300",
       imageOpacity: 50,
-      position: "",
+      position: "center",
       offsetSpace: "15",
 
       positions: [
@@ -157,7 +180,8 @@ export default {
         product: null,
         itemType: "image",
         returnUrl: false,
-        returnPath: true,
+        returnPath: false,
+        returnObject: true,
       },
     };
   },
@@ -165,7 +189,8 @@ export default {
     mediaResponse(v) {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings
         .dialogStatus;
-      this.watermark = v ? v : this.watermark;
+      this.selectedImage = v;
+      this.watermark = v ? v.path : this.watermark;
     },
     openMediaFiles() {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings
@@ -176,15 +201,32 @@ export default {
       this.position = this.fetchedposition;
       this.offsetSpace = this.fetchedoffsetSpace;
     },
+    deleteWatermark() {
+      axios
+        .post("/settings/watermark/delete/" + this.watermarkId)
+        .then((response) => {
+          this.watermarkOn = false;
+          this.watermark = "";
+          this.position = this.positions[4];
+          this.offsetSpace = "15";
+          this.imageOpacity = 50;
+          this.imageWidth = "300";
+        })
+        .catch((error) => {
+          console.log("Error deleting Watermark settings");
+          console.log(error);
+        });
+    },
     saveWatermark() {
       let data = {
-        watermark: this.watermark,
+        media_file_id: this.selectedImage.id,
+        watermark: this.watermark.replace("watermark/", ""),
         image_width: this.imageWidth,
         image_opacity: this.imageOpacity,
-        position: this.position.value,
+        position: this.position.value ? this.position.value : this.position,
         offset_space: this.offsetSpace,
+        status: this.watermarkOn,
       };
-      console.log(data);
       axios
         .post("/settings/watermark/save", data)
         .then((response) => {
@@ -201,18 +243,26 @@ export default {
         .get("/settings/watermark/fetch")
         .then((response) => {
           let w = response.data;
-          this.fetchedwatermark = "watermark/" + w.path;
-          this.fetchedposition = w.position;
-          this.fetchedoffsetSpace = w.offset_space;
-          this.fetchedImageWidth = w.image_width;
-          this.fetchedImageOpacity = w.image_opacity;
-
-          this.watermark = "watermark/" + w.path;
-          this.imageWidth = w.image_width;
-          this.imageOpacity = w.image_opacity;
-          this.position = w.position;
-          this.offsetSpace = w.offset_space;
           console.log(w);
+          if (Object.keys(w).length != 0) {
+            this.fetchedwatermark = w.media_file.path;
+            this.fetchedposition = w.position;
+            this.fetchedoffsetSpace = w.offset_space;
+            this.fetchedImageWidth = w.image_width;
+            this.fetchedImageOpacity = w.image_opacity;
+            this.fetchedWatermarkOn = w.status;
+
+            this.selectedImage = w.media_file;
+            this.watermarkId = w.id;
+            this.watermarkOn = w.status;
+            this.watermark = w.media_file.path;
+            this.imageWidth = w.image_width;
+            this.imageOpacity = w.image_opacity;
+            this.position = w.position;
+            this.offsetSpace = w.offset_space;
+          } else {
+            console.log("Watermark is not set");
+          }
         })
         .catch((error) => {
           console.log("Error fetching Watermark");
@@ -222,6 +272,8 @@ export default {
   },
   created() {
     this.fetchedCompanyWatermark();
+  },
+  mounted() {
     this.position = this.positions[4];
   },
 };
