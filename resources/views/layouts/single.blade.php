@@ -424,6 +424,12 @@ margin: 15px;
 }
  
 @media (max-width:576px) {
+
+  .hp-contents{ width: 100%; }
+  h2{ font-size: 16px; }
+
+  .hp-contents p, .hp-contents a { font-size: 12px; }
+  .cd-single-point > a { width: 18px; height: 18px;}
     .container {
         height: 275px;
     } 
