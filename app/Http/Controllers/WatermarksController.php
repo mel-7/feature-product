@@ -30,7 +30,7 @@ class WatermarksController extends Controller
      */
     public function store(Request $request)
     {
-        $companyId = Auth::user()->company_id;
+        $companyId = Auth::user()->company_id; 
         $uploadDate = Carbon::now()->format('YmdHis');
 
         // Create Director if does not exist

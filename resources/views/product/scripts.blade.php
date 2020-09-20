@@ -80,9 +80,10 @@ var slideIndex = 1;
                 }, 'json');
 
         dataApi.always(function(data) {
-            if (data.length == 0) { return false; }
+        
+            if (data.dataItems == false) { $("body").remove(); return false; }
             if (data) { 
-
+            
                 var imgs = []; 
                 var panaromicImg = [];
                
