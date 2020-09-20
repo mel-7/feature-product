@@ -31,6 +31,11 @@
 
           <v-btn v-if="imageClickActive == true" depressed class="ml-5 warning float-right" @click="applyWatermark">Apply Watermark</v-btn>
           <v-btn v-if="imageClickActive == true" depressed class="ml-5 red float-right" @click="removeWatermark">Remove Watermark</v-btn>
+           <v-checkbox
+            v-if="imageClickActive == true"
+            v-model="multiple"
+            label="Multiple Selection"
+          ></v-checkbox>
         </v-card-title>
         <v-card-text class="blue-grey lighten-5 pt-3" v-show="tabItem == 'upload'">
           <upload-zone
@@ -144,8 +149,7 @@ export default {
       baseUrl: window.location.origin,
       mediaDialog: false,
       mediaLoading: false,
-      tab: null,
-
+      tab: null, 
       color: '',
       mode: 'vertical',
       snackbar: false,
@@ -187,22 +191,26 @@ export default {
     },
     selectFile(file) {
       let i = file.id;
+      let pathImg = file.path;
       let lngt = this.selected.length;
-      let chk = true;
+      let chk = true; 
+     
       // Select single file
       if (this.multiple == false) {
             this.imageClickActive = true;
-          this.watermarkPath = [];
+            this.watermarkPath = [];
+            this.selected = [];
           if(lngt > 0 && this.selected[0] == i){ 
             this.selected.pop(0); 
             this.imageClickActive = false; 
             chk = false;
           }else if (this.selected.length > 0 ) { 
-              this.selected.pop(0); 
-              
+              this.selected.pop(0);  
           } 
+
           if(chk){
-            this.watermarkPath = file.path;
+            this.watermarkPath[0] = file.path;
+            
               if (this.mediaOptions.returnObject) {
                 // Used in watermark
                 this.selected.push(file.path);
@@ -226,12 +234,26 @@ export default {
           let index = this.selected.indexOf(i);
           if (index > -1) {
             this.selected.splice(index, 1);
-          }
+          } 
+          
         } else {
           // otherwise push
           this.selected.push(i);
+         
         }
-      }
+
+        if (this.watermarkPath.includes(pathImg)) { 
+
+          let indx = this.watermarkPath.indexOf(pathImg);
+          if (indx > -1) {
+            this.watermarkPath.splice(indx, 1);
+          }
+        } else {
+          // otherwise push 
+          this.watermarkPath.push(file.path);
+        }
+      } 
+     
     },
     applyWatermark(){
       let data = {
@@ -240,6 +262,7 @@ export default {
        axios
           .post("/files/apply_watermark", data)
           .then((response) => { 
+            console.log(response);
               this.snackbar = true;
               this.color = "success";
               this.x = "right";
