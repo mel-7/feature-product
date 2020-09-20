@@ -21,9 +21,10 @@
         </div>
       </vue-dropzone>
     </div>
-    <div class="pa-3 d-flex">
+    <div class="py-3 d-flex align-center">
+      <v-btn color="grey" text @click="removeAllFiles">clear</v-btn>
       <v-spacer></v-spacer>
-      <v-btn class="ml-3" color="grey" text @click="removeAllFiles">clear</v-btn>
+      <v-checkbox class="ma-0 caption" v-model="withWatermark" label="Apply Watermark" color="primary" hide-details></v-checkbox>
       <v-btn class="ml-3" color="primary" :loading="btnLoading" @click="upload">Upload</v-btn>
     </div>
   </div>
@@ -57,7 +58,8 @@ export default {
         autoProcessQueue: false,
         maxFiles: 100,
         parallelUploads: 100,
-        maxFilesize: this.itemType == 'video' ? 30 : this.itemType == 'panorama' ? 3 : 1,
+        maxFilesize:
+          this.itemType == "video" ? 30 : this.itemType == "panorama" ? 3 : 1,
         timeout: 180000,
         previewTemplate: this.dropzoneTemplate(),
         clickable: ".open-uploader",
@@ -70,6 +72,7 @@ export default {
       dropzone: null,
       preview: true,
       btnLoading: false,
+      withWatermark: true,
     };
   },
   methods: {
@@ -116,6 +119,7 @@ export default {
       formData.append("product", this.$route.params.id);
       formData.append("add_items", this.addItems);
       formData.append("item_type", this.itemType);
+      formData.append("with_watermark", this.withWatermark);
     },
     removeAllFiles() {
       this.$refs.myVueDropzone.removeAllFiles();
