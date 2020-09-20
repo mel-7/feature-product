@@ -16,7 +16,8 @@
           large
           :color="`${activateVideo == true ? 'yellow accent-4' : 'primary' }`"
           @click="selectPanel('video')"
-        >Video</v-btn>
+        >Video</v-btn> 
+        <v-btn class="float-right">Preview</v-btn>
       </div>
     </v-row>
     <v-divider></v-divider>

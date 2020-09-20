@@ -3541,6 +3541,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 
@@ -29499,7 +29500,9 @@ var render = function() {
                 }
               },
               [_vm._v("Video")]
-            )
+            ),
+            _vm._v(" "),
+            _c("v-btn", { staticClass: "float-right" }, [_vm._v("Preview")])
           ],
           1
         )
