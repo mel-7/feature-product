@@ -178,15 +178,20 @@ class FilesController extends Controller
     {
         $user = Auth::user();
         $companyId = $user->company_id;  
+        $userStorage = public_path('storage/uploads/'). $companyId;   
         
-        $userStorage = public_path('storage/uploads/'). $companyId; 
+        $watermark = Watermark::where('company_id', $companyId)->first(); 
         
-        $source = storage_path() . '/app/public/uploads/'.$companyId.'/original/'.$request->selected;
-       
-        $selectedImg = Image::make($source);     
-       
-        $selectedImg->save($userStorage . '/' . $request->selected); // Save to directory
-      
+        $files = Collection::wrap($request->selected);
+ 
+        // Do something on each files uploaded
+        foreach($files AS $k => $file) {
+            $source = storage_path() . '/app/public/uploads/'.$companyId.'/original/'.$file; 
+           
+            $selectedImg = Image::make($source);    
+             
+            $selectedImg->save($userStorage . '/' . $file); // Save to directory
+        }
         return response()->json("Success", 200);
     }
 
