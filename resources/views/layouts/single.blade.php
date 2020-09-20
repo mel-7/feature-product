@@ -424,11 +424,11 @@ margin: 15px;
 }
  
 @media (max-width:576px) {
-
+  .custom-hotspot{ height: 23px; width: 23px;}
   .hp-contents{ width: 100%; }
-  h2{ font-size: 16px; }
+  h2{ font-size: 14px; }
 
-  .hp-contents p, .hp-contents a { font-size: 12px; }
+  .hp-contents p, .hp-contents a { font-size: 11px; }
   .cd-single-point > a { width: 18px; height: 18px;}
     .container {
         height: 275px;
