@@ -50,6 +50,8 @@ var slideIndex = 1;
  
   </script>
   <script type="text/javascript">
+  var dt = "<?php echo date("dHis") ?>";
+ 
     var api;
     var sls = '{{ $slug }}';
       $(function () {
@@ -181,7 +183,7 @@ var slideIndex = 1;
                             } else{
                               conf_hotspots[ii] = [];      
                               conf_hotspots[ii]['hotspot_setting'] = [];    
-                              imgs[ii] = base_url + '/storage/uploads/'+o.user.company_id+'/'+items[ii].media_file.path;
+                              imgs[ii] = base_url + '/storage/uploads/'+o.user.company_id+'/'+items[ii].media_file.path+"?v="+dt;
                             }
                             if(items[ii].hotspot_setting){
                                     Object.keys(items[ii].hotspot_setting).map(function (iii) {  
