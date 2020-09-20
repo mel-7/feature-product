@@ -48,6 +48,7 @@ class FilesController extends Controller
         $userStorage = '/public/uploads/' . $companyId;
         if (!Storage::exists($userStorage)) {
             Storage::makeDirectory($userStorage, 0755, true);
+            Storage::makeDirectory($userStorage."/original", 0755, true);
         }
 
         // Wrap the files to collection
@@ -92,11 +93,12 @@ class FilesController extends Controller
                 //     $img->fit(1920, 1080);
                 //     $img->encode($format, 50);
                 // }
+                $img->save($userStorageDir . '/original/' . $path); // Save to directory
 
                 if($watermark && $watermark->status == true && $request->item_type != "panorama"){
                     $img->insert('storage/uploads/'.$companyId.'/watermark/'.$watermark->path, $watermark->position, $watermark->offset_space, $watermark->offset_space);
+                   
                 }
-
                 $img->save($userStorageDir . '/' . $path); // Save to directory
             }
 
