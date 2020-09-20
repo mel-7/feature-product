@@ -60,7 +60,7 @@ class ProductsController extends Controller
 
         $check_product = Product::where('slug', $request->slug)->first(); 
        
-        if($check_product->slug){ 
+        if(@$check_product->slug){ 
             $request['slug'] = $request->slug."-".$check_product->count();
         } 
 

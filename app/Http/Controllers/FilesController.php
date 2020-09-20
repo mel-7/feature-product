@@ -93,7 +93,7 @@ class FilesController extends Controller
                 //     $img->encode($format, 50);
                 // }
 
-                if($watermark && $watermark->status == true){
+                if($watermark && $watermark->status == true && $request->item_type != "panorama"){
                     $img->insert('storage/uploads/'.$companyId.'/watermark/'.$watermark->path, $watermark->position, $watermark->offset_space, $watermark->offset_space);
                 }
 
