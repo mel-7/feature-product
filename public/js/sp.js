@@ -295,17 +295,19 @@ function findSpecs(metrics, frames, frame, lane) {
     var sprite = null;
     var sheet = null;
     while (true) {
-        sheet = metrics[sheetId];
-        if (!sheet) {
+        if(metrics){
+            sheet = metrics[sheetId];
+            if (!sheet) {
+                break;
+            }
+            if (spriteId >= sheet.sprites.length) {
+                spriteId -= sheet.sprites.length;
+                sheetId++;
+                continue;
+            }
+            sprite = sheet.sprites[spriteId];
             break;
         }
-        if (spriteId >= sheet.sprites.length) {
-            spriteId -= sheet.sprites.length;
-            sheetId++;
-            continue;
-        }
-        sprite = sheet.sprites[spriteId];
-        break;
     }
     return { sprite: sprite, sheet: sheet };
 }

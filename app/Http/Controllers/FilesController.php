@@ -152,22 +152,25 @@ class FilesController extends Controller
 
     public function apply_watermark(Request $request)
     {
+
         $user = Auth::user();
-        $companyId = $user->company_id; 
-         
+        $companyId = $user->company_id;  
+        $userStorage = public_path('storage/uploads/'). $companyId;   
         
-        $userStorage = public_path('storage/uploads/'). $companyId; 
-       
-        $source = storage_path() . '/app/public/uploads/'.$companyId.'/original/'.$request->selected;
-       
-        $selectedImg = Image::make($source);    
+        $watermark = Watermark::where('company_id', $companyId)->first(); 
         
-        $watermark = Watermark::where('company_id', $companyId)->first();
-        if($watermark && $watermark->status == true ){
-           $selectedImg->insert('storage/uploads/'.$companyId.'/watermark/'.$watermark->path, $watermark->position, $watermark->offset_space, $watermark->offset_space); 
+        $files = Collection::wrap($request->selected);
+ 
+        // Do something on each files uploaded
+        foreach($files AS $k => $file) {
+            $source = storage_path() . '/app/public/uploads/'.$companyId.'/original/'.$file; 
+           
+            $selectedImg = Image::make($source);    
+            if($watermark && $watermark->status == true ){
+                $selectedImg->insert('storage/uploads/'.$companyId.'/watermark/'.$watermark->path, $watermark->position, $watermark->offset_space, $watermark->offset_space); 
+            }
+                $selectedImg->save($userStorage . '/' . $file); // Save to directory
         }
-       $selectedImg->save($userStorage . '/' . $request->selected); // Save to directory
-      
         return response()->json("Success", 200);
     }
 
