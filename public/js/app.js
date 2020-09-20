@@ -3713,6 +3713,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -5624,6 +5626,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -5639,6 +5653,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      valid: false,
       show1: false,
       passwordError: "",
       fetchedname: "",
@@ -5647,8 +5662,26 @@ __webpack_require__.r(__webpack_exports__);
       phone: "",
       password: "",
       confirmpass: "",
-      baseUrl: window.location.origin
+      baseUrl: window.location.origin,
+      color: '',
+      mode: 'vertical',
+      snackbar: false,
+      text: '',
+      timeout: 5000,
+      x: '',
+      y: ''
     };
+  },
+  watch: {
+    confirmpass: function confirmpass(val) {
+      if (this.password !== val) {
+        this.passwordError = "Password did not match!";
+        this.valid = false;
+      } else {
+        this.valid = true;
+        this.passwordError = "";
+      }
+    }
   },
   methods: {
     resetFields: function resetFields() {
@@ -5660,6 +5693,11 @@ __webpack_require__.r(__webpack_exports__);
 
       axios.post(controller, data).then(function (response) {
         _this.passwordError = "";
+        _this.snackbar = true;
+        _this.color = "success";
+        _this.x = "right";
+        _this.y = "top";
+        _this.text = "Success";
       })["catch"](function (error) {
         console.log("Error Fetching account");
         console.log(error);
@@ -5667,15 +5705,14 @@ __webpack_require__.r(__webpack_exports__);
     },
     updatePassword: function updatePassword() {
       this.$refs.updatepass.validate();
-
-      if (this.password !== this.confirmpass) {
-        this.passwordError = "Password did not match!";
-        return false;
-      }
-
       var data = {
         password: this.password
       };
+
+      if (this.password == null || this.password == "" || this.confirmpass == "" || this.confirmpass == null) {
+        return false;
+      }
+
       this.postFunction(data, "/settings/account/update_password");
     },
     updateAccount: function updateAccount() {
@@ -5684,6 +5721,7 @@ __webpack_require__.r(__webpack_exports__);
         name: this.name,
         phone: this.phone
       };
+      console.log(data);
       this.postFunction(data, "/settings/account/update");
     },
     fetchAccount: function fetchAccount() {
@@ -29635,6 +29673,10 @@ var render = function() {
                             ]),
                             _vm._v(" "),
                             _c("th", { staticClass: "text-left" }, [
+                              _vm._v("slug")
+                            ]),
+                            _vm._v(" "),
+                            _c("th", { staticClass: "text-left" }, [
                               _vm._v("Status")
                             ]),
                             _vm._v(" "),
@@ -29653,6 +29695,8 @@ var render = function() {
                           _vm._l(_vm.products, function(item) {
                             return _c("tr", { key: item.name }, [
                               _c("td", [_vm._v(_vm._s(item.title))]),
+                              _vm._v(" "),
+                              _c("td", [_vm._v(_vm._s(item.slug))]),
                               _vm._v(" "),
                               _c(
                                 "td",
@@ -31964,109 +32008,263 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("v-row", [
-    _c(
-      "div",
-      { staticClass: "col-12 col-md-6 px-5" },
-      [
-        _c("h3", { staticClass: "font-weight-light mb-5" }, [
-          _vm._v("Account Settings")
-        ]),
-        _vm._v(" "),
-        _c(
-          "v-card",
-          [
-            _c(
-              "v-card-text",
-              [
-                _c("ValidationObserver", { ref: "observer" }, [
-                  _c(
-                    "form",
-                    { attrs: { method: "post" } },
-                    [
-                      _c("ValidationProvider", {
-                        attrs: { name: "Name", rules: "required|min:5" },
-                        scopedSlots: _vm._u([
-                          {
-                            key: "default",
-                            fn: function(ref) {
-                              var errors = ref.errors
-                              return [
-                                _c("v-text-field", {
-                                  staticClass: "py-0",
-                                  attrs: {
-                                    outlined: "",
-                                    label: "Name",
-                                    "error-messages": errors,
-                                    required: "",
-                                    dense: ""
-                                  },
-                                  model: {
-                                    value: _vm.name,
-                                    callback: function($$v) {
-                                      _vm.name = $$v
-                                    },
-                                    expression: "name"
-                                  }
-                                })
-                              ]
-                            }
-                          }
-                        ])
-                      }),
-                      _vm._v(" "),
-                      _c("ValidationProvider", {
-                        attrs: { name: "Phone", rules: "required|min:10" },
-                        scopedSlots: _vm._u([
-                          {
-                            key: "default",
-                            fn: function(ref) {
-                              var errors = ref.errors
-                              return [
-                                _c("v-text-field", {
-                                  staticClass: "py-0",
-                                  attrs: {
-                                    outlined: "",
-                                    label: "Phone",
-                                    "error-messages": errors,
-                                    required: "",
-                                    dense: ""
-                                  },
-                                  model: {
-                                    value: _vm.phone,
-                                    callback: function($$v) {
-                                      _vm.phone = $$v
-                                    },
-                                    expression: "phone"
-                                  }
-                                })
-                              ]
-                            }
-                          }
-                        ])
-                      }),
-                      _vm._v(" "),
-                      _c(
-                        "div",
-                        { staticClass: "d-flex justify-end" },
-                        [
-                          _c(
-                            "v-btn",
+  return _c(
+    "v-row",
+    [
+      _c(
+        "div",
+        { staticClass: "col-12 col-md-6 px-5" },
+        [
+          _c("h3", { staticClass: "font-weight-light mb-5" }, [
+            _vm._v("Account Settings")
+          ]),
+          _vm._v(" "),
+          _c(
+            "v-card",
+            [
+              _c(
+                "v-card-text",
+                [
+                  _c("ValidationObserver", { ref: "observer" }, [
+                    _c(
+                      "form",
+                      { attrs: { method: "post" } },
+                      [
+                        _c("ValidationProvider", {
+                          attrs: { name: "Name", rules: "required|min:5" },
+                          scopedSlots: _vm._u([
                             {
-                              staticClass: "mr-1",
-                              attrs: { text: "", color: "grey" },
-                              on: { click: _vm.resetFields }
+                              key: "default",
+                              fn: function(ref) {
+                                var errors = ref.errors
+                                return [
+                                  _c("v-text-field", {
+                                    staticClass: "py-0",
+                                    attrs: {
+                                      outlined: "",
+                                      label: "Name",
+                                      "error-messages": errors,
+                                      required: "",
+                                      dense: ""
+                                    },
+                                    model: {
+                                      value: _vm.name,
+                                      callback: function($$v) {
+                                        _vm.name = $$v
+                                      },
+                                      expression: "name"
+                                    }
+                                  })
+                                ]
+                              }
+                            }
+                          ])
+                        }),
+                        _vm._v(" "),
+                        _c("ValidationProvider", {
+                          attrs: { name: "Phone", rules: "required|min:10" },
+                          scopedSlots: _vm._u([
+                            {
+                              key: "default",
+                              fn: function(ref) {
+                                var errors = ref.errors
+                                return [
+                                  _c("v-text-field", {
+                                    staticClass: "py-0",
+                                    attrs: {
+                                      outlined: "",
+                                      label: "Phone",
+                                      "error-messages": errors,
+                                      required: "",
+                                      dense: ""
+                                    },
+                                    model: {
+                                      value: _vm.phone,
+                                      callback: function($$v) {
+                                        _vm.phone = $$v
+                                      },
+                                      expression: "phone"
+                                    }
+                                  })
+                                ]
+                              }
+                            }
+                          ])
+                        }),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          { staticClass: "d-flex justify-end" },
+                          [
+                            _c(
+                              "v-btn",
+                              {
+                                staticClass: "mr-1",
+                                attrs: { text: "", color: "grey" },
+                                on: { click: _vm.resetFields }
+                              },
+                              [_vm._v("reset")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "v-btn",
+                              {
+                                staticClass: "primary",
+                                on: { click: _vm.updateAccount }
+                              },
+                              [_vm._v("Update")]
+                            )
+                          ],
+                          1
+                        )
+                      ],
+                      1
+                    )
+                  ])
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "col-12 col-md-4 px-5" },
+        [
+          _c("h3", { staticClass: "font-weight-light mb-5" }, [
+            _vm._v("Change Password")
+          ]),
+          _vm._v(" "),
+          _c(
+            "v-card",
+            [
+              _c(
+                "v-card-text",
+                [
+                  _c(
+                    "ValidationObserver",
+                    { ref: "updatepass" },
+                    [
+                      _c(
+                        "v-form",
+                        {
+                          model: {
+                            value: _vm.valid,
+                            callback: function($$v) {
+                              _vm.valid = $$v
                             },
-                            [_vm._v("reset")]
-                          ),
+                            expression: "valid"
+                          }
+                        },
+                        [
+                          _c("ValidationProvider", {
+                            attrs: {
+                              name: "Password",
+                              rules: "required|min:8"
+                            },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "default",
+                                fn: function(ref) {
+                                  var errors = ref.errors
+                                  return [
+                                    _c("v-text-field", {
+                                      staticClass: "py-0",
+                                      attrs: {
+                                        "append-icon": _vm.show1
+                                          ? "mdi-eye"
+                                          : "mdi-eye-off",
+                                        "error-messages": errors,
+                                        type: _vm.show1 ? "text" : "password",
+                                        outlined: "",
+                                        label: "New Password",
+                                        required: "",
+                                        dense: ""
+                                      },
+                                      on: {
+                                        "click:append": function($event) {
+                                          _vm.show1 = !_vm.show1
+                                        }
+                                      },
+                                      model: {
+                                        value: _vm.password,
+                                        callback: function($$v) {
+                                          _vm.password = $$v
+                                        },
+                                        expression: "password"
+                                      }
+                                    })
+                                  ]
+                                }
+                              }
+                            ])
+                          }),
+                          _vm._v(" "),
+                          _c("ValidationProvider", {
+                            attrs: {
+                              name: "Confirm Password",
+                              rules: "required|min:8"
+                            },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "default",
+                                fn: function(ref) {
+                                  var errors = ref.errors
+                                  return [
+                                    _c("v-text-field", {
+                                      staticClass: "py-0",
+                                      attrs: {
+                                        "append-icon": _vm.show1
+                                          ? "mdi-eye"
+                                          : "mdi-eye-off",
+                                        "error-messages":
+                                          _vm.passwordError == ""
+                                            ? errors
+                                            : _vm.passwordError,
+                                        type: _vm.show1 ? "text" : "password",
+                                        outlined: "",
+                                        label: "Confirm Password",
+                                        required: "",
+                                        dense: ""
+                                      },
+                                      on: {
+                                        "click:append": function($event) {
+                                          _vm.show1 = !_vm.show1
+                                        }
+                                      },
+                                      model: {
+                                        value: _vm.confirmpass,
+                                        callback: function($$v) {
+                                          _vm.confirmpass = $$v
+                                        },
+                                        expression: "confirmpass"
+                                      }
+                                    })
+                                  ]
+                                }
+                              }
+                            ])
+                          }),
                           _vm._v(" "),
                           _c(
-                            "v-btn",
-                            {
-                              staticClass: "primary",
-                              on: { click: _vm.updateAccount }
-                            },
-                            [_vm._v("Update")]
+                            "div",
+                            { staticClass: "d-flex justify-end" },
+                            [
+                              _c(
+                                "v-btn",
+                                {
+                                  staticClass: "primary",
+                                  attrs: { disabled: !_vm.valid },
+                                  on: { click: _vm.updatePassword }
+                                },
+                                [_vm._v("Change Password")]
+                              )
+                            ],
+                            1
                           )
                         ],
                         1
@@ -32074,150 +32272,39 @@ var render = function() {
                     ],
                     1
                   )
-                ])
-              ],
-              1
-            )
-          ],
-          1
-        )
-      ],
-      1
-    ),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "col-12 col-md-4 px-5" },
-      [
-        _c("h3", { staticClass: "font-weight-light mb-5" }, [
-          _vm._v("Change Password")
-        ]),
-        _vm._v(" "),
-        _c(
-          "v-card",
-          [
-            _c(
-              "v-card-text",
-              [
-                _c("ValidationObserver", { ref: "updatepass" }, [
-                  _c(
-                    "form",
-                    [
-                      _c("ValidationProvider", {
-                        attrs: { name: "Password", rules: "required|min:8" },
-                        scopedSlots: _vm._u([
-                          {
-                            key: "default",
-                            fn: function(ref) {
-                              var errors = ref.errors
-                              return [
-                                _c("v-text-field", {
-                                  staticClass: "py-0",
-                                  attrs: {
-                                    "append-icon": _vm.show1
-                                      ? "mdi-eye"
-                                      : "mdi-eye-off",
-                                    "error-messages": errors,
-                                    type: _vm.show1 ? "text" : "password",
-                                    outlined: "",
-                                    label: "New Password",
-                                    required: "",
-                                    dense: ""
-                                  },
-                                  on: {
-                                    "click:append": function($event) {
-                                      _vm.show1 = !_vm.show1
-                                    }
-                                  },
-                                  model: {
-                                    value: _vm.password,
-                                    callback: function($$v) {
-                                      _vm.password = $$v
-                                    },
-                                    expression: "password"
-                                  }
-                                })
-                              ]
-                            }
-                          }
-                        ])
-                      }),
-                      _vm._v(" "),
-                      _c("ValidationProvider", {
-                        attrs: {
-                          name: "Confirm Password",
-                          rules: "required|min:8"
-                        },
-                        scopedSlots: _vm._u([
-                          {
-                            key: "default",
-                            fn: function(ref) {
-                              var errors = ref.errors
-                              return [
-                                _c("v-text-field", {
-                                  staticClass: "py-0",
-                                  attrs: {
-                                    "append-icon": _vm.show1
-                                      ? "mdi-eye"
-                                      : "mdi-eye-off",
-                                    "error-messages":
-                                      _vm.passwordError == ""
-                                        ? errors
-                                        : _vm.passwordError,
-                                    type: _vm.show1 ? "text" : "password",
-                                    outlined: "",
-                                    label: "Confirm Password",
-                                    required: "",
-                                    dense: ""
-                                  },
-                                  on: {
-                                    "click:append": function($event) {
-                                      _vm.show1 = !_vm.show1
-                                    }
-                                  },
-                                  model: {
-                                    value: _vm.confirmpass,
-                                    callback: function($$v) {
-                                      _vm.confirmpass = $$v
-                                    },
-                                    expression: "confirmpass"
-                                  }
-                                })
-                              ]
-                            }
-                          }
-                        ])
-                      }),
-                      _vm._v(" "),
-                      _c(
-                        "div",
-                        { staticClass: "d-flex justify-end" },
-                        [
-                          _c(
-                            "v-btn",
-                            {
-                              staticClass: "primary",
-                              on: { click: _vm.updatePassword }
-                            },
-                            [_vm._v("Change Password")]
-                          )
-                        ],
-                        1
-                      )
-                    ],
-                    1
-                  )
-                ])
-              ],
-              1
-            )
-          ],
-          1
-        )
-      ],
-      1
-    )
-  ])
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-snackbar",
+        {
+          attrs: {
+            color: _vm.color,
+            right: _vm.x === "right",
+            timeout: _vm.timeout,
+            top: _vm.y === "top",
+            vertical: _vm.mode === "vertical"
+          },
+          model: {
+            value: _vm.snackbar,
+            callback: function($$v) {
+              _vm.snackbar = $$v
+            },
+            expression: "snackbar"
+          }
+        },
+        [_vm._v("\n    " + _vm._s(_vm.text) + "  \n  ")]
+      )
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -93919,8 +94006,13 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+<<<<<<< HEAD
 __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
 module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
+=======
+__webpack_require__(/*! C:\xampp7.2\htdocs\spinner\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.2\htdocs\spinner\resources\sass\app.scss */"./resources/sass/app.scss");
+>>>>>>> ed9fec138498aff96b91ed9bfb142780b66f4922
 
 
 /***/ })

@@ -120,7 +120,91 @@
             animation: cd-pulse 2s infinite;
         }
  
-        
+.icon-360 {position: absolute;
+top: 0;
+margin: 15px;
+} 
+
+.icon-360 img{ width: 50%; }
+
+.round-container{ 
+  margin: 0 auto;
+    width: 210px;
+    }
+.center-con {
+  width: 24%;
+    left: 38%;
+    bottom: 65px;
+    height: 50px;
+    position: absolute;
+    margin: 0 auto;
+    padding-top: 7px;
+    background: rgb(14 14 14 / 50%);
+} 
+.label-360{ position: relative; }
+.round {
+  border: 2px solid #fff;
+    width: 35px;
+    display: inline-block;
+    height: 35px;
+    border-radius: 100%;
+} 
+.round-label{
+  display: inline-block;
+    color: #fff;
+    bottom: 10px;
+    position: relative;
+    font-weight: bold;
+    margin-right:10px;
+}
+
+#cta{
+    width:100%; cursor: pointer; position: absolute;
+}
+
+#cta .arrow{left: 2%;}
+.arrow {position: absolute; bottom: 0;  margin-left:0px; width: 12px; height: 12px; background-size: contain; top:10px;}
+.segunda{margin-left: 8px;}
+.next-arrow {
+	background-image: url(data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgNTEyIDUxMiI+PHN0eWxlPi5zdDB7ZmlsbDojZmZmfTwvc3R5bGU+PHBhdGggY2xhc3M9InN0MCIgZD0iTTMxOS4xIDIxN2MyMC4yIDIwLjIgMTkuOSA1My4yLS42IDczLjdzLTUzLjUgMjAuOC03My43LjZsLTE5MC0xOTBjLTIwLjEtMjAuMi0xOS44LTUzLjIuNy03My43UzEwOSA2LjggMTI5LjEgMjdsMTkwIDE5MHoiLz48cGF0aCBjbGFzcz0ic3QwIiBkPSJNMzE5LjEgMjkwLjVjMjAuMi0yMC4yIDE5LjktNTMuMi0uNi03My43cy01My41LTIwLjgtNzMuNy0uNmwtMTkwIDE5MGMtMjAuMiAyMC4yLTE5LjkgNTMuMi42IDczLjdzNTMuNSAyMC44IDczLjcuNmwxOTAtMTkweiIvPjwvc3ZnPg==);
+}
+
+@keyframes bounceAlpha {
+  0% {opacity: 1; transform: translateX(0px) scale(1);}
+  25%{opacity: 0; transform:translateX(10px) scale(0.9);}
+  26%{opacity: 0; transform:translateX(-10px) scale(0.9);}
+  55% {opacity: 1; transform: translateX(0px) scale(1);}
+}
+
+.bounceAlpha {
+    animation-name: bounceAlpha;
+    animation-duration:1.4s;
+    animation-iteration-count:infinite;
+    animation-timing-function:linear;
+}
+
+.arrow.primera.bounceAlpha {
+    animation-name: bounceAlpha;
+    animation-duration:1.4s;
+    animation-delay:0.2s;
+    animation-iteration-count:infinite;
+    animation-timing-function:linear;
+}
+
+.round .arrow{
+    animation-name: bounceAlpha;
+    animation-duration:1.4s;
+    animation-iteration-count:infinite;
+    animation-timing-function:linear;
+}
+.round .arrow.primera{
+    animation-name: bounceAlpha;
+    animation-duration:1.4s;
+    animation-delay:0.2s;
+    animation-iteration-count:infinite;
+    animation-timing-function:linear;
+}
+
 @-webkit-keyframes cd-pulse {
   0% {
     -webkit-transform: scale(1);
@@ -224,6 +308,9 @@
   max-width: 1200px;
  
 }
+
+.hp-contents{ position: absolute;bottom: 0; padding:10px; color: #fff;margin-bottom: 7px;width: 50%;text-align: center;background: rgb(14 14 14 / 30%); }
+.hp-contents a.c-color { text-decoration: none; color: #e4b327; }
 .close:hover, .close:focus{
   color: #dcae05;
   border-color: #dcae05;
@@ -252,6 +339,7 @@
 
 .mySlides {
   display: none;
+  background: #000;
 }
 
 .cursor {
@@ -327,10 +415,28 @@
     .slick-initialized { visibility: visible; }
     .container{width: 100%;  max-width: 1366px; height:768px; padding:0}
 
+@media (max-width:970px) {
+  .center-con { bottom: 35px; height: 40px;width: 40%; left: 30%; } 
+  .round-container{ left: 30%; width: 144px; }
+    .round-label{ font-size:12px;}
+    .round{ width: 25px; height: 25px; }
+    .arrow{ top:7px;width: 8px; height: 8px;}
+}
+ 
 @media (max-width:576px) {
     .container {
         height: 275px;
-    }
+    } 
+
+    .center-con {
+      bottom: 35px;
+    height: 40px;
+    width: 50%;
+    left: 28%;} 
+    .round-container{ left: 30%; width: 144px; }
+    .round-label{ font-size:12px;}
+    .round{ width: 25px; height: 25px; }
+    .arrow{ top:7px;width: 8px; height: 8px;}
 }
     </style>
 <script> var base_url = "{{URL::to('/')}}"; </script>

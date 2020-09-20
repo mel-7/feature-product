@@ -56,7 +56,14 @@ class ProductsController extends Controller
     public function store(Request $request)
     {
         $company_id = Auth::user()->company_id;
-        // validate request
+        // validate request 
+
+        $check_product = Product::where('slug', $request->slug)->first(); 
+       
+        if($check_product->slug){ 
+            $request['slug'] = $request->slug."-".$check_product->count();
+        } 
+
         $this->validateRequest();
         // store request
         $product = Product::create([
