@@ -72,11 +72,12 @@ class WatermarksController extends Controller
             'updated_at' => Carbon::now(),
         ];
         $updateWaterMarkArray = [
+            'path' => $request['watermark'],
+            'media_file_id' => $request['media_file_id'],
             'position' => $request['position'],
             'offset_space' => $request['offset_space'],
             'image_width' => $request['image_width'],
             'image_opacity' => $request['image_opacity'],
-            'media_file_id' => $request['media_file_id'],
             'status' => $request['status'],
             'updated_at' => Carbon::now(),
         ];
