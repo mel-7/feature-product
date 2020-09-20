@@ -62,6 +62,8 @@ Route::get('/product/{slug}', 'ProductsController@show')->name('single.product')
 
 // Media_files
 Route::post('/files/upload', 'FilesController@upload')->name('upload');
+Route::post('/files/apply_watermark/', 'FilesController@apply_watermark')->name('apply_watermark');
+Route::post('/files/remove_watermark/', 'FilesController@remove_watermark')->name('remove_watermark');
 
 Route::get('/files/fetch', 'FilesController@getItemImages')->name('fetch.item.files'); // has static
 Route::get('/display/file/{path}', 'FilesController@showImage')->name('show.file'); // has static

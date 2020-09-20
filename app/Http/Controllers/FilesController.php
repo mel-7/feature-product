@@ -12,7 +12,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
-
 class FilesController extends Controller
 {
     public function __construct()
@@ -66,10 +65,7 @@ class FilesController extends Controller
             $extn = $file->getClientOriginalExtension();
             $slugTitle = Str::slug($title, '-');
             $path = $slugTitle."-".$uploadKey.".".$extn;
-            // $path = Str::slug($uploadKey."-".$fileName, "-"); // Added upload key to avoid replacing of duplicated filenames
-            // $fname = $file->getClientOriginalName();
-            // $fileName = substr($name,0,6).'-'.auth()->id().'-'.$randomName;
-            // $fileExtensions = array('jpeg','jpg','png','JPEG','JPG','PNG');
+           
             $jpgExtensions = array('jpeg', 'jpg', 'JPEG', 'JPG');
             $pngExtensions = array('png', 'PNG');
             $format = 'jpg';
@@ -79,20 +75,14 @@ class FilesController extends Controller
 
             // Check file if image or video
             if($request->item_type == 'video'){
-                // dd('vidoeeasdasdas');
+               
                 $file->move('storage/uploads/'.$companyId.'/', $path); // add user id
-                // dd($userStorageDir);
-                // $path = $request->file('slide')->storeAs('public/videos/',$fileNameToStore);
-                // $img->save($userStorageDir . '/' . $path); // FHD
+                
             }else{
                 // File Optimization
                 // $img = Image::make($file)->fit(3840,2160); // UHD
                 $img = Image::make($file);
-                // if ($request->item_type == "360") {
-                //     // Optimize 360 images only
-                //     $img->fit(1920, 1080);
-                //     $img->encode($format, 50);
-                // }
+               
                 $img->save($userStorageDir . '/original/' . $path); // Save to directory
 
                 if($watermark && $watermark->status == true && $request->item_type != "panorama"){
@@ -134,24 +124,7 @@ class FilesController extends Controller
                 'item_id' => null,
                 'created_at' => Carbon::now(),
             ));
-        });
-        // 'path' => $uploadKey.".".$extn, // title-date.extension,
-        // 'path' => $fileName,
-        // 'path' => Str::slug($title, '-')."-".$uploadKey.".".$extn, // title-date.extension,
-
-        // Save to Items table
-        // if ($request->add_items == 'true') {
-        //     Item::insert($itemsArray);
-        //     $recentlySavedItems = Item::where([
-        //         'product_id' => $request->product,
-        //         'created_at' => $uploadKey,
-        //     ])->get();
-
-        //     // Prepare Media_files object before saving Set Connection
-        //     foreach ($recentlySavedItems as $key => $item) {
-        //         $fileArray[$key]['item_id'] = $item->id;
-        //     }
-        // }
+        }); 
 
         // Save the files to Media_files table
         Media_file::insert($fileArray);
@@ -162,19 +135,8 @@ class FilesController extends Controller
 
             // Get the files by original_name
             $originaNamesArray = array_column($fileArray, 'original_name');
-            $recentlySavedFiles = Media_file::whereIn('original_name', $originaNamesArray )->get();
-
-            // Prepare items
-            // $toInsertItemsArray = array();
-            // foreach ($recentlySavedFiles as $file) {
-                // array_push($toInsertItemsArray, array(
-                //     'item_type' => '360',
-                //     'product_id' => $request->product,
-                //     'media_file_id' => $file->id,
-                //     'created_at' => Carbon::now(),
-                //     'updated_at' => Carbon::now()
-                // ));
-                // }
+            $recentlySavedFiles = Media_file::whereIn('original_name', $originaNamesArray )->get(); 
+          
             foreach ($recentlySavedFiles as $key => $file) {
                 $itemsArray[$key]['media_file_id'] = $file->id;
             }
@@ -186,6 +148,43 @@ class FilesController extends Controller
         return response()->json([
             'message' => 'Upload Success',
         ], 200);
+    }
+
+    public function apply_watermark(Request $request)
+    {
+        $user = Auth::user();
+        $companyId = $user->company_id; 
+         
+        
+        $userStorage = public_path('storage/uploads/'). $companyId; 
+       
+        $source = storage_path() . '/app/public/uploads/'.$companyId.'/original/'.$request->selected;
+       
+        $selectedImg = Image::make($source);    
+        
+        $watermark = Watermark::where('company_id', $companyId)->first();
+        if($watermark && $watermark->status == true ){
+           $selectedImg->insert('storage/uploads/'.$companyId.'/watermark/'.$watermark->path, $watermark->position, $watermark->offset_space, $watermark->offset_space); 
+        }
+       $selectedImg->save($userStorage . '/' . $request->selected); // Save to directory
+      
+        return response()->json("Success", 200);
+    }
+
+    public function remove_watermark(Request $request)
+    {
+        $user = Auth::user();
+        $companyId = $user->company_id;  
+        
+        $userStorage = public_path('storage/uploads/'). $companyId; 
+        
+        $source = storage_path() . '/app/public/uploads/'.$companyId.'/original/'.$request->selected;
+       
+        $selectedImg = Image::make($source);     
+       
+        $selectedImg->save($userStorage . '/' . $request->selected); // Save to directory
+      
+        return response()->json("Success", 200);
     }
 
     public function getItemImages()
