@@ -200,11 +200,11 @@ var slideIndex = 1;
                     
                     Object.keys(items).map(function (ii) {  
                             if(items[ii].item_type == "panorama"){
-                              panaromicImg[ii] = base_url + '/storage/uploads/'+o.user.company_id+'/'+items[ii].media_file.path; 
+                              panaromicImg[ii] = '/storage/uploads/'+o.user.company_id+'/'+items[ii].media_file.path; 
                             } else{
                               conf_hotspots[ii] = [];      
                               conf_hotspots[ii]['hotspot_setting'] = [];    
-                              imgs[ii] = base_url + '/storage/uploads/'+o.user.company_id+'/'+items[ii].media_file.path;
+                              imgs[ii] = '/storage/uploads/'+o.user.company_id+'/'+items[ii].media_file.path;
                             }
                             if(items[ii].hotspot_setting){
                                     Object.keys(items[ii].hotspot_setting).map(function (iii) {  
@@ -247,28 +247,31 @@ var slideIndex = 1;
                 
                 var intHps = intHps.filter(function (el) {
                   return el != null;
-                });    
-                
-                
-                
+                });     
                 
                 imgs.forEach(function(img){
                     new Image().src = img; 
                     // caches images, avoiding white flash between background replacements
-                }); 
-
+                });  
+                
                 let imagesArray = imgs;   
-             
+                let imgCnt = imagesArray.length;
+               
                 function init360(){  
                   
                   bootSpriteSpin(".spritespin", { 
                     source: imagesArray,  
                     loading: true,
                     width: 1366,
-                    height: 768,
+                    height: 768, 
                      sense: -1,
+                     renderer: "image",
                     responsive: true,
-                    animate: false, 
+                    animate: false,  
+                    framesX: 4,
+                    frames: imgCnt,
+                    detectSubsampling : true,         
+                    frame: 0,
                     plugins: [ 
                     "drag", 
                     "360", 
@@ -330,37 +333,45 @@ var slideIndex = 1;
                       $(".icon-360").show();
                     }
                 });
+                
               }
               init360(); 
-
+              
                 if(data.hpItems.length > 0){
                   $(".photos.img").show();
                 }
 
                 if(panaromicImg.length > 0){
-                  $('.open-interior').show();
+                      $('.open-interior').show();
+                    var x = 1;
+                    $(".content-wrapper").hover(function(){
 
-                galviewer = pannellum.viewer("panorama", {
-                              // hotSpotDebug: true,
-                              default: {
-                                firstScene: "default_scene_start",
-                                // author: "Moikzz",
-                                autoLoad: true,
-                                sceneFadeDuration: 1000,
-                              },
-                              scenes: {
-                                "default_scene_start": {  
-                                  hfov: 80,
-                                  pitch: -16.834687202204037,
-                                  yaw: -36.30724382948786, 
-                                  type: "equirectangular",
-                                  panorama: panaromicImg, 
-                                  hotSpots: intHps, // dynamically add hotspots 
-                                
-                                },
-                              },
-                            }); 
+                      if(x == 1){
+                    galviewer = pannellum.viewer("panorama", {
+                                  // hotSpotDebug: true,
+                                  default: {
+                                    firstScene: "default_scene_start",
+                                    // author: "Moikzz",
+                                    autoLoad: true,
+                                    sceneFadeDuration: 1000,
+                                  },
+                                  scenes: {
+                                    "default_scene_start": {  
+                                      hfov: 80,
+                                      pitch: -16.834687202204037,
+                                      yaw: -36.30724382948786, 
+                                      type: "equirectangular",
+                                      panorama: panaromicImg, 
+                                      hotSpots: intHps, // dynamically add hotspots 
+                                    
+                                    },
+                                  },
+                                }); 
+                                x++; 
+                        }
+                      });
                 }
+
                       /**
                       * HotSpot
                       * */

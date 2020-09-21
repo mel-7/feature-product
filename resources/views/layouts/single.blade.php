@@ -10,29 +10,16 @@
 
     {{-- <title>{{ config('app.name', 'Laravel') }}</title> --}}
     <title>Gallega Demo</title>
-
-    <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ asset('js/jquery-3.3.1.js') }}"></script>
+     <!-- Styles -->
+     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+   
 
     <!-- slick slider -->
-    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
-    <link rel="stylesheet" type="text/css" href="//kenwheeler.github.io/slick/slick/slick-theme.css"/>
-    
-  
-
-    <script src="https://unpkg.com/spritespin@4.0.11/release/spritespin.js"></script>
-
-    <link rel="stylesheet" href="{{ asset('css/pannellum.css') }}" />
-    <script type="text/javascript" src="{{ asset('js/libpannellum.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/pannellum.js') }}"></script>
-
-    <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
-
-    <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/slick-carousel.css') }}"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/slick.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('css/pannellum.css') }}" />  
+   
 
     <style>
       .spritespin-wrapper {
@@ -542,7 +529,15 @@ display: none;
     </div>
     @include('product.scripts')
 
-    <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+  <!-- Scripts -->
+  
+  <script src="{{ asset('js/app.js') }}" defer></script>
+    <script type="text/javascript" src="{{ asset('js/spritespin.js') }}"></script>
+
+   
+    <script type="text/javascript" src="{{ asset('js/libpannellum.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/pannellum.js') }}"></script> 
+    <script type="text/javascript" src="{{ asset('js/slick.js') }}"></script>
 </body>
 
 </html>
