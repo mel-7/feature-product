@@ -255,7 +255,6 @@ export default {
         .then((response) => {
           this.loading = false;
           let w = response.data;
-          console.log(w);
           if (Object.keys(w).length != 0) {
             this.fetchedwatermark = w.media_file.path;
             this.fetchedposition = w.position;

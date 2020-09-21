@@ -402,8 +402,8 @@ export default {
         .get("/hotspot/by-product/" + this.product + "/" + panel)
         .then((response) => {
           this.itemHotspots = response.data;
-          console.log(this.itemHotspots);
-          console.log("sdfds")
+          // console.log(this.itemHotspots);
+          // console.log("sdfds")
         //   console.log(this.itemHotspots)
         })
         .catch((error) => {
