@@ -419,6 +419,7 @@ export default {
     },
     getImagesByProduct() {
       this.show = false;
+       setTimeout(() => {
       axios
         .get("/items/by-product/" + this.product)
         .then((response) => {   
@@ -437,6 +438,7 @@ export default {
           this.items = response.data.items;
           this.isItemsLoaded = true;
 
+         
           // Setup 360
           this.options.frames = response.data.items.length;
           this.options.source = response.data.items.map(
@@ -447,21 +449,24 @@ export default {
               "/" +
               item.media_file.path
           );
-
-          setTimeout(() => {
-            this.show = true;
-          }, 1000); 
-
-          if (this.items[0].length !== 0) {
-            setTimeout(() => {
-              this.selected(0, this.items[0]);
-            }, 10000);
-          }
-        })
-        .catch((error) => {
-          console.log("Error fetching items");
-          console.log(error);
-        });
+         
+            this.getHotspotSettings(); 
+              setTimeout(() => {
+                this.show = true;
+              }, 500); 
+              if (this.items[0].length !== 0) {
+                  setTimeout(() => {
+                    this.selected(0, this.items[0]);
+                  }, 1000);
+              } 
+          
+            })
+            .catch((error) => {
+              console.log("Error fetching items");
+              console.log(error);
+            });
+        }, 3000);
+       
     },
     draggableFunc() {
       // console.log(i + " : ss");
@@ -517,8 +522,7 @@ export default {
     },
   },
   created() {
-    this.getImagesByProduct();
-    this.getHotspotSettings();
+    this.getImagesByProduct(); 
    
   },
   mounted() {},
