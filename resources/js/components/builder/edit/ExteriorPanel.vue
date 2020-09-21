@@ -15,12 +15,17 @@
     <!-- </div> -->
     <div>
       <div style="min-height:450px;background-color:#eee;">
-        <upload-zone v-show="uploader == true" :add-items="true" :item-type="'360'" @uploaded="getImagesByProduct"></upload-zone>
-        <div class="spritespin-wrapper" v-show="uploader == false" >
+        <upload-zone
+          v-show="uploader == true"
+          :add-items="true"
+          :item-type="'360'"
+          @uploaded="getImagesByProduct"
+        ></upload-zone>
+        <div class="spritespin-wrapper" v-show="uploader == false">
           <spritespin
             v-bind:options="options"
             v-if="show && uploader == false"
-            ref="spritespin" 
+            ref="spritespin"
             style="margin:0 auto;"
           />
           <!-- :data-hps="`${spot.hotspotObjectToEmit.id}`" -->
@@ -159,6 +164,9 @@ export default {
   },
   data() {
     return {
+      // UI
+      isItemsLoaded: false,
+
       enableButton: [],
 
       settingsInCurrentScene: [],
@@ -234,27 +242,27 @@ export default {
   methods: {
     removeHotspotSettings(spotId) {
       let refId = spotId;
-     
-        $("#"+spotId).css({'display': "none"});
-        $(".hp-"+spotId).show();
-        
-        var hpSettings = {};
-        hpSettings.top = 5;
-        hpSettings.left = 5;
-        hpSettings.display = 'none';
-         
-          temp_hotspots[spotId+this.tempItemID] = {
-          hotspotsID: spotId,
-          itemID: this.tempItemID,
-          hotspotSettings: hpSettings,
-        };
-        var filtered = temp_hotspots.filter(function (el) {
-              return el != null;
-            });
 
-        tempHotspots = JSON.stringify(filtered);
-       
-        console.log(tempHotspots)
+      $("#" + spotId).css({ display: "none" });
+      $(".hp-" + spotId).show();
+
+      var hpSettings = {};
+      hpSettings.top = 5;
+      hpSettings.left = 5;
+      hpSettings.display = "none";
+
+      temp_hotspots[spotId + this.tempItemID] = {
+        hotspotsID: spotId,
+        itemID: this.tempItemID,
+        hotspotSettings: hpSettings,
+      };
+      var filtered = temp_hotspots.filter(function (el) {
+        return el != null;
+      });
+
+      tempHotspots = JSON.stringify(filtered);
+
+      console.log(tempHotspots);
     },
     closeHotspot() {
       //console.log("close hotspot");
@@ -265,7 +273,7 @@ export default {
       let data = {
         hotspot_settings: tempHotspots,
       };
-     // console.log(data);
+      // console.log(data);
       axios
         .post("/hotspot/apply", data)
         .then((response) => {
@@ -310,14 +318,14 @@ export default {
       this.dialogItem = Object.assign({}, item);
     },
     confirmDelete(item) {
-     // console.log(hotspotsID)
+      // console.log(hotspotsID)
       this.dialogLoading = true;
       axios
         .post("/item/delete/" + item)
         .then((response) => {
           this.dialogLoading = false;
           this.actionDialog = false;
-          
+
           this.getImagesByProduct();
         })
         .catch((error) => {
@@ -332,21 +340,20 @@ export default {
       if (this.$refs.spritespin) {
         // console.log("item id: "+$("#cur-frame").val())
         let targetFrame = this.$refs.spritespin.data.frame;
-        let targetItem = $('.target-frame-'+targetFrame).data('targetid');
+        let targetItem = $(".target-frame-" + targetFrame).data("targetid");
         // targetItem = JSON.parse(targetItem);
         // console.log("frame: "+ targetFrame);
         // console.log("item: "+ targetItem);
         this.selected(targetFrame, targetItem);
       }
     },
-    selected(index, id = null) {
-      
+    selected(index, id = []) {
       allHps = this.hotspots;
-       $(".draggable-hotspot").css({
-          left:  "5%",
-          top: "5%",
-          display: "none",
-        });
+      $(".draggable-hotspot").css({
+        left: "5%",
+        top: "5%",
+        display: "none",
+      });
 
       $(".default-hp").show();
 
@@ -354,34 +361,33 @@ export default {
       let dItemId = id.id; // Current Item ID
       this.settingsInCurrentScene = []; // Settings Variable
       let tempSettings = [];
-    
-      this.hotspots.map(function (k, i) { 
-        if(k){
-        k.hotspot_settings.map(function (inner, index) {
-          if (inner.item_id == dItemId) {
-            // Insert all the settings on the selected Item ID
-            tempSettings.push(inner);
-          
-          } 
-        }); 
+
+      this.hotspots.map(function (k, i) {
+        if (k) {
+          k.hotspot_settings.map(function (inner, index) {
+            if (inner.item_id == dItemId) {
+              // Insert all the settings on the selected Item ID
+              tempSettings.push(inner);
+            }
+          });
         }
       });
 
       tempSettings.map(function (s, index) {
-        if(s){
-          let parseData = JSON.parse(s.hotspot_settings);   
-         
+        if (s) {
+          let parseData = JSON.parse(s.hotspot_settings);
+
           // Apply hotspot style from the settings variable
           $(".draggable-hotspot.hotspot-id-" + s.hotspot_id).css({
-            left: parseData.left ? parseData.left+"%" : "5%",
-            top: parseData.top ? parseData.top+"%" : "5%",
+            left: parseData.left ? parseData.left + "%" : "5%",
+            top: parseData.top ? parseData.top + "%" : "5%",
             display: parseData.display,
           });
 
-          if($(".hotspot-id-"+s.hotspot_id).is(":hidden")){
-            $(".hp-"+s.hotspot_id).show();
-          }else{
-            $(".hp-"+s.hotspot_id).hide();
+          if ($(".hotspot-id-" + s.hotspot_id).is(":hidden")) {
+            $(".hp-" + s.hotspot_id).show();
+          } else {
+            $(".hp-" + s.hotspot_id).hide();
           }
         }
       });
@@ -394,42 +400,43 @@ export default {
       }
       if (hpItems.length > 0) {
         $.each(hpItems, function (i, o) {
-          if (o.itemID == id.id) {   
-
+          if (o.itemID == id.id) {
             $("#" + o.hotspotsID).css({
               left: o.hotspotSettings.left + "%",
               top: o.hotspotSettings.top + "%",
               display: o.hotspotSettings.display,
             });
 
-            if($(".hotspot-id-"+o.hotspotsID).is(":hidden")){
-              $(".hp-"+o.hotspotsID).show();
-            }else{
-              $(".hp-"+o.hotspotsID).hide(); 
+            if ($(".hotspot-id-" + o.hotspotsID).is(":hidden")) {
+              $(".hp-" + o.hotspotsID).show();
+            } else {
+              $(".hp-" + o.hotspotsID).hide();
             }
           }
         });
       }
       $("#cur-frame").val(id.id);
-      if(this.$refs.spritespin){
-      this.$refs.spritespin.api.updateFrame(index);
+      if (this.$refs.spritespin) {
+        this.$refs.spritespin.api.updateFrame(index);
       }
       this.$emit("selectedItem", id.id);
       this.tempItemID = id.id;
     },
-    getImagesByProduct() {
-      this.show = false;
-     
+    async getImagesByProduct() {
+      this.items = [];
+      this.show = false;      
+      this.options.frames = 0;
+      this.options.source = [];
       axios
         .get("/items/by-product/" + this.product)
-        .then((response) => {   
-          // console.log(response.data.items);
+        .then((response) => {
+          // console.log(response.data.items.length);
           // If no items found
           if (response.data.items.length == 0) {
             this.withItems = false;
             this.uploader = true;
             return;
-          } 
+          }
 
           this.withItems = true;
           this.uploader = false;
@@ -449,31 +456,28 @@ export default {
               item.media_file.path
           );
 
-          setTimeout(() => {
-            this.show = true;
-          }, 1000); 
-            
-          if (this.items[0].length !== 0) {
-            setTimeout(() => {
-            this.selected(0, this.items[0]);
-           }, 3000);
-          }
-
-          
+          // setTimeout(() => {
+          this.show = true;
+          // }, 1000);
+          this.selected(0, this.items[0]);
+          // if (this.items[0].length !== 0) {
+          //   // setTimeout(() => {
+              // this.selected(0, this.items[0]);
+          //     console.log('selected: '+this.items[0].id);
+          //   // }, 1);
+          // }
         })
         .catch((error) => {
           console.log("Error fetching items");
           console.log(error);
         });
- 
-       
     },
     draggableFunc() {
       // console.log(i + " : ss");
       var hotspotObject = this.toSetHotspot;
       var topPercentage;
       var leftPercentage;
-      
+
       // this.$nextTick(function () {
       $(function () {
         $(".draggable-hotspot").draggable({
@@ -493,11 +497,11 @@ export default {
             var hpSettings = {
               top: null,
               left: null,
-              display: 'none'
+              display: "none",
             };
             hpSettings.top = topPercentage.toFixed(2);
             hpSettings.left = leftPercentage.toFixed(2);
-            hpSettings.display = 'block';
+            hpSettings.display = "block";
             var ieID = $("#cur-frame").val();
             var hpsId = $(this).attr("data-hps");
             temp_hotspots[ieID + hpsId] = {
@@ -505,8 +509,8 @@ export default {
               itemID: ieID,
               hotspotSettings: hpSettings,
             };
-            
-            console.log(allHps)
+
+            console.log(allHps);
 
             var filtered = temp_hotspots.filter(function (el) {
               return el != null;
@@ -522,8 +526,8 @@ export default {
     },
   },
   created() {
-    this.getImagesByProduct(); 
-     this.getHotspotSettings(); 
+    this.getImagesByProduct();
+    this.getHotspotSettings();
   },
   mounted() {},
 };
@@ -588,8 +592,8 @@ export default {
 /**.hotspot */
 .spritespin-wrapper {
   width: 800px;
-    height: 450px;
-    margin: 0 auto;
+  height: 450px;
+  margin: 0 auto;
   position: relative;
 }
 .hotspot-wrapper {
@@ -870,48 +874,10 @@ ul {
   height: 12px;
   width: 2px;
 }
-
-// .cd-single-point::after {
-//   /* this is used to create the pulse animation */
-//   content: "";
-//   position: absolute;
-//   z-index: 1;
-//   width: 100%;
-//   height: 100%;
-//   top: 0;
-//   left: 0;
-//   border-radius: inherit;
-//   background-color: transparent;
-//   -webkit-animation: cd-pulse 2s infinite;
-//   -moz-animation: cd-pulse 2s infinite;
-//   animation: cd-pulse 2s infinite;
-// }
 .hotspot-default-position {
-  // left: 50%;
-  // bottom: 50%;
   left: 5%;
-  top: 5%; 
+  top: 5%;
 }
-// .cd-single-point.hotspot-1 {
-//   bottom: 54%;
-//   right: 23%;
-// }
-
-// .cd-single-point.hotspot-2 {
-//   bottom: 45%;
-//   right: 38%;
-// }
-
-// .cd-single-point:nth-of-type(3) {
-//   top: 47%;
-//   left: 44%;
-// }
-
-// .cd-single-point:nth-of-type(4) {
-//   top: 80%;
-//   right: 25%;
-// }
-
 .cd-single-point.is-open > a {
   background-color: #191e47;
 }
