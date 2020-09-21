@@ -4588,38 +4588,43 @@ var allHps = [];
       var _this4 = this;
 
       this.show = false;
-      axios.get("/items/by-product/" + this.product).then(function (response) {
-        // console.log(response.data.items);
-        // If no items found
-        if (response.data.items.length == 0) {
-          _this4.withItems = false;
-          _this4.uploader = true;
-          return;
-        }
+      setTimeout(function () {
+        axios.get("/items/by-product/" + _this4.product).then(function (response) {
+          // console.log(response.data.items);
+          // If no items found
+          if (response.data.items.length == 0) {
+            _this4.withItems = false;
+            _this4.uploader = true;
+            return;
+          }
 
-        _this4.withItems = true;
-        _this4.uploader = false; // Set Items
+          _this4.withItems = true;
+          _this4.uploader = false; // Set Items
 
-        _this4.items = response.data.items;
-        _this4.isItemsLoaded = true; // Setup 360
+          _this4.items = response.data.items;
+          _this4.isItemsLoaded = true; // Setup 360
 
-        _this4.options.frames = response.data.items.length;
-        _this4.options.source = response.data.items.map(function (item) {
-          return window.location.origin + "/storage/uploads/" + _this4.authUser.company_id + "/" + item.media_file.path;
-        });
-        setTimeout(function () {
-          _this4.show = true;
-        }, 1000);
+          _this4.options.frames = response.data.items.length;
+          _this4.options.source = response.data.items.map(function (item) {
+            return window.location.origin + "/storage/uploads/" + _this4.authUser.company_id + "/" + item.media_file.path;
+          });
 
-        if (_this4.items[0].length !== 0) {
+          _this4.getHotspotSettings();
+
           setTimeout(function () {
-            _this4.selected(0, _this4.items[0]);
-          }, 10000);
-        }
-      })["catch"](function (error) {
-        console.log("Error fetching items");
-        console.log(error);
-      });
+            _this4.show = true;
+          }, 500);
+
+          if (_this4.items[0].length !== 0) {
+            setTimeout(function () {
+              _this4.selected(0, _this4.items[0]);
+            }, 1000);
+          }
+        })["catch"](function (error) {
+          console.log("Error fetching items");
+          console.log(error);
+        });
+      }, 3000);
     },
     draggableFunc: function draggableFunc() {
       // console.log(i + " : ss");
@@ -4669,7 +4674,6 @@ var allHps = [];
   },
   created: function created() {
     this.getImagesByProduct();
-    this.getHotspotSettings();
   },
   mounted: function mounted() {}
 });
