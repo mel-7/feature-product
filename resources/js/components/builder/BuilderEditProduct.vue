@@ -20,7 +20,7 @@
           :color="`${activateVideo == true ? 'yellow accent-4' : 'primary' }`"
           @click="selectPanel('video')"
         >Video</v-btn>
-        <v-btn class="ml-auto" large>Preview</v-btn>
+        <v-btn class="ml-auto" large :href="`${previewUrl}`" target="_blank">Preview</v-btn>
       </div>
     </v-row>
     <v-divider></v-divider>
@@ -68,6 +68,10 @@ export default {
       type: Object,
       default: null,
     },
+    products: {
+      type: Array,
+      default: [],
+    },
   },
   components: {
     Hotspots,
@@ -86,9 +90,20 @@ export default {
       selected_hotspot_prop: null,
 
       selected_interior_hotspot_prop: null,
+
+      previewUrl: "",
+      baseUrl: window.location.origin,
     };
   },
   methods: {
+    setPreviewUrl() {
+
+      this.products.map((product) => {
+        if(product.id == this.$route.params.id){
+            this.previewUrl = this.baseUrl+'/product/'+product.slug;
+        }
+      });
+    },
     theSelectedItem(v) {
       this.selected_item = v;
     },
@@ -125,6 +140,9 @@ export default {
         this.activateExterior = false;
       }
     },
+  },
+  created() {
+    this.setPreviewUrl();
   },
 };
 </script>

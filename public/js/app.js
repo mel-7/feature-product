@@ -3650,6 +3650,10 @@ __webpack_require__.r(__webpack_exports__);
     authUser: {
       type: Object,
       "default": null
+    },
+    products: {
+      type: Array,
+      "default": []
     }
   },
   components: {
@@ -3666,10 +3670,21 @@ __webpack_require__.r(__webpack_exports__);
       activateVideo: false,
       selected_item: null,
       selected_hotspot_prop: null,
-      selected_interior_hotspot_prop: null
+      selected_interior_hotspot_prop: null,
+      previewUrl: "",
+      baseUrl: window.location.origin
     };
   },
   methods: {
+    setPreviewUrl: function setPreviewUrl() {
+      var _this = this;
+
+      this.products.map(function (product) {
+        if (product.id == _this.$route.params.id) {
+          _this.previewUrl = _this.baseUrl + '/product/' + product.slug;
+        }
+      });
+    },
     theSelectedItem: function theSelectedItem(v) {
       this.selected_item = v;
     },
@@ -3704,6 +3719,9 @@ __webpack_require__.r(__webpack_exports__);
         this.activateExterior = false;
       }
     }
+  },
+  created: function created() {
+    this.setPreviewUrl();
   }
 });
 
@@ -30486,9 +30504,18 @@ var render = function() {
               [_vm._v("Video")]
             ),
             _vm._v(" "),
-            _c("v-btn", { staticClass: "ml-auto", attrs: { large: "" } }, [
-              _vm._v("Preview")
-            ])
+            _c(
+              "v-btn",
+              {
+                staticClass: "ml-auto",
+                attrs: {
+                  large: "",
+                  href: "" + _vm.previewUrl,
+                  target: "_blank"
+                }
+              },
+              [_vm._v("Preview")]
+            )
           ],
           1
         )
