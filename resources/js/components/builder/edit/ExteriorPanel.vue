@@ -450,13 +450,12 @@ export default {
 
           setTimeout(() => {
             this.show = true;
-          }, 1);
-
+          }, 1000); 
 
           if (this.items[0].length !== 0) {
             setTimeout(() => {
               this.selected(0, this.items[0]);
-            }, 3000);
+            }, 10000);
           }
         })
         .catch((error) => {
