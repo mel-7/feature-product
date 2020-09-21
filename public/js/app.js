@@ -3639,6 +3639,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 
 
@@ -4436,8 +4438,9 @@ var allHps = [];
   },
   methods: {
     removeHotspotSettings: function removeHotspotSettings(spotId) {
-      var refId = spotId;
-      $("#" + spotId).css({
+      var refId = spotId; //   $("#" + spotId).css({ display: "none" });
+
+      $(".hotspot-id-" + spotId).css({
         display: "none"
       });
       $(".hp-" + spotId).show();
@@ -4481,15 +4484,29 @@ var allHps = [];
     getHotspotSettings: function getHotspotSettings() {
       var _this2 = this;
 
-      axios // .get("/hotspot/settings/" + this.product)
-      .get("/hotspot/product/" + this.product).then(function (response) {
-        _this2.hotspots = response.data.settings;
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                console.log("getHotspotSettings");
+                _context.next = 3;
+                return axios.get("/hotspot/product/" + _this2.product).then(function (response) {
+                  _this2.hotspots = response.data.settings;
 
-        _this2.draggableFunc();
-      })["catch"](function (error) {
-        console.log("Error Fetching Hotspots");
-        console.log(error);
-      });
+                  _this2.draggableFunc();
+                })["catch"](function (error) {
+                  console.log("Error Fetching Hotspots");
+                  console.log(error);
+                });
+
+              case 3:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
     },
     mediaResponse: function mediaResponse(res) {
       // console.log(res.status);
@@ -4539,6 +4556,7 @@ var allHps = [];
     },
     selected: function selected(index) {
       var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+      console.log("selected");
       allHps = this.hotspots;
       $(".draggable-hotspot").css({
         left: "5%",
@@ -4590,7 +4608,7 @@ var allHps = [];
       if (hpItems.length > 0) {
         $.each(hpItems, function (i, o) {
           if (o.itemID == id.id) {
-            $("#" + o.hotspotsID).css({
+            $(".hotspot-id-" + o.hotspotsID).css({
               left: o.hotspotSettings.left + "%",
               top: o.hotspotSettings.top + "%",
               display: o.hotspotSettings.display
@@ -4617,16 +4635,18 @@ var allHps = [];
     getImagesByProduct: function getImagesByProduct() {
       var _this4 = this;
 
-      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
           while (1) {
-            switch (_context.prev = _context.next) {
+            switch (_context2.prev = _context2.next) {
               case 0:
-                _this4.items = [];
+                console.log("getImagesByProduct");
                 _this4.show = false;
+                _this4.items = [];
                 _this4.options.frames = 0;
                 _this4.options.source = [];
-                axios.get("/items/by-product/" + _this4.product).then(function (response) {
+                _context2.next = 7;
+                return axios.get("/items/by-product/" + _this4.product).then(function (response) {
                   // console.log(response.data.items.length);
                   // If no items found
                   if (response.data.items.length == 0) {
@@ -4644,28 +4664,18 @@ var allHps = [];
                   _this4.options.frames = response.data.items.length;
                   _this4.options.source = response.data.items.map(function (item) {
                     return window.location.origin + "/storage/uploads/" + _this4.authUser.company_id + "/" + item.media_file.path;
-                  }); // setTimeout(() => {
-
-                  _this4.show = true; // }, 1000);
-
-                  _this4.selected(0, _this4.items[0]); // if (this.items[0].length !== 0) {
-                  //   // setTimeout(() => {
-                  // this.selected(0, this.items[0]);
-                  //     console.log('selected: '+this.items[0].id);
-                  //   // }, 1);
-                  // }
-
+                  });
                 })["catch"](function (error) {
                   console.log("Error fetching items");
                   console.log(error);
                 });
 
-              case 5:
+              case 7:
               case "end":
-                return _context.stop();
+                return _context2.stop();
             }
           }
-        }, _callee);
+        }, _callee2);
       }))();
     },
     draggableFunc: function draggableFunc() {
@@ -4715,8 +4725,18 @@ var allHps = [];
     }
   },
   created: function created() {
-    this.getImagesByProduct();
-    this.getHotspotSettings();
+    var _this5 = this;
+
+    // Get the items first
+    this.getImagesByProduct().then(function () {
+      // Get the hotspot settings
+      _this5.getHotspotSettings().then(function () {
+        // show spritespin/360
+        _this5.show = true; // Select the first item
+
+        _this5.selected(0, _this5.items[0]);
+      });
+    });
   },
   mounted: function mounted() {}
 });
@@ -30398,15 +30418,17 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
+    { staticClass: "builder-container" },
     [
       _c("v-row", { staticClass: "px-3" }, [
         _c(
           "div",
-          { staticClass: "col-12 pb-3 pa-0" },
+          { staticClass: "col-12 pb-3 pa-0 d-flex" },
           [
             _c(
               "v-btn",
               {
+                staticClass: "mr-2",
                 attrs: {
                   large: "",
                   color:
@@ -30427,6 +30449,7 @@ var render = function() {
             _c(
               "v-btn",
               {
+                staticClass: "mr-2",
                 attrs: {
                   large: "",
                   color:
@@ -30447,6 +30470,7 @@ var render = function() {
             _c(
               "v-btn",
               {
+                staticClass: "mr-2",
                 attrs: {
                   large: "",
                   color:
@@ -30462,7 +30486,9 @@ var render = function() {
               [_vm._v("Video")]
             ),
             _vm._v(" "),
-            _c("v-btn", { staticClass: "float-right" }, [_vm._v("Preview")])
+            _c("v-btn", { staticClass: "ml-auto", attrs: { large: "" } }, [
+              _vm._v("Preview")
+            ])
           ],
           1
         )
@@ -30471,8 +30497,6 @@ var render = function() {
       _c("v-divider"),
       _vm._v(" "),
       _c("v-row", [
-        _c("div"),
-        _vm._v(" "),
         _c(
           "div",
           {
@@ -31408,7 +31432,10 @@ var render = function() {
                         class:
                           "cd-single-point draggable-hotspot hotspot-default-position hotspot-id-" +
                           spot.id,
-                        attrs: { "data-hps": "" + spot.id, id: "" + spot.id }
+                        attrs: {
+                          "data-hps": "" + spot.id,
+                          id: "spot-" + spot.id
+                        }
                       },
                       [
                         _c(
@@ -94969,8 +94996,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

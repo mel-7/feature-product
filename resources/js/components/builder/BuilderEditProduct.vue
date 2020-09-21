@@ -1,28 +1,30 @@
 <template>
-  <div>
+  <div class="builder-container">
     <v-row class="px-3">
-      <div class="col-12 pb-3 pa-0">
+      <div class="col-12 pb-3 pa-0 d-flex">
         <v-btn
+          class="mr-2"
           large
           :color="`${activateExterior == true ? 'yellow accent-4' : 'primary' }`"
           @click="selectPanel('exterior')"
         >Exterior</v-btn>
         <v-btn
+          class="mr-2"
           large
           :color="`${activateInterior == true ? 'yellow accent-4' : 'primary' }`"
           @click="selectPanel('interior')"
         >Interior</v-btn>
         <v-btn
+          class="mr-2"
           large
           :color="`${activateVideo == true ? 'yellow accent-4' : 'primary' }`"
           @click="selectPanel('video')"
-        >Video</v-btn> 
-        <v-btn class="float-right">Preview</v-btn>
+        >Video</v-btn>
+        <v-btn class="ml-auto" large>Preview</v-btn>
       </div>
     </v-row>
     <v-divider></v-divider>
     <v-row>
-      <div></div>
       <div class="col-12 col-md-3" v-show="activateVideo == false">
         <Hotspots
           :item="selected_item"

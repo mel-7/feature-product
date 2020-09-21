@@ -36,7 +36,7 @@
               v-for="(spot, index) in hotspots"
               :key="index"
               :data-hps="`${spot.id}`"
-              :id="`${spot.id}`"
+              :id="`spot-${spot.id}`"
               :class="`cd-single-point draggable-hotspot hotspot-default-position hotspot-id-${spot.id}`"
             >
               <a class="cd-img-replace" href="#0">More</a>
@@ -243,7 +243,8 @@ export default {
     removeHotspotSettings(spotId) {
       let refId = spotId;
 
-      $("#" + spotId).css({ display: "none" });
+    //   $("#" + spotId).css({ display: "none" });
+      $(".hotspot-id-" + spotId).css({ display: "none" });
       $(".hp-" + spotId).show();
 
       var hpSettings = {};
@@ -286,9 +287,9 @@ export default {
           console.log(error);
         });
     },
-    getHotspotSettings() {
-      axios
-        // .get("/hotspot/settings/" + this.product)
+    async getHotspotSettings() {
+      console.log("getHotspotSettings");
+      await axios
         .get("/hotspot/product/" + this.product)
         .then((response) => {
           this.hotspots = response.data.settings;
@@ -348,6 +349,7 @@ export default {
       }
     },
     selected(index, id = []) {
+      console.log("selected");
       allHps = this.hotspots;
       $(".draggable-hotspot").css({
         left: "5%",
@@ -401,7 +403,7 @@ export default {
       if (hpItems.length > 0) {
         $.each(hpItems, function (i, o) {
           if (o.itemID == id.id) {
-            $("#" + o.hotspotsID).css({
+            $(".hotspot-id-" + o.hotspotsID).css({
               left: o.hotspotSettings.left + "%",
               top: o.hotspotSettings.top + "%",
               display: o.hotspotSettings.display,
@@ -423,11 +425,12 @@ export default {
       this.tempItemID = id.id;
     },
     async getImagesByProduct() {
+      console.log("getImagesByProduct");
+      this.show = false;
       this.items = [];
-      this.show = false;      
       this.options.frames = 0;
       this.options.source = [];
-      axios
+      await axios
         .get("/items/by-product/" + this.product)
         .then((response) => {
           // console.log(response.data.items.length);
@@ -455,17 +458,6 @@ export default {
               "/" +
               item.media_file.path
           );
-
-          // setTimeout(() => {
-          this.show = true;
-          // }, 1000);
-          this.selected(0, this.items[0]);
-          // if (this.items[0].length !== 0) {
-          //   // setTimeout(() => {
-              // this.selected(0, this.items[0]);
-          //     console.log('selected: '+this.items[0].id);
-          //   // }, 1);
-          // }
         })
         .catch((error) => {
           console.log("Error fetching items");
@@ -526,8 +518,16 @@ export default {
     },
   },
   created() {
-    this.getImagesByProduct();
-    this.getHotspotSettings();
+    // Get the items first
+    this.getImagesByProduct().then(() => {
+      // Get the hotspot settings
+      this.getHotspotSettings().then(() => {
+        // show spritespin/360
+        this.show = true;
+        // Select the first item
+        this.selected(0, this.items[0]);
+      });
+    });
   },
   mounted() {},
 };
