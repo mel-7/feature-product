@@ -419,7 +419,7 @@ export default {
     },
     getImagesByProduct() {
       this.show = false;
-      setTimeout(() => {
+     
       axios
         .get("/items/by-product/" + this.product)
         .then((response) => {   
@@ -429,9 +429,7 @@ export default {
             this.withItems = false;
             this.uploader = true;
             return;
-          }
-
-          this.getHotspotSettings(); 
+          } 
 
           this.withItems = true;
           this.uploader = false;
@@ -467,7 +465,7 @@ export default {
           console.log("Error fetching items");
           console.log(error);
         });
-      }, 2000); 
+ 
        
     },
     draggableFunc() {
@@ -525,7 +523,7 @@ export default {
   },
   created() {
     this.getImagesByProduct(); 
-   
+     this.getHotspotSettings(); 
   },
   mounted() {},
 };
