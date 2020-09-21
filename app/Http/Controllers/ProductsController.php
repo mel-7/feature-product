@@ -35,16 +35,22 @@ class ProductsController extends Controller
 
     public function publicproductsAPI($id)
     {
+        $hotspot = array();
+        $videos = array();
         $products = Product::where(function ($query) use ($id) {
-            $query->where('id', '=', $id)
-                  ->orWhere('slug', '=', $id);
+                                $query->where('slug', '=', $id)
+                                    ->orWhere('id', '=', $id);
         })->with('user','items','items.media_file','items.hotspot_setting')->get();
 
-        $hotspot = Hotspot::where('product_id', '=', $products[0]->id)->orderBy("hotspot_for")->get(); 
-
-        $videos = Video::where('product_id', '=', $products[0]->id)->get(); 
        
-        return response()->json(["dataItems" => $products, "hpItems" => $hotspot, "videos" => $videos]);
+        if(@count($products) > 0){
+            $hotspot = Hotspot::where('product_id', '=', $products[0]->id)->orderBy("hotspot_for")->get(); 
+
+            $videos = Video::where('product_id', '=', $products[0]->id)->get(); 
+            return response()->json(["dataItems" => $products, "hpItems" => $hotspot, "videos" => $videos]);
+        } 
+       
+        return response()->json(["dataItems" => false]);;
     }
 
     /**
@@ -60,7 +66,7 @@ class ProductsController extends Controller
 
         $check_product = Product::where('slug', $request->slug)->first(); 
        
-        if($check_product->slug){ 
+        if(@$check_product->slug){ 
             $request['slug'] = $request->slug."-".$check_product->count();
         } 
 

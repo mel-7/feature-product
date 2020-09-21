@@ -419,6 +419,7 @@ export default {
     },
     getImagesByProduct() {
       this.show = false;
+     
       axios
         .get("/items/by-product/" + this.product)
         .then((response) => {   
@@ -428,7 +429,7 @@ export default {
             this.withItems = false;
             this.uploader = true;
             return;
-          }
+          } 
 
           this.withItems = true;
           this.uploader = false;
@@ -450,19 +451,22 @@ export default {
 
           setTimeout(() => {
             this.show = true;
-          }, 1);
-
-
+          }, 1000); 
+            
           if (this.items[0].length !== 0) {
             setTimeout(() => {
-              this.selected(0, this.items[0]);
-            }, 3000);
+            this.selected(0, this.items[0]);
+           }, 3000);
           }
+
+          
         })
         .catch((error) => {
           console.log("Error fetching items");
           console.log(error);
         });
+ 
+       
     },
     draggableFunc() {
       // console.log(i + " : ss");
@@ -518,9 +522,8 @@ export default {
     },
   },
   created() {
-    this.getImagesByProduct();
-    this.getHotspotSettings();
-   
+    this.getImagesByProduct(); 
+     this.getHotspotSettings(); 
   },
   mounted() {},
 };

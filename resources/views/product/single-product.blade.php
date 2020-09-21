@@ -2,11 +2,14 @@
 
 @section('content')
 <div class="container"> 
+<div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
     <div class="content-wrapper">
+    
       <div class="exterior">
+      
         <div class="spritespin-wrapper" id="spritespin-wrapper">
           <div class="spritespin"></div>
-        
+          
           <ul id="hp-draggable" class="hp-draggable-ext">  </ul>
           <div class="icon-360"> <img src="{{URL::to('/')}}/images/360image.png"></div>
         </div>

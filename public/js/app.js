@@ -3164,6 +3164,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -3185,6 +3204,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      imageClickActive: false,
       tabItem: "upload",
       companyId: this.mediaOptions.user.company_id,
       userId: this.mediaOptions.user.id,
@@ -3193,13 +3213,21 @@ __webpack_require__.r(__webpack_exports__);
       mediaDialog: false,
       mediaLoading: false,
       tab: null,
+      color: '',
+      mode: 'vertical',
+      snackbar: false,
+      text: '',
+      timeout: 5000,
+      x: '',
+      y: '',
       return_url: this.mediaOptions.returnUrl ? this.mediaOptions.returnUrl : false,
       return_path: this.mediaOptions.returnPath ? this.mediaOptions.returnPath : false,
       submitAction: this.mediaOptions.action ? this.mediaOptions.action : "save",
       // Selected File
       multiple: this.mediaOptions.multiple ? this.mediaOptions.multiple : false,
       selected: [],
-      selectedObject: []
+      selectedObject: [],
+      watermarkPath: []
     };
   },
   methods: {
@@ -3216,10 +3244,27 @@ __webpack_require__.r(__webpack_exports__);
       this.tabItem = "upload";
     },
     selectFile: function selectFile(file) {
-      var i = file.id; // Select single file
+      var i = file.id;
+      var pathImg = file.path;
+      var lngt = this.selected.length;
+      var chk = true; // Select single file
 
       if (this.multiple == false) {
-        if (this.selected.length < 1) {
+        this.imageClickActive = true;
+        this.watermarkPath = [];
+        this.selected = [];
+
+        if (lngt > 0 && this.selected[0] == i) {
+          this.selected.pop(0);
+          this.imageClickActive = false;
+          chk = false;
+        } else if (this.selected.length > 0) {
+          this.selected.pop(0);
+        }
+
+        if (chk) {
+          this.watermarkPath[0] = file.path;
+
           if (this.mediaOptions.returnObject) {
             // Used in watermark
             this.selected.push(file.path);
@@ -3232,30 +3277,70 @@ __webpack_require__.r(__webpack_exports__);
               this.selected.push(i);
             }
           }
-        } else {
-          var index = this.selected.indexOf(i);
-
-          if (index > -1) {
-            this.selected.pop(i);
-          }
         } // Select multiple files
 
       } else {
         if (this.selected.includes(i)) {
           // if already exist pop out
-          var _index = this.selected.indexOf(i);
+          var index = this.selected.indexOf(i);
 
-          if (_index > -1) {
-            this.selected.splice(_index, 1);
+          if (index > -1) {
+            this.selected.splice(index, 1);
           }
         } else {
           // otherwise push
           this.selected.push(i);
         }
+
+        if (this.watermarkPath.includes(pathImg)) {
+          var indx = this.watermarkPath.indexOf(pathImg);
+
+          if (indx > -1) {
+            this.watermarkPath.splice(indx, 1);
+          }
+        } else {
+          // otherwise push 
+          this.watermarkPath.push(file.path);
+        }
       }
     },
-    submitSelected: function submitSelected() {
+    applyWatermark: function applyWatermark() {
       var _this = this;
+
+      var data = {
+        selected: this.watermarkPath
+      };
+      axios.post("/files/apply_watermark", data).then(function (response) {
+        console.log(response);
+        _this.snackbar = true;
+        _this.color = "success";
+        _this.x = "right";
+        _this.y = "top";
+        _this.text = "Watermark has been added!";
+      })["catch"](function (error) {
+        _this.watermarkPath = [];
+      });
+    },
+    removeWatermark: function removeWatermark() {
+      var _this2 = this;
+
+      var data = {
+        selected: this.watermarkPath
+      };
+      axios.post("/files/remove_watermark", data).then(function (response) {
+        _this2.snackbar = true;
+        _this2.color = "success";
+        _this2.x = "right";
+        _this2.y = "top";
+        _this2.text = "Watermark has been removed!";
+      })["catch"](function (error) {
+        _this2.watermarkPath = [];
+      });
+    },
+    submitSelected: function submitSelected() {
+      var _this3 = this;
+
+      this.imageClickActive = false;
 
       if (this.mediaOptions.returnObject) {
         this.$emit("responded", this.selectedObject);
@@ -3281,32 +3366,29 @@ __webpack_require__.r(__webpack_exports__);
           product: this.mediaOptions.product ? this.mediaOptions.product : null
         };
         axios.post("/item/save", data).then(function (response) {
-          // console.log(response.data);
           if (response.data.status == "success") {
-            _this.$emit("responded", response.data);
+            _this3.$emit("responded", response.data);
 
-            _this.selected = [];
+            _this3.selected = [];
           }
-
-          console.log(response.data);
         })["catch"](function (error) {
-          _this.selected = [];
-          console.log("Error Saving Setting File to Item");
-          console.log(error);
+          _this3.selected = [];
         });
       }
     },
     closeMediaDialog: function closeMediaDialog() {
       this.mediaDialog = false;
       this.$emit("responded", false);
+      this.selected = [];
+      this.imageClickActive = false;
     },
     getUserFiles: function getUserFiles() {
-      var _this2 = this;
+      var _this4 = this;
 
       if (this.selected.length == 0) {
         axios.get("/user/files/" + this.userId).then(function (response) {
           console.log("Media Files has been loaded");
-          _this2.files = Object.assign({}, response.data.data); // console.log(this.files);
+          _this4.files = Object.assign({}, response.data.data);
         })["catch"](function (error) {
           console.log("Error Fetching Files in getUserFiles");
           console.log(error);
@@ -3488,6 +3570,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _edit_ExteriorPanel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./edit/ExteriorPanel */ "./resources/js/components/builder/edit/ExteriorPanel.vue");
 /* harmony import */ var _edit_InteriorPanel__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./edit/InteriorPanel */ "./resources/js/components/builder/edit/InteriorPanel.vue");
 /* harmony import */ var _edit_VideoPanel__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./edit/VideoPanel */ "./resources/js/components/builder/edit/VideoPanel.vue");
+//
 //
 //
 //
@@ -4529,7 +4612,7 @@ var allHps = [];
         });
         setTimeout(function () {
           _this4.show = true;
-        }, 1);
+        }, 1000);
 
         if (_this4.items[0].length !== 0) {
           setTimeout(function () {
@@ -29046,7 +29129,44 @@ var render = function() {
                           ])
                         ],
                         1
-                      )
+                      ),
+                      _vm._v(" "),
+                      _vm.imageClickActive == true
+                        ? _c(
+                            "v-btn",
+                            {
+                              staticClass: "ml-5 warning float-right",
+                              attrs: { depressed: "" },
+                              on: { click: _vm.applyWatermark }
+                            },
+                            [_vm._v("Apply Watermark")]
+                          )
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _vm.imageClickActive == true
+                        ? _c(
+                            "v-btn",
+                            {
+                              staticClass: "ml-5 red float-right",
+                              attrs: { depressed: "" },
+                              on: { click: _vm.removeWatermark }
+                            },
+                            [_vm._v("Remove Watermark")]
+                          )
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _vm.imageClickActive == true
+                        ? _c("v-checkbox", {
+                            attrs: { label: "Multiple Selection" },
+                            model: {
+                              value: _vm.multiple,
+                              callback: function($$v) {
+                                _vm.multiple = $$v
+                              },
+                              expression: "multiple"
+                            }
+                          })
+                        : _vm._e()
                     ],
                     1
                   ),
@@ -29261,7 +29381,28 @@ var render = function() {
             ],
             1
           )
-        : _vm._e()
+        : _vm._e(),
+      _vm._v(" "),
+      _c(
+        "v-snackbar",
+        {
+          attrs: {
+            color: _vm.color,
+            right: _vm.x === "right",
+            timeout: _vm.timeout,
+            top: _vm.y === "top",
+            vertical: _vm.mode === "vertical"
+          },
+          model: {
+            value: _vm.snackbar,
+            callback: function($$v) {
+              _vm.snackbar = $$v
+            },
+            expression: "snackbar"
+          }
+        },
+        [_vm._v("\n    " + _vm._s(_vm.text) + "  \n  ")]
+      )
     ],
     1
   )
@@ -29517,7 +29658,9 @@ var render = function() {
                 }
               },
               [_vm._v("Video")]
-            )
+            ),
+            _vm._v(" "),
+            _c("v-btn", { staticClass: "float-right" }, [_vm._v("Preview")])
           ],
           1
         )

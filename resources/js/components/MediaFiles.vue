@@ -28,6 +28,14 @@
             Media Files
             <v-icon small right>mdi-panorama</v-icon>
           </v-btn>
+
+          <v-btn v-if="imageClickActive == true" depressed class="ml-5 warning float-right" @click="applyWatermark">Apply Watermark</v-btn>
+          <v-btn v-if="imageClickActive == true" depressed class="ml-5 red float-right" @click="removeWatermark">Remove Watermark</v-btn>
+           <v-checkbox
+            v-if="imageClickActive == true"
+            v-model="multiple"
+            label="Multiple Selection"
+          ></v-checkbox>
         </v-card-title>
         <v-card-text class="blue-grey lighten-5 pt-3" v-show="tabItem == 'upload'">
           <upload-zone
@@ -97,7 +105,18 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+      <v-snackbar
+      v-model="snackbar" 
+      :color="color" 
+      :right="x === 'right'"
+      :timeout="timeout"
+      :top="y === 'top'"
+      :vertical="mode === 'vertical'"
+    >
+      {{ text }}  
+    </v-snackbar>
   </div>
+  
 </template>
 
 <script>
@@ -122,6 +141,7 @@ export default {
   },
   data() {
     return {
+      imageClickActive: false,
       tabItem: "upload",
       companyId: this.mediaOptions.user.company_id,
       userId: this.mediaOptions.user.id,
@@ -129,7 +149,14 @@ export default {
       baseUrl: window.location.origin,
       mediaDialog: false,
       mediaLoading: false,
-      tab: null,
+      tab: null, 
+      color: '',
+      mode: 'vertical',
+      snackbar: false,
+      text: '',
+      timeout: 5000,
+      x: '',
+      y: '',
 
       return_url: this.mediaOptions.returnUrl
         ? this.mediaOptions.returnUrl
@@ -145,6 +172,7 @@ export default {
       multiple: this.mediaOptions.multiple ? this.mediaOptions.multiple : false,
       selected: [],
       selectedObject: [],
+      watermarkPath: [],
 
     };
   },
@@ -163,28 +191,42 @@ export default {
     },
     selectFile(file) {
       let i = file.id;
-
+      let pathImg = file.path;
+      let lngt = this.selected.length;
+      let chk = true; 
+     
       // Select single file
       if (this.multiple == false) {
-        if (this.selected.length < 1) {
-          if (this.mediaOptions.returnObject) {
-            // Used in watermark
-            this.selected.push(file.path);
-            this.selectedObject = file;
-          } else {
-            // If Return URL used in hotspot images
-            if (this.return_url == true || this.return_path == true) {
-              this.selected.push(file.path);
-            } else {
-              this.selected.push(i);
-            }
-          }
-        } else {
-          let index = this.selected.indexOf(i);
-          if (index > -1) {
-            this.selected.pop(i);
-          }
-        }
+            this.imageClickActive = true;
+            this.watermarkPath = [];
+            this.selected = [];
+          if(lngt > 0 && this.selected[0] == i){ 
+            this.selected.pop(0); 
+            this.imageClickActive = false; 
+            chk = false;
+          }else if (this.selected.length > 0 ) { 
+              this.selected.pop(0);  
+          } 
+
+          if(chk){
+            this.watermarkPath[0] = file.path;
+            
+              if (this.mediaOptions.returnObject) {
+                // Used in watermark
+                this.selected.push(file.path);
+                this.selectedObject = file;
+              
+              } else {
+               
+                // If Return URL used in hotspot images
+                if (this.return_url == true || this.return_path == true) {
+                  this.selected.push(file.path);
+                } else {
+                  this.selected.push(i);
+                }
+              }
+          } 
+        
         // Select multiple files
       } else {
         if (this.selected.includes(i)) {
@@ -192,17 +234,69 @@ export default {
           let index = this.selected.indexOf(i);
           if (index > -1) {
             this.selected.splice(index, 1);
-          }
+          } 
+          
         } else {
           // otherwise push
           this.selected.push(i);
+         
         }
+
+        if (this.watermarkPath.includes(pathImg)) { 
+
+          let indx = this.watermarkPath.indexOf(pathImg);
+          if (indx > -1) {
+            this.watermarkPath.splice(indx, 1);
+          }
+        } else {
+          // otherwise push 
+          this.watermarkPath.push(file.path);
+        }
+      } 
+     
+    },
+    applyWatermark(){
+      let data = {
+          selected: this.watermarkPath
       }
+       axios
+          .post("/files/apply_watermark", data)
+          .then((response) => { 
+            console.log(response);
+              this.snackbar = true;
+              this.color = "success";
+              this.x = "right";
+              this.y = "top";
+              this.text = "Watermark has been added!";
+          })
+          .catch((error) => {
+            this.watermarkPath = [];
+           
+          });
+    },
+     removeWatermark(){
+      let data = {
+          selected: this.watermarkPath
+      }
+       axios
+          .post("/files/remove_watermark", data)
+          .then((response) => { 
+              this.snackbar = true;
+              this.color = "success";
+              this.x = "right";
+              this.y = "top";
+              this.text = "Watermark has been removed!";
+          })
+          .catch((error) => {
+            this.watermarkPath = [];
+           
+          });
     },
     submitSelected() {
+      this.imageClickActive = false; 
       if (this.mediaOptions.returnObject) {
         this.$emit("responded", this.selectedObject);
-        this.selected = [];
+        this.selected = []; 
       }
       // If only needs to return the url of the selected image
       if (this.return_path == true) {
@@ -232,23 +326,24 @@ export default {
         axios
           .post("/item/save", data)
           .then((response) => {
-            // console.log(response.data);
+          
             if (response.data.status == "success") {
               this.$emit("responded", response.data);
               this.selected = [];
             }
-            console.log(response.data);
+             
           })
           .catch((error) => {
             this.selected = [];
-            console.log("Error Saving Setting File to Item");
-            console.log(error);
+           
           });
       }
     },
     closeMediaDialog() {
       this.mediaDialog = false;
       this.$emit("responded", false);
+      this.selected = [];
+       this.imageClickActive = false; 
     },
     getUserFiles() {
       if (this.selected.length == 0) {
@@ -257,7 +352,7 @@ export default {
           .then((response) => {
             console.log("Media Files has been loaded");
             this.files = Object.assign({}, response.data.data);
-            // console.log(this.files);
+            
           })
           .catch((error) => {
             console.log("Error Fetching Files in getUserFiles");
