@@ -245,8 +245,8 @@ var slideIndex = 1;
                 .spritespin({
                      
                     source: imagesArray,
-                    // width: 800,
-                    // height: 450,
+                    preloadCount: 4,
+                    loading: true,
                     width: 1366,
                     height: 768,
                      sense: -1,
