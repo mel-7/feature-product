@@ -48,6 +48,27 @@ var slideIndex = 1;
     
   } 
  
+
+  function bootSpriteSpin(selector, options) {
+  if ("IntersectionObserver" in window) {
+    // Browser supports IntersectionObserver so use that to defer the boot
+    let observer = new IntersectionObserver(function(entries, observer) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          observer.unobserve(entry.target);
+          $(entry.target).spritespin(options);
+          console.log("booted", selector, options);
+        }
+      });
+    });
+    observer.observe($(selector)[0]);
+  } else {
+    // Browser does not support IntersectionObserver so boot instantly
+    $(selector).spritespin(options);
+    console.log("booted", selector, options);
+  }
+}
+
   </script>
   <script type="text/javascript">
   var dt = "<?php echo date("dHis") ?>";
@@ -238,14 +259,10 @@ var slideIndex = 1;
 
                 let imagesArray = imgs;   
              
-                function init360(){ 
-                 
-
-                api = $(".spritespin")
-                .spritespin({
-                     
-                    source: imagesArray,
-                    preloadCount: 4,
+                function init360(){  
+                  
+                  bootSpriteSpin(".spritespin", { 
+                    source: imagesArray,  
                     loading: true,
                     width: 1366,
                     height: 768,
@@ -255,7 +272,7 @@ var slideIndex = 1;
                     plugins: [ 
                     "drag", 
                     "360", 
-                    ],
+                    ], 
                     onFrameChanged: function (e, data) { 
 
                         $('#hp-draggable li').hide();
@@ -286,7 +303,7 @@ var slideIndex = 1;
                     onInit: function (e) { 
                       $('#hp-draggable li').hide();
                       
-                       $(".spritespin-wrapper").css({"background-image":'url("'+ base_url + '/storage/uploads/'+data.dataItems[0].user.company_id+'/'+data.dataItems[0].items[0].media_file.path +'")', "background-size": "cover","background-position": "center", "background-repeat": "no-repeat"});
+                     $(".spritespin-wrapper").css({"background-image":'url("'+ base_url + '/storage/uploads/'+data.dataItems[0].user.company_id+'/'+data.dataItems[0].items[0].media_file.path +'")', "background-size": "cover","background-position": "center", "background-repeat": "no-repeat"});
                     },
                     onLoad: function (e, data) {
                       if(conf_hotspots){
@@ -308,8 +325,7 @@ var slideIndex = 1;
                         $(".open-exterior").show();
                         $(".content-action").attr("style","display:flex");
                     },
-                })
-                .spritespin("api");  
+                });
               }
               init360(); 
 
