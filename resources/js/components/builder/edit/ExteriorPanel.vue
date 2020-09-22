@@ -4,7 +4,7 @@
     <!-- <div id="results"></div> -->
     <!-- <div class="col-12 py-0 d-flex justify-space-between align-center"> -->
     <v-toolbar dense class="elevation-1" >
-      <v-toolbar-title>Title: {{products.title}}</v-toolbar-title>
+      <v-toolbar-title>Title: {{productDetails.title}}</v-toolbar-title>
         <v-spacer></v-spacer>
       <v-toolbar-title> Frame: {{currentFrame}}/ {{totalFrame}}</v-toolbar-title>
       <v-spacer></v-spacer>
@@ -146,10 +146,14 @@ import MediaFiles from "../../MediaFiles";
 import UploadZone from "../../UploadZone";
 export default {
   props: {
-    products: {
+    product: {
+      type: String,
+      default: "",
+    }, 
+    productDetails: {
       type: Object,
       default: null,
-    }, 
+    },
     authUser: {
       type: Object,
       default: null,
@@ -167,7 +171,7 @@ export default {
   data() {
     return {
       // UI
-      product : "",
+      
       isItemsLoaded: false, 
       enableButton: [],
       currentFrame:0,
@@ -289,7 +293,7 @@ export default {
     async getHotspotSettings() {
       
       await axios
-        .get("/hotspot/product/" + this.products.id)
+        .get("/hotspot/product/" + this.$route.params.id)
         .then((response) => {
           this.hotspots = response.data.settings;
           this.draggableFunc();
@@ -428,13 +432,13 @@ export default {
       this.tempItemID = id.id;
     },
     async getImagesByProduct() { 
- 
+      
       this.show = false; 
       this.items = [];
       this.options.frames = 0;
       this.options.source = [];
       await axios
-        .get("/items/by-product/" + this.products.id)
+        .get("/items/by-product/" + this.$route.params.id)
         .then((response) => {
           // console.log(response.data.items.length);
           // If no items found
@@ -536,7 +540,9 @@ export default {
   created() {
     this.loadExterior();
   },
-  mounted() {},
+  mounted() {
+     
+  },
 };
 </script>
 
