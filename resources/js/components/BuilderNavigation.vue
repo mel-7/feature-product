@@ -55,10 +55,7 @@
         <template v-slot:activator="{ on }">
           <v-btn text icon v-on="on">
             <v-avatar size="30">
-              <img
-                src="https://w5insight.com/wp-content/uploads/2014/07/placeholder-user-400x400.png"
-                alt="Romel Indemne"
-              />
+              <img :src="`${baseUrl+'/images/placeholder-user.png'}`" :alt="authUser.name" />
             </v-avatar>
           </v-btn>
         </template>
@@ -66,10 +63,7 @@
           <v-list>
             <v-list-item>
               <v-list-item-avatar>
-                <img
-                  src="https://w5insight.com/wp-content/uploads/2014/07/placeholder-user-400x400.png"
-                  alt="Romel Indemne"
-                />
+                <img :src="`${baseUrl+'/images/placeholder-user.png'}`" :alt="authUser.name" />
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title>{{ authUser.name }}</v-list-item-title>
@@ -92,6 +86,7 @@ export default {
   props: ["authUser"],
   data() {
     return {
+      baseUrl: window.location.origin,
       drawer: null,
       menu: false,
       items: [
@@ -105,8 +100,6 @@ export default {
           text: "Products",
           location: "/builder/products",
         },
-        // { icon: "mdi-cloud-upload-outline", text: "Upload Video", location: "/builder/product/upload-video" },
-        // { icon: "mdi-cloud-upload-outline", text: "Upload Video", location: "/builder/product/upload-video" },
       ],
       clientSettings: [
         {
@@ -144,13 +137,6 @@ export default {
       event.preventDefault();
       document.getElementById("logout-form").submit();
     },
-    // drawerToggle() {
-    //   this.mini = !this.mini;
-    //   this.drawer = !this.drawer;
-    // },
-  },
-  mounted() {
-    // console.log("Component mounted.");
   },
 };
 </script>
