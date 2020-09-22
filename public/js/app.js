@@ -3446,6 +3446,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -3491,8 +3495,14 @@ __webpack_require__.r(__webpack_exports__);
     dropzoneTemplate: function dropzoneTemplate() {
       return "<div class=\"dz-preview dz-file-preview d-flex pa-2 blue lighten-5\">\n                <img data-dz-thumbnail />\n                <div class=\"dz-details d-flex align-center justify-start\">\n                  <div class=\"px-1 caption\">\n                    <div class=\"dz-filename\" data-dz-name></div>\n                     <div class=\"dz-size px-1 caption\" data-dz-size></div>\n                    <div class=\"error--text\" data-dz-errormessage></div>\n                  </div>\n                  <div class=\"dz-progress d-flex align-center justify-center caption\">\n                    <span class=\"dz-upload\" data-dz-uploadprogress></span>\n                  </div>\n                </div>\n                <v-spacer></v-spacer>\n                <button\n                  data-dz-remove\n                  type=\"button\"\n                  class=\"ml-auto v-btn v-btn--flat v-btn--icon v-btn--round theme--light v-size--x-small error--text\"\n                >\n                  <span class=\"v-btn__content\">\n                    <i\n                      aria-hidden=\"true\"\n                      class=\"v-icon notranslate mdi mdi-trash-can-outline theme--light\"\n                      style=\"font-size: 12px;\"\n                    ></i>\n                  </span>\n                </button>\n              </div>";
     },
+    fileAdded: function fileAdded(file) {
+      this.preview = false;
+    },
     processing: function processing() {
       this.btnLoading = true;
+    },
+    duplicateFile: function duplicateFile(e) {
+      console.log("Duplicated file will not be inserted in upload queue: " + e.name);
     },
     dropFunction: function dropFunction(e) {
       e.preventDefault();
@@ -30319,17 +30329,21 @@ var render = function() {
             staticClass: "file-upload",
             attrs: {
               id: "dropzone",
+              duplicateCheck: true,
               options: _vm.dropzoneOptions,
               "include-styling": false,
               useCustomSlot: _vm.preview
             },
             on: {
+              "vdropzone-file-added": _vm.fileAdded,
+              "vdropzone-files-added": _vm.fileAdded,
               "vdropzone-sending": _vm.sendingEvent,
               "vdropzone-drop": _vm.dropFunction,
               "vdropzone-success-multiple": _vm.uploadSuccess,
               "vdropzone-removed-file": _vm.removedFile,
               "vdropzone-processing-multiple": _vm.processing,
-              "vdropzone-error-multiple": _vm.uploadError
+              "vdropzone-error-multiple": _vm.uploadError,
+              "vdropzone-duplicate-file": _vm.duplicateFile
             }
           },
           [
@@ -30360,8 +30374,10 @@ var render = function() {
     _vm._v(" "),
     _c(
       "div",
-      { staticClass: "py-3 d-flex align-center" },
+      { staticClass: "pa-3 d-flex align-center" },
       [
+        _c("v-spacer"),
+        _vm._v(" "),
         _c(
           "v-btn",
           {
@@ -30370,24 +30386,6 @@ var render = function() {
           },
           [_vm._v("clear")]
         ),
-        _vm._v(" "),
-        _c("v-spacer"),
-        _vm._v(" "),
-        _c("v-checkbox", {
-          staticClass: "ma-0 caption",
-          attrs: {
-            label: "Apply Watermark",
-            color: "primary",
-            "hide-details": ""
-          },
-          model: {
-            value: _vm.withWatermark,
-            callback: function($$v) {
-              _vm.withWatermark = $$v
-            },
-            expression: "withWatermark"
-          }
-        }),
         _vm._v(" "),
         _c(
           "v-btn",
