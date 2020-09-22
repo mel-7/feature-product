@@ -455,7 +455,7 @@ export default {
             
           if (this.items[0].length !== 0) {
             setTimeout(() => {
-            this.selected(0, this.items[0]);
+            
            }, 3000);
           }
 
