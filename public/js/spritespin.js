@@ -340,11 +340,17 @@ function preload(opts) {
             total: src.length,
             percent: Math.round((count / src.length) * 100)
         });
+
         firstLoaded = firstLoaded || (this === images[0]);
         if (firstLoaded && !completed && (count >= targetCount)) {
-            completed = true;
+            completed = true; 
             onComplete(images);
-        }
+        } 
+        setTimeout(()=>{
+            if(count >= src.length){
+                onComplete(images);
+            }
+        }, 2000);
     };
     for (var _i = 0, src_1 = src; _i < src_1.length; _i++) {
         var url = src_1[_i];
@@ -356,6 +362,7 @@ function preload(opts) {
         // begin load
         img.src = url;
     }
+     
     onInitiated(images);
 }
 
