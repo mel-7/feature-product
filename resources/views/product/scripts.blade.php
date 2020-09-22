@@ -213,7 +213,7 @@ var slideIndex = 1;
                     responsive: false,
                     animate: false,  
                     detectSubsampling : true,         
-                    preloadCount: 2,
+                    preloadCount: 6,
                     plugins: [ 
                     "drag", 
                     "360", 
