@@ -250,8 +250,7 @@ var slideIndex = 1;
                     framesX: 4,
                     frames: imgCnt,
                     detectSubsampling : true,         
-                    frame: 0,
-                    preloadCount: 5,
+                    frame: 0, 
                     plugins: [ 
                     "drag", 
                     "360", 
