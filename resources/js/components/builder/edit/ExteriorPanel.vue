@@ -261,20 +261,16 @@ export default {
         return el != null;
       });
 
-      tempHotspots = JSON.stringify(filtered);
-
-      console.log(tempHotspots);
-    },
-    closeHotspot() {
-      //console.log("close hotspot");
-    },
+      tempHotspots = JSON.stringify(filtered); 
+      
+    }, 
     applyHotspot() {
       // Get the selected item_id
       // Get the hotspot hotspot_id
       let data = {
         hotspot_settings: tempHotspots,
       };
-      // console.log(data);
+     
       axios
         .post("/hotspot/apply", data)
         .then((response) => {
@@ -288,7 +284,7 @@ export default {
         });
     },
     async getHotspotSettings() {
-      console.log("getHotspotSettings");
+      
       await axios
         .get("/hotspot/product/" + this.product)
         .then((response) => {
@@ -305,8 +301,12 @@ export default {
       if (res.status == "error") {
         return;
       }
+     
       this.mediaFilesSettings.dialogStatus = false;
-      this.getImagesByProduct();
+
+      if(res != false){
+         this.loadExterior();
+      } 
     },
     editItem(item) {
       // Toggle Dialog
@@ -327,7 +327,7 @@ export default {
           this.dialogLoading = false;
           this.actionDialog = false;
 
-          this.getImagesByProduct();
+          this.loadExterior();
         })
         .catch((error) => {
           this.dialogLoading = false;
@@ -349,7 +349,7 @@ export default {
       }
     },
     selected(index, id = []) {
-      console.log("selected");
+   
       allHps = this.hotspots;
       $(".draggable-hotspot").css({
         left: "5%",
@@ -425,7 +425,7 @@ export default {
       this.tempItemID = id.id;
     },
     async getImagesByProduct() {
-      console.log("getImagesByProduct");
+      
       this.show = false;
       this.items = [];
       this.options.frames = 0;

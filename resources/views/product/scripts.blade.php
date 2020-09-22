@@ -46,29 +46,8 @@ var slideIndex = 1;
      
     slides[slideIndex-1].style.display = "block"; 
     
-  } 
+  }  
  
-
-  function bootSpriteSpin(selector, options) {
-  if ("IntersectionObserver" in window) {
-    // Browser supports IntersectionObserver so use that to defer the boot
-    let observer = new IntersectionObserver(function(entries, observer) {
-      entries.forEach(function(entry) {
-        if (entry.isIntersecting) {
-          observer.unobserve(entry.target);
-          $(entry.target).spritespin(options);
-          console.log("booted", selector, options);
-        }
-      });
-    });
-    observer.observe($(selector)[0]);
-  } else {
-    // Browser does not support IntersectionObserver so boot instantly
-    $(selector).spritespin(options);
-    console.log("booted", selector, options);
-  }
-}
-
   </script>
   <script type="text/javascript">
   var dt = "<?php echo date("dHis") ?>";
@@ -258,20 +237,21 @@ var slideIndex = 1;
                 let imgCnt = imagesArray.length;
                
                 function init360(){  
-                  
-                  bootSpriteSpin(".spritespin", { 
+                   
+                  api = $(".spritespin").spritespin({
                     source: imagesArray,  
-                    loading: true,
+                    loading: false,
                     width: 1366,
                     height: 768, 
                      sense: -1,
-                     renderer: "image",
-                    responsive: true,
+                     renderer: "canvas",
+                    responsive: false,
                     animate: false,  
                     framesX: 4,
                     frames: imgCnt,
                     detectSubsampling : true,         
                     frame: 0,
+                    preloadCount: 5,
                     plugins: [ 
                     "drag", 
                     "360", 
@@ -332,7 +312,7 @@ var slideIndex = 1;
                       $(".center-con").show();
                       $(".icon-360").show();
                     }
-                });
+                }).spritespin("api");  
                 
               }
               init360(); 
