@@ -146,10 +146,10 @@ import MediaFiles from "../../MediaFiles";
 import UploadZone from "../../UploadZone";
 export default {
   props: {
-    product: {
-      type: Object,
-      default: null,
-    },
+    products: {
+      type: Array,
+      default: [],
+    }, 
     authUser: {
       type: Object,
       default: null,
@@ -167,8 +167,8 @@ export default {
   data() {
     return {
       // UI
-      isItemsLoaded: false,
-
+      product : "",
+      isItemsLoaded: false, 
       enableButton: [],
       currentFrame: 1,
       totalFrame: 0,
@@ -428,8 +428,12 @@ export default {
       this.tempItemID = id.id;
     },
     async getImagesByProduct() {
-      
-      this.show = false;
+       this.products.map((productItems) => {
+        if(productItems.id == this.$route.params.id){
+           this.product = productItems;
+        }
+      });
+      this.show = false; 
       this.items = [];
       this.options.frames = 0;
       this.options.source = [];

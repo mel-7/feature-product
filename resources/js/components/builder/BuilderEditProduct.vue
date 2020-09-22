@@ -38,7 +38,7 @@
       <div class="col-12 col-md-9" v-if="activateExterior == true" cols="9">
         <exterior-panel
           :auth-user="authUser"
-          :product="product"
+          :products="products"
           :selected-hotspot-prop="selected_hotspot_prop"
           @selectedItem="theSelectedItem"
         />
@@ -68,8 +68,8 @@ export default {
       type: Object,
       default: null,
     },
-    product: {
-      type: Object,
+    products: {
+      type: Array,
       default: [],
     },
   },
@@ -96,10 +96,13 @@ export default {
     };
   },
   methods: {
-    setPreviewUrl() {  
-        
-      this.previewUrl = this.baseUrl+'/product/'+this.product.slug; 
-      
+    setPreviewUrl() {
+
+      this.products.map((product) => {
+        if(product.id == this.$route.params.id){
+            this.previewUrl = this.baseUrl+'/product/'+product.slug;
+        }
+      });
     },
     theSelectedItem(v) {
       this.selected_item = v;
