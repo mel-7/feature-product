@@ -240,7 +240,7 @@ export default {
       axios
         .post("/hotspot/setting/delete", data)
         .then((response) => {
-          console.log(response);
+          //console.log(response);
           $("#"+spotId).css({'left':'5%',"top": "5%"});
           // remove the hotspot from 360
           //   this.getHotspotSettings();
@@ -259,7 +259,7 @@ export default {
       let data = {
         hotspot_settings: tempHotspots,
       };
-      console.log(data);
+      //console.log(data);
       axios
         .post("/hotspot/apply", data)
         .then((response) => {

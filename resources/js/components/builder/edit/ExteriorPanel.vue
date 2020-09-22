@@ -4,7 +4,7 @@
     <!-- <div id="results"></div> -->
     <!-- <div class="col-12 py-0 d-flex justify-space-between align-center"> -->
     <v-toolbar dense class="elevation-1" >
-      <v-toolbar-title>Title: {{product.title}}</v-toolbar-title>
+      <v-toolbar-title>Title: {{products.title}}</v-toolbar-title>
         <v-spacer></v-spacer>
       <v-toolbar-title> Frame: {{currentFrame}}/ {{totalFrame}}</v-toolbar-title>
       <v-spacer></v-spacer>
@@ -147,8 +147,8 @@ import UploadZone from "../../UploadZone";
 export default {
   props: {
     products: {
-      type: Array,
-      default: [],
+      type: Object,
+      default: null,
     }, 
     authUser: {
       type: Object,
@@ -170,7 +170,7 @@ export default {
       product : "",
       isItemsLoaded: false, 
       enableButton: [],
-      currentFrame: 1,
+      currentFrame:0,
       totalFrame: 0,
       settingsInCurrentScene: [],
 
@@ -289,7 +289,7 @@ export default {
     async getHotspotSettings() {
       
       await axios
-        .get("/hotspot/product/" + this.product.id)
+        .get("/hotspot/product/" + this.products.id)
         .then((response) => {
           this.hotspots = response.data.settings;
           this.draggableFunc();
@@ -427,18 +427,14 @@ export default {
       this.$emit("selectedItem", id.id);
       this.tempItemID = id.id;
     },
-    async getImagesByProduct() {
-       this.products.map((productItems) => {
-        if(productItems.id == this.$route.params.id){
-           this.product = productItems;
-        }
-      });
+    async getImagesByProduct() { 
+ 
       this.show = false; 
       this.items = [];
       this.options.frames = 0;
       this.options.source = [];
       await axios
-        .get("/items/by-product/" + this.product.id)
+        .get("/items/by-product/" + this.products.id)
         .then((response) => {
           // console.log(response.data.items.length);
           // If no items found
@@ -510,7 +506,7 @@ export default {
               hotspotSettings: hpSettings,
             };
 
-            console.log(allHps);
+           // console.log(allHps);
 
             var filtered = temp_hotspots.filter(function (el) {
               return el != null;
@@ -518,7 +514,7 @@ export default {
 
             tempHotspots = JSON.stringify(filtered);
 
-            console.log(tempHotspots);
+           // console.log(tempHotspots);
           },
         });
         // this.toSetHotspot = hotspotObject;

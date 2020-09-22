@@ -173,7 +173,7 @@ export default {
         name: this.name,
         phone: this.phone,
       };
-      console.log(data);
+     // console.log(data);
       this.postFunction(data, "/settings/account/update");
        
     },

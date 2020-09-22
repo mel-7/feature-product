@@ -31,6 +31,7 @@ Route::get('/builder/product/edit/{id}', 'BuilderController@edit')->name('builde
 Route::get('/builder/products', 'BuilderController@index')->name('builder.products');
 
 Route::get('/builder/products/all', 'ProductsController@productsAPI')->name('builder.all.products');
+Route::get('/builder/products/fetch/{id}', 'ProductsController@fetch')->name('builder.fetch.product');
 Route::post('/builder/product/store', 'ProductsController@store')->name('builder.store.product');
 // Route::get('/builder/scenes/scenes', 'ProductsController@scenesByProductId')->name('builder.scenes.by.product.id');
 Route::get('/builder/product/upload-video', 'BuilderController@index')->name('builder.upload.video');

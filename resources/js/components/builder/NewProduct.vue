@@ -37,13 +37,15 @@ export default {
         title: this.title,
         slug: slugify(this.title),
       };
-      console.log(data);
+      
       axios
         .post("/builder/product/store", data)
         .then((response) => {
           //   console.log(response.data.product);
           this.valid = true;
           this.$router.push("/builder/product/edit/" + response.data.product);
+          
+         //  window.location = "/builder/product/edit/" + response.data.product;
         })
         .catch((error) => {
           console.log("invalid");

@@ -144,7 +144,7 @@ export default {
         .then((response) => {
           this.deleteDialog = false;
           this.id = null;
-          console.log("delete success");
+         // console.log("delete success");
           this.fetchAllVideos();
         })
         .catch((error) => {

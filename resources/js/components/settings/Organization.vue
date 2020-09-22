@@ -108,7 +108,7 @@ export default {
         .post("/settings/organization/update", data)
         .then((response) => {
         //   this.fetchOrg();
-          console.log(response.data);
+         // console.log(response.data);
         })
         .catch((error) => {
           console.log("Error Fetching Organization");

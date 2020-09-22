@@ -3575,10 +3575,18 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _edit_Hotspots__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./edit/Hotspots */ "./resources/js/components/builder/edit/Hotspots.vue");
-/* harmony import */ var _edit_ExteriorPanel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./edit/ExteriorPanel */ "./resources/js/components/builder/edit/ExteriorPanel.vue");
-/* harmony import */ var _edit_InteriorPanel__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./edit/InteriorPanel */ "./resources/js/components/builder/edit/InteriorPanel.vue");
-/* harmony import */ var _edit_VideoPanel__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./edit/VideoPanel */ "./resources/js/components/builder/edit/VideoPanel.vue");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _edit_Hotspots__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./edit/Hotspots */ "./resources/js/components/builder/edit/Hotspots.vue");
+/* harmony import */ var _edit_ExteriorPanel__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./edit/ExteriorPanel */ "./resources/js/components/builder/edit/ExteriorPanel.vue");
+/* harmony import */ var _edit_InteriorPanel__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./edit/InteriorPanel */ "./resources/js/components/builder/edit/InteriorPanel.vue");
+/* harmony import */ var _edit_VideoPanel__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./edit/VideoPanel */ "./resources/js/components/builder/edit/VideoPanel.vue");
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 //
 //
 //
@@ -3647,17 +3655,13 @@ __webpack_require__.r(__webpack_exports__);
     authUser: {
       type: Object,
       "default": null
-    },
-    products: {
-      type: Array,
-      "default": []
     }
   },
   components: {
-    Hotspots: _edit_Hotspots__WEBPACK_IMPORTED_MODULE_0__["default"],
-    ExteriorPanel: _edit_ExteriorPanel__WEBPACK_IMPORTED_MODULE_1__["default"],
-    InteriorPanel: _edit_InteriorPanel__WEBPACK_IMPORTED_MODULE_2__["default"],
-    VideoPanel: _edit_VideoPanel__WEBPACK_IMPORTED_MODULE_3__["default"]
+    Hotspots: _edit_Hotspots__WEBPACK_IMPORTED_MODULE_1__["default"],
+    ExteriorPanel: _edit_ExteriorPanel__WEBPACK_IMPORTED_MODULE_2__["default"],
+    InteriorPanel: _edit_InteriorPanel__WEBPACK_IMPORTED_MODULE_3__["default"],
+    VideoPanel: _edit_VideoPanel__WEBPACK_IMPORTED_MODULE_4__["default"]
   },
   data: function data() {
     return {
@@ -3665,6 +3669,7 @@ __webpack_require__.r(__webpack_exports__);
       activateExterior: true,
       activateInterior: false,
       activateVideo: false,
+      products: {},
       selected_item: null,
       selected_hotspot_prop: null,
       selected_interior_hotspot_prop: null,
@@ -3673,14 +3678,36 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
-    setPreviewUrl: function setPreviewUrl() {
+    fetchCurrentProduct: function fetchCurrentProduct() {
       var _this = this;
 
-      this.products.map(function (product) {
-        if (product.id == _this.$route.params.id) {
-          _this.previewUrl = _this.baseUrl + '/product/' + product.slug;
-        }
-      });
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var cc;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return axios.get("/builder/products/fetch/" + _this.$route.params.id).then(function (response) {
+                  _this.products = response.data;
+                })["catch"](function (error) {
+                  console.log("Error fetching items");
+                  console.log(error);
+                });
+
+              case 2:
+                _this.setPreviewUrl();
+
+              case 3:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
+    },
+    setPreviewUrl: function setPreviewUrl() {
+      this.previewUrl = this.baseUrl + '/product/' + this.products.slug;
     },
     theSelectedItem: function theSelectedItem(v) {
       this.selected_item = v;
@@ -3718,7 +3745,7 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   created: function created() {
-    this.setPreviewUrl();
+    this.fetchCurrentProduct();
   }
 });
 
@@ -3857,8 +3884,7 @@ __webpack_require__.r(__webpack_exports__);
       theCode.select();
       document.execCommand("copy");
     },
-    actionFn: function actionFn(i) {
-      console.log(i);
+    actionFn: function actionFn(i) {//console.log(i);
     },
     editProduct: function editProduct(i) {
       this.$router.push("/builder/product/edit/" + i);
@@ -3951,12 +3977,12 @@ __webpack_require__.r(__webpack_exports__);
         title: this.title,
         slug: slugify(this.title)
       };
-      console.log(data);
       axios.post("/builder/product/store", data).then(function (response) {
         //   console.log(response.data.product);
         _this.valid = true;
 
-        _this.$router.push("/builder/product/edit/" + response.data.product);
+        _this.$router.push("/builder/product/edit/" + response.data.product); //  window.location = "/builder/product/edit/" + response.data.product;
+
       })["catch"](function (error) {
         console.log("invalid");
         console.log(error.response); //   if (error.response.status == 403) {
@@ -4056,19 +4082,16 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     load360: function load360() {
-      var _this = this;
-
       axios.get("/files/fetch").then(function (response) {
         response.data.map(function (file) {
           this.options.source.push("http://127.0.0.1:8000/display/file/" + file.path);
-        });
-        console.log(_this.options);
+        }); //console.log(this.options);
       })["catch"](function (error) {
         console.log(error.response);
       });
     },
     uploadVideo: function uploadVideo() {
-      var _this2 = this;
+      var _this = this;
 
       this.loading = true;
       console.log(this.video);
@@ -4082,10 +4105,10 @@ __webpack_require__.r(__webpack_exports__);
           "Content-Type": "multipart/form-data"
         }
       }).then(function (response) {
-        _this2.loading = false;
-        console.log(response); // this.load360();
+        _this.loading = false; //console.log(response);
+        // this.load360();
       })["catch"](function (error) {
-        _this2.loading = false;
+        _this.loading = false;
         console.log(error.response);
       });
     }
@@ -4177,8 +4200,8 @@ __webpack_require__.r(__webpack_exports__);
         title: this.title,
         type: this.sceneType,
         product: this.productId
-      };
-      console.log(data);
+      }; //console.log(data);
+
       axios.post("/builder/scene/store", data).then(function (response) {
         _this.$emit("close", false);
 
@@ -4365,8 +4388,8 @@ var allHps = [];
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     products: {
-      type: Array,
-      "default": []
+      type: Object,
+      "default": null
     },
     authUser: {
       type: Object,
@@ -4388,7 +4411,7 @@ var allHps = [];
       product: "",
       isItemsLoaded: false,
       enableButton: [],
-      currentFrame: 1,
+      currentFrame: 0,
       totalFrame: 0,
       settingsInCurrentScene: [],
       // Fetched Hotspot Settings
@@ -4506,7 +4529,7 @@ var allHps = [];
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return axios.get("/hotspot/product/" + _this2.product.id).then(function (response) {
+                return axios.get("/hotspot/product/" + _this2.products.id).then(function (response) {
                   _this2.hotspots = response.data.settings;
 
                   _this2.draggableFunc();
@@ -4656,18 +4679,12 @@ var allHps = [];
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _this4.products.map(function (productItems) {
-                  if (productItems.id == _this4.$route.params.id) {
-                    _this4.product = productItems;
-                  }
-                });
-
                 _this4.show = false;
                 _this4.items = [];
                 _this4.options.frames = 0;
                 _this4.options.source = [];
-                _context2.next = 7;
-                return axios.get("/items/by-product/" + _this4.product.id).then(function (response) {
+                _context2.next = 6;
+                return axios.get("/items/by-product/" + _this4.products.id).then(function (response) {
                   // console.log(response.data.items.length);
                   // If no items found
                   if (response.data.items.length == 0) {
@@ -4692,7 +4709,7 @@ var allHps = [];
                   console.log(error);
                 });
 
-              case 7:
+              case 6:
               case "end":
                 return _context2.stop();
             }
@@ -4734,13 +4751,12 @@ var allHps = [];
               hotspotsID: hpsId,
               itemID: ieID,
               hotspotSettings: hpSettings
-            };
-            console.log(allHps);
+            }; // console.log(allHps);
+
             var filtered = temp_hotspots.filter(function (el) {
               return el != null;
             });
-            tempHotspots = JSON.stringify(filtered);
-            console.log(tempHotspots);
+            tempHotspots = JSON.stringify(filtered); // console.log(tempHotspots);
           }
         }); // this.toSetHotspot = hotspotObject;
       });
@@ -5065,9 +5081,9 @@ __webpack_require__.r(__webpack_exports__);
         product_id: this.product,
         content: JSON.stringify(c)
       }).then(function (response) {
-        _this3.getAllHotspots();
+        _this3.getAllHotspots(); //console.log(response);
 
-        console.log(response);
+
         _this3.editDialog = false;
       })["catch"](function (error) {
         // this.editDialog = false;
@@ -5112,13 +5128,11 @@ __webpack_require__.r(__webpack_exports__);
             item_id: this.selectedItem,
             hotspot_settings: '{"top":"5%","left":"5%","display":"block"}'
           }],
-          title: h.title // hotspotObjectToEmit: h,
-
-        }; // console.log(this.selectedItem);
+          title: h.title
+        };
 
         if (this.selectedItem.length != 0) {
           if ($("div").hasClass("hotspot-id-" + h.id)) {
-            console.log("fffuuuuu" + h.id);
             $(".hotspot-id-" + h.id).css({
               left: "5%",
               top: "5%",
@@ -5303,7 +5317,7 @@ var toSaveHotspot = [];
   },
   watch: {
     selectedInteriorHotspot: function selectedInteriorHotspot(v) {
-      console.log(v);
+      // console.log(v);
       this.addHotspot(v);
     }
   },
@@ -5396,8 +5410,7 @@ var toSaveHotspot = [];
           toSaveHotspot[id]["itemID"] = selectedItem;
           toSaveHotspot[id]["hotspotSettings"] = settingsToString; // push to global variable
           // console.log(p.mouseEventToCoords(e));
-
-          console.log(toSaveHotspot);
+          //console.log(toSaveHotspot);
         });
       }, 500);
     },
@@ -5416,8 +5429,7 @@ var toSaveHotspot = [];
         _this2.getScenes();
 
         _this2.deleteDialog = false;
-        _this2.selectedItem = [];
-        console.log(response);
+        _this2.selectedItem = []; //console.log(response);
       })["catch"](function (error) {
         console.log("Error: " + error);
         console.log(_this2.scenes);
@@ -5656,8 +5668,7 @@ __webpack_require__.r(__webpack_exports__);
 
       axios.post("/video/delete/" + this.id).then(function (response) {
         _this.deleteDialog = false;
-        _this.id = null;
-        console.log("delete success");
+        _this.id = null; // console.log("delete success");
 
         _this.fetchAllVideos();
       })["catch"](function (error) {
@@ -5895,8 +5906,8 @@ __webpack_require__.r(__webpack_exports__);
       var data = {
         name: this.name,
         phone: this.phone
-      };
-      console.log(data);
+      }; // console.log(data);
+
       this.postFunction(data, "/settings/account/update");
     },
     fetchAccount: function fetchAccount() {
@@ -6051,9 +6062,8 @@ __webpack_require__.r(__webpack_exports__);
         title: this.title,
         description: this.description
       };
-      axios.post("/settings/organization/update", data).then(function (response) {
-        //   this.fetchOrg();
-        console.log(response.data);
+      axios.post("/settings/organization/update", data).then(function (response) {//   this.fetchOrg();
+        // console.log(response.data);
       })["catch"](function (error) {
         console.log("Error Fetching Organization");
         console.log(error);
@@ -6216,7 +6226,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     printRole: function printRole(role) {
-      console.log(role);
+      //console.log(role);
       var roleLabel = "";
 
       if (role == 1) {
@@ -31358,7 +31368,7 @@ var render = function() {
         { staticClass: "elevation-1", attrs: { dense: "" } },
         [
           _c("v-toolbar-title", [
-            _vm._v("Title: " + _vm._s(_vm.product.title))
+            _vm._v("Title: " + _vm._s(_vm.products.title))
           ]),
           _vm._v(" "),
           _c("v-spacer"),
