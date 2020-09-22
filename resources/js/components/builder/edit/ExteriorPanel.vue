@@ -19,7 +19,7 @@
           v-show="uploader == true"
           :add-items="true"
           :item-type="'360'"
-          @uploaded="getImagesByProduct"
+          @uploaded="loadExterior"
         ></upload-zone>
         <div class="spritespin-wrapper" v-show="uploader == false">
           <spritespin
@@ -243,7 +243,7 @@ export default {
     removeHotspotSettings(spotId) {
       let refId = spotId;
 
-    //   $("#" + spotId).css({ display: "none" });
+      //   $("#" + spotId).css({ display: "none" });
       $(".hotspot-id-" + spotId).css({ display: "none" });
       $(".hp-" + spotId).show();
 
@@ -516,18 +516,21 @@ export default {
         // this.toSetHotspot = hotspotObject;
       });
     },
+    loadExterior() {
+      // Get the items first
+      this.getImagesByProduct().then(() => {
+        // Get the hotspot settings
+        this.getHotspotSettings().then(() => {
+          // show spritespin/360
+          this.show = true;
+          // Select the first item
+          this.selected(0, this.items[0]);
+        });
+      });
+    },
   },
   created() {
-    // Get the items first
-    this.getImagesByProduct().then(() => {
-      // Get the hotspot settings
-      this.getHotspotSettings().then(() => {
-        // show spritespin/360
-        this.show = true;
-        // Select the first item
-        this.selected(0, this.items[0]);
-      });
-    });
+    this.loadExterior();
   },
   mounted() {},
 };

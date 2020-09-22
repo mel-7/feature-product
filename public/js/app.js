@@ -4740,21 +4740,24 @@ var allHps = [];
           }
         }); // this.toSetHotspot = hotspotObject;
       });
+    },
+    loadExterior: function loadExterior() {
+      var _this5 = this;
+
+      // Get the items first
+      this.getImagesByProduct().then(function () {
+        // Get the hotspot settings
+        _this5.getHotspotSettings().then(function () {
+          // show spritespin/360
+          _this5.show = true; // Select the first item
+
+          _this5.selected(0, _this5.items[0]);
+        });
+      });
     }
   },
   created: function created() {
-    var _this5 = this;
-
-    // Get the items first
-    this.getImagesByProduct().then(function () {
-      // Get the hotspot settings
-      _this5.getHotspotSettings().then(function () {
-        // show spritespin/360
-        _this5.show = true; // Select the first item
-
-        _this5.selected(0, _this5.items[0]);
-      });
-    });
+    this.loadExterior();
   },
   mounted: function mounted() {}
 });
@@ -31413,7 +31416,7 @@ var render = function() {
                 }
               ],
               attrs: { "add-items": true, "item-type": "360" },
-              on: { uploaded: _vm.getImagesByProduct }
+              on: { uploaded: _vm.loadExterior }
             }),
             _vm._v(" "),
             _c(
@@ -95023,8 +95026,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
