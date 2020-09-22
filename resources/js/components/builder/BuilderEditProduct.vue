@@ -38,7 +38,8 @@
       <div class="col-12 col-md-9" v-if="activateExterior == true" cols="9">
         <exterior-panel
           :auth-user="authUser"
-          :products="products"
+          :product="this.$route.params.id"
+          :product-details="product"
           :selected-hotspot-prop="selected_hotspot_prop"
           @selectedItem="theSelectedItem"
         />
@@ -81,7 +82,7 @@ export default {
       activateExterior: true,
       activateInterior: false,
       activateVideo: false,
-      products: {},
+      product: {},
       selected_item: null,
       selected_hotspot_prop: null,
 
@@ -92,24 +93,25 @@ export default {
     };
   },
   methods: {
-   async fetchCurrentProduct(){
-      let cc;
-     await axios
+    async fetchCurrentProduct(){
+     
+      await axios
         .get("/builder/products/fetch/" + this.$route.params.id)
         .then((response) => {
            
-            this.products = response.data; 
+            this.product = response.data; 
+           
         })
         .catch((error) => {
           console.log("Error fetching items");
           console.log(error);
         });  
-
+         
          this.setPreviewUrl();
     },
     setPreviewUrl() { 
       
-      this.previewUrl = this.baseUrl+'/product/'+this.products.slug;
+      this.previewUrl = this.baseUrl+'/product/'+this.product.slug;
         
       
     },

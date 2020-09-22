@@ -3646,6 +3646,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
 
 
 
@@ -3669,7 +3670,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       activateExterior: true,
       activateInterior: false,
       activateVideo: false,
-      products: {},
+      product: {},
       selected_item: null,
       selected_hotspot_prop: null,
       selected_interior_hotspot_prop: null,
@@ -3682,14 +3683,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var cc;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
                 return axios.get("/builder/products/fetch/" + _this.$route.params.id).then(function (response) {
-                  _this.products = response.data;
+                  _this.product = response.data;
                 })["catch"](function (error) {
                   console.log("Error fetching items");
                   console.log(error);
@@ -3707,7 +3707,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     setPreviewUrl: function setPreviewUrl() {
-      this.previewUrl = this.baseUrl + '/product/' + this.products.slug;
+      this.previewUrl = this.baseUrl + '/product/' + this.product.slug;
     },
     theSelectedItem: function theSelectedItem(v) {
       this.selected_item = v;
@@ -4387,7 +4387,11 @@ var allHps = [];
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
-    products: {
+    product: {
+      type: String,
+      "default": ""
+    },
+    productDetails: {
       type: Object,
       "default": null
     },
@@ -4408,7 +4412,6 @@ var allHps = [];
   data: function data() {
     return {
       // UI
-      product: "",
       isItemsLoaded: false,
       enableButton: [],
       currentFrame: 0,
@@ -4529,7 +4532,7 @@ var allHps = [];
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return axios.get("/hotspot/product/" + _this2.products.id).then(function (response) {
+                return axios.get("/hotspot/product/" + _this2.$route.params.id).then(function (response) {
                   _this2.hotspots = response.data.settings;
 
                   _this2.draggableFunc();
@@ -4684,7 +4687,7 @@ var allHps = [];
                 _this4.options.frames = 0;
                 _this4.options.source = [];
                 _context2.next = 6;
-                return axios.get("/items/by-product/" + _this4.products.id).then(function (response) {
+                return axios.get("/items/by-product/" + _this4.$route.params.id).then(function (response) {
                   // console.log(response.data.items.length);
                   // If no items found
                   if (response.data.items.length == 0) {
@@ -30571,7 +30574,8 @@ var render = function() {
                 _c("exterior-panel", {
                   attrs: {
                     "auth-user": _vm.authUser,
-                    products: _vm.products,
+                    product: this.$route.params.id,
+                    "product-details": _vm.product,
                     "selected-hotspot-prop": _vm.selected_hotspot_prop
                   },
                   on: { selectedItem: _vm.theSelectedItem }
@@ -31368,7 +31372,7 @@ var render = function() {
         { staticClass: "elevation-1", attrs: { dense: "" } },
         [
           _c("v-toolbar-title", [
-            _vm._v("Title: " + _vm._s(_vm.products.title))
+            _vm._v("Title: " + _vm._s(_vm.productDetails.title))
           ]),
           _vm._v(" "),
           _c("v-spacer"),
