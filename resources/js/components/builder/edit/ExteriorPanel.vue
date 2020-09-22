@@ -3,8 +3,10 @@
     <input type="hidden" id="cur-frame" />
     <!-- <div id="results"></div> -->
     <!-- <div class="col-12 py-0 d-flex justify-space-between align-center"> -->
-    <v-toolbar dense class="elevation-1">
-      <v-toolbar-title>Product ID: {{product}}</v-toolbar-title>
+    <v-toolbar dense class="elevation-1" >
+      <v-toolbar-title>Title: {{product.title}}</v-toolbar-title>
+        <v-spacer></v-spacer>
+      <v-toolbar-title> Frame: {{currentFrame}}/ {{totalFrame}}</v-toolbar-title>
       <v-spacer></v-spacer>
       <div v-show="hotspots.length != 0">
         <v-btn color="primary" small @click="applyHotspot">
@@ -145,8 +147,8 @@ import UploadZone from "../../UploadZone";
 export default {
   props: {
     product: {
-      type: String,
-      default: "",
+      type: Object,
+      default: null,
     },
     authUser: {
       type: Object,
@@ -168,7 +170,8 @@ export default {
       isItemsLoaded: false,
 
       enableButton: [],
-
+      currentFrame: 1,
+      totalFrame: 0,
       settingsInCurrentScene: [],
 
       // Fetched Hotspot Settings
@@ -286,7 +289,7 @@ export default {
     async getHotspotSettings() {
       
       await axios
-        .get("/hotspot/product/" + this.product)
+        .get("/hotspot/product/" + this.product.id)
         .then((response) => {
           this.hotspots = response.data.settings;
           this.draggableFunc();
@@ -343,8 +346,8 @@ export default {
         let targetFrame = this.$refs.spritespin.data.frame;
         let targetItem = $(".target-frame-" + targetFrame).data("targetid");
         // targetItem = JSON.parse(targetItem);
-        // console.log("frame: "+ targetFrame);
-        // console.log("item: "+ targetItem);
+        this.currentFrame = targetFrame+1;
+         
         this.selected(targetFrame, targetItem);
       }
     },
@@ -431,7 +434,7 @@ export default {
       this.options.frames = 0;
       this.options.source = [];
       await axios
-        .get("/items/by-product/" + this.product)
+        .get("/items/by-product/" + this.product.id)
         .then((response) => {
           // console.log(response.data.items.length);
           // If no items found
@@ -448,6 +451,7 @@ export default {
           this.items = response.data.items;
           this.isItemsLoaded = true;
 
+          this.totalFrame = response.data.items.length;
           // Setup 360
           this.options.frames = response.data.items.length;
           this.options.source = response.data.items.map(
