@@ -13,13 +13,16 @@
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    {{-- <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet"> --}}
 
+    <link rel="icon" href="{{asset('images/spinner-fav.png')}}" sizes="32x32">
     <!-- Styles -->
     {{-- <link href="{{ asset('css/pannellum.css') }}" rel="stylesheet"> --}}
+    <link href="{{ asset('css/jquery-ui-1.12.1.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <script> var tempHotspots = [];</script>
+    <script>
+        var tempHotspots = [];
+    </script>
 </head>
 
 <body>
@@ -33,13 +36,15 @@
         </v-app>
     </div>
     <!-- Scripts -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> --}}
+    {{-- <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> --}}
     {{-- <script src="https://unpkg.com/spritespin@4.0.11/release/spritespin.js"></script> --}}
     {{-- <script src="https://unpkg.com/spritespin@4.1.0/release/spritespin.js"></script> --}}
     {{-- <script src="https://unpkg.com/spritespin@x.x.x/release/spritespin.js"></script> --}}
-    
+
     {{-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script> --}}
+    <script src="{{ asset('js/jquery-3.5.1.min.js') }}"></script>
+    <script src="{{ asset('js/jquery-ui-1.12.1.min.js') }}"></script>
     <script src="{{ asset('js/libpannellum.js') }}"></script>
     <script src="{{ asset('js/pannellum.js') }}"></script>
     <script src="{{ asset('js/sp.js') }}"></script>

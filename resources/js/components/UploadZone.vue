@@ -5,13 +5,17 @@
         class="file-upload"
         ref="myVueDropzone"
         id="dropzone"
+        :duplicateCheck="true"
         :options="dropzoneOptions"
+        v-on:vdropzone-file-added="fileAdded"
+        v-on:vdropzone-files-added="fileAdded"
         v-on:vdropzone-sending="sendingEvent"
         v-on:vdropzone-drop="dropFunction"
         v-on:vdropzone-success-multiple="uploadSuccess"
         v-on:vdropzone-removed-file="removedFile"
         v-on:vdropzone-processing-multiple="processing"
         v-on:vdropzone-error-multiple="uploadError"
+        v-on:vdropzone-duplicate-file="duplicateFile"
         :include-styling="false"
         :useCustomSlot="preview"
       >
@@ -21,10 +25,10 @@
         </div>
       </vue-dropzone>
     </div>
-    <div class="py-3 d-flex align-center">
-      <v-btn color="grey" text @click="removeAllFiles">clear</v-btn>
+    <div class="pa-3 d-flex align-center">
       <v-spacer></v-spacer>
-      <v-checkbox class="ma-0 caption" v-model="withWatermark" label="Apply Watermark" color="primary" hide-details></v-checkbox>
+      <v-btn color="grey" text @click="removeAllFiles">clear</v-btn>
+      <!-- <v-checkbox class="ma-0 caption" v-model="withWatermark" label="Apply Watermark" color="primary" hide-details></v-checkbox> -->
       <v-btn class="ml-3" color="primary" :loading="btnLoading" @click="upload">Upload</v-btn>
     </div>
   </div>
@@ -105,8 +109,14 @@ export default {
                 </button>
               </div>`;
     },
+    fileAdded(file){
+      this.preview = false;
+    },
     processing() {
       this.btnLoading = true;
+    },
+    duplicateFile(e){
+      console.log("Duplicated file will not be inserted in upload queue: "+ e.name);
     },
     dropFunction(e) {
       e.preventDefault();
