@@ -202,17 +202,18 @@ var slideIndex = 1;
                    
                   api = $(".spritespin").spritespin({
                     source: imagesArray,  
+                    frame: 0, 
+                    frames: imgCnt,
+                    framesX: 4,
                     loading: false,
                     width: 1366,
                     height: 768, 
-                     sense: -1,
-                     renderer: "canvas",
+                    sense: -1,
+                    renderer: "canvas",
                     responsive: false,
                     animate: false,  
-                    framesX: 4,
-                    frames: imgCnt,
                     detectSubsampling : true,         
-                    frame: 0, 
+                    preloadCount: 2,
                     plugins: [ 
                     "drag", 
                     "360", 
@@ -316,7 +317,7 @@ var slideIndex = 1;
 
            $('.slider-content').html(hpSlider);
            $('#hp-draggable').html(hpLabel);  
-           
+
               
                 if(data.hpItems.length > 0){
                   $(".photos.img").show();
