@@ -260,6 +260,7 @@ class HotspotsController extends Controller
     public function destroy($id)
     {
         $hotspot = Hotspot::where('id', '=', $id)->firstOrFail()->delete();
+         Hotspot_setting::where( 'hotspot_id', '=', $id)->firstOrFail()->delete();
         return response()->json([
             'message' => 'Hotspot has been deleted',
         ], 200);
