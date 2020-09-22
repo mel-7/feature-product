@@ -74,8 +74,9 @@ var slideIndex = 1;
         var datazz = base_url+ '/api/product/'+sls;
         
         var dataApi = $.get(datazz, function(data) {
-                    if (data.length == 0 && !p) {
-                        $('form').remove();
+           
+                    if (data.dataItems.length < 1) {
+                       
                         return false;
                     }
                     return data;
@@ -100,8 +101,8 @@ var slideIndex = 1;
                 let hpSlider = '';
 
 
-                var x = 1;
-
+                var x = 1; 
+                
                 if(data.videos.length > 0){
                   $(".videos.img").show();
                 }
@@ -131,47 +132,7 @@ var slideIndex = 1;
                       x++;
 
                       showVideo();
-                });
-
-               
-                $.each(data.hpItems, function(i,o){   
-                  
-                       var hpContents =  JSON.parse(o.content);
-                        if(o.hotspot_for == "exterior"){
-                          hpLabel +=    '<li id="'+o.id+'" data-ids="'+o.id+'" class="cd-single-point">';  
-                          hpLabel +=       '<a class="cd-img-replace" data-ids="'+ cnts++ +'" href="#">More</a>'; 
-                          hpLabel +=    '</li>';
-                        }
-
-                        hpSlider += '<div class="mySlides text-center" id="'+o.id+'">';
-                       
-                        if(hpContents && hpContents.image){ 
-                         hpSlider +=       '<img  width="100%" height="auto" src="'+hpContents.image+'" style="width:100%" alt="'+o.title+'" />';
-                       }
-                       hpSlider += '<div class="hp-contents">';
-                        if(o.title){
-                        
-                          hpSlider +=       '<h2 class="text-uppercase" >'+o.title+'</h2>';
-                        }
-                        if(hpContents && hpContents.description){
-                          hpSlider +=       '<p> '+hpContents.description+' </p>';
-                        }
-                       
-                        if(hpContents && hpContents.cta_url){
-                          if(hpContents.cta_new_tab){
-                            var target = "_blank";
-                          }else{
-                            var target = "_parent";
-                          } 
-
-                          hpSlider +=      '<a href="'+hpContents.cta_url+'" class="c-color" target="'+target+'">'+hpContents.cta_label+'</a>';
-                        }
-                        hpSlider += '</div>';
-                        hpSlider += '</div>';
-                });
-
-                $('.slider-content').html(hpSlider);
-                $('#hp-draggable').html(hpLabel);   
+                }); 
 
                 $.each(data.dataItems, function(i, o) {  
               
@@ -235,7 +196,8 @@ var slideIndex = 1;
                 
                 let imagesArray = imgs;   
                 let imgCnt = imagesArray.length;
-               
+                
+                init360(); 
                 function init360(){  
                    
                   api = $(".spritespin").spritespin({
@@ -314,7 +276,47 @@ var slideIndex = 1;
                 }).spritespin("api");  
                 
               }
-              init360(); 
+              
+
+              $.each(data.hpItems, function(i,o){   
+                  
+                  var hpContents =  JSON.parse(o.content);
+                   if(o.hotspot_for == "exterior"){
+                     hpLabel +=    '<li id="'+o.id+'" data-ids="'+o.id+'" class="cd-single-point">';  
+                     hpLabel +=       '<a class="cd-img-replace" data-ids="'+ cnts++ +'" href="#">More</a>'; 
+                     hpLabel +=    '</li>';
+                   }
+
+                   hpSlider += '<div class="mySlides text-center" id="'+o.id+'">';
+                  
+                   if(hpContents && hpContents.image){ 
+                    hpSlider +=       '<img  width="100%" height="auto" src="'+hpContents.image+'" style="width:100%" alt="'+o.title+'" />';
+                  }
+                  hpSlider += '<div class="hp-contents">';
+                   if(o.title){
+                   
+                     hpSlider +=       '<h2 class="text-uppercase" >'+o.title+'</h2>';
+                   }
+                   if(hpContents && hpContents.description){
+                     hpSlider +=       '<p> '+hpContents.description+' </p>';
+                   }
+                  
+                   if(hpContents && hpContents.cta_url){
+                     if(hpContents.cta_new_tab){
+                       var target = "_blank";
+                     }else{
+                       var target = "_parent";
+                     } 
+
+                     hpSlider +=      '<a href="'+hpContents.cta_url+'" class="c-color" target="'+target+'">'+hpContents.cta_label+'</a>';
+                   }
+                   hpSlider += '</div>';
+                   hpSlider += '</div>';
+           });
+
+           $('.slider-content').html(hpSlider);
+           $('#hp-draggable').html(hpLabel);  
+           
               
                 if(data.hpItems.length > 0){
                   $(".photos.img").show();

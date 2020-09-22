@@ -3509,8 +3509,8 @@ __webpack_require__.r(__webpack_exports__);
     },
     dropFunction: function dropFunction(e) {
       e.preventDefault();
-      this.preview = false; // this.sendWithFile = true;
-      // this.dragging = false;
+      console.log(e);
+      this.preview = false;
     },
     sendingEvent: function sendingEvent(file, xhr, formData) {
       //   console.log(formData);
