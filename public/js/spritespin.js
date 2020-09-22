@@ -345,13 +345,16 @@ function preload(opts) {
         if (firstLoaded && !completed && (count >= targetCount)) {
             completed = true; 
             onComplete(images);
-        } 
-        setTimeout(()=>{
-            if(count >= src.length){
-                onComplete(images);
-            }
-        }, 2000);
+        }else if(count >= src.length){
+            setTimeout(()=>{
+                onComplete(images); 
+            }, 500);
+            
+        }
     };
+
+  
+
     for (var _i = 0, src_1 = src; _i < src_1.length; _i++) {
         var url = src_1[_i];
         var img = new Image();
