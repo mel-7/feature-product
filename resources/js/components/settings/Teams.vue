@@ -122,7 +122,7 @@ export default {
   },
   methods: {
     printRole(role) {
-      console.log(role);
+      //console.log(role);
       let roleLabel = "";
       if (role == 1) {
         roleLabel = "Super Admin";

@@ -26,6 +26,13 @@ class ProductsController extends Controller
         //
     }
 
+    public function fetch($id)
+    { 
+        $product = Product::where('id', '=', $id)->firstOrFail();
+        return response()->json($product, 200);
+      
+    }
+
     public function productsAPI()
     {
         $company_id = Auth::user()->company_id;

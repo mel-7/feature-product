@@ -140,7 +140,7 @@ export default {
   },
   watch: {
     selectedInteriorHotspot: function (v) {
-      console.log(v);
+     // console.log(v);
       this.addHotspot(v);
     },
   },
@@ -245,7 +245,7 @@ export default {
           // push to global variable
           // console.log(p.mouseEventToCoords(e));
 
-          console.log(toSaveHotspot);
+          //console.log(toSaveHotspot);
         });
       }, 500);
     },
@@ -265,7 +265,7 @@ export default {
           this.getScenes();
           this.deleteDialog = false;
           this.selectedItem = [];
-          console.log(response);
+          //console.log(response);
         })
         .catch((error) => {
           console.log("Error: " + error);

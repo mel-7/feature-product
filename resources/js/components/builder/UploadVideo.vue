@@ -71,7 +71,7 @@ export default {
           response.data.map(function (file) {
             this.options.source.push("http://127.0.0.1:8000/display/file/" + file.path);
           });
-          console.log(this.options);
+          //console.log(this.options);
         })
         .catch((error) => {
           console.log(error.response);
@@ -92,7 +92,7 @@ export default {
         })
         .then((response) => {
           this.loading = false;
-          console.log(response);
+          //console.log(response);
           // this.load360();
         })
         .catch((error) => {

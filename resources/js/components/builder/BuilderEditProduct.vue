@@ -67,11 +67,7 @@ export default {
     authUser: {
       type: Object,
       default: null,
-    },
-    products: {
-      type: Array,
-      default: [],
-    },
+    }
   },
   components: {
     Hotspots,
@@ -85,7 +81,7 @@ export default {
       activateExterior: true,
       activateInterior: false,
       activateVideo: false,
-
+      products: {},
       selected_item: null,
       selected_hotspot_prop: null,
 
@@ -96,13 +92,26 @@ export default {
     };
   },
   methods: {
-    setPreviewUrl() {
+   async fetchCurrentProduct(){
+      let cc;
+     await axios
+        .get("/builder/products/fetch/" + this.$route.params.id)
+        .then((response) => {
+           
+            this.products = response.data; 
+        })
+        .catch((error) => {
+          console.log("Error fetching items");
+          console.log(error);
+        });  
 
-      this.products.map((product) => {
-        if(product.id == this.$route.params.id){
-            this.previewUrl = this.baseUrl+'/product/'+product.slug;
-        }
-      });
+         this.setPreviewUrl();
+    },
+    setPreviewUrl() { 
+      
+      this.previewUrl = this.baseUrl+'/product/'+this.products.slug;
+        
+      
     },
     theSelectedItem(v) {
       this.selected_item = v;
@@ -142,7 +151,8 @@ export default {
     },
   },
   created() {
-    this.setPreviewUrl();
+    this.fetchCurrentProduct();
+   
   },
 };
 </script>

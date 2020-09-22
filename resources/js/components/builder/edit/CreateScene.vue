@@ -74,7 +74,7 @@ export default {
         type: this.sceneType,
         product: this.productId,
       };
-      console.log(data);
+      //console.log(data);
       axios
         .post("/builder/scene/store", data)
         .then((response) => {

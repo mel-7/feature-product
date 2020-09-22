@@ -130,7 +130,7 @@ export default {
       document.execCommand("copy");
     },
     actionFn(i) {
-      console.log(i);
+      //console.log(i);
     },
     editProduct(i) {
       this.$router.push("/builder/product/edit/" + i);

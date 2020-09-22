@@ -312,7 +312,7 @@ export default {
         })
         .then((response) => {
           this.getAllHotspots();
-          console.log(response);
+          //console.log(response);
           this.editDialog = false;
         })
         .catch((error) => {
@@ -373,14 +373,14 @@ export default {
             hotspot_settings: '{"top":"5%","left":"5%","display":"block"}',
           }],
         title: h.title
-        // hotspotObjectToEmit: h,
+   
       };
        
-      // console.log(this.selectedItem);
+     
       if (this.selectedItem.length != 0) {
        
         if($("div").hasClass("hotspot-id-"+h.id)){
-          console.log("fffuuuuu"+h.id);
+          
             $(".hotspot-id-"+h.id).css({
               left:"5%",
               top: "5%",
