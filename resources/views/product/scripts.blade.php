@@ -98,19 +98,17 @@ var slideIndex = 1;
 
                 var hpLabel = '';  
                
-                let hpSlider = '';
-
-
-                var x = 1; 
+                let hpSlider = ''; 
+                var xx = 1; 
                 
                 if(data.videos.length > 0){
                   $(".videos.img").show();
                 }
 
                 $('body').on('click','.videos', function(e){
-                  e.preventDefault();  
-
-                      if(x == 1){ 
+                  e.preventDefault();   
+                
+                      if(xx == 1){ 
                       var vds = '';
                           $.each(data.videos, function(i,o){   
                               vds +=  '<div> <video preload="metadata"  width="220" height="140" controls>'+
@@ -118,7 +116,8 @@ var slideIndex = 1;
                                               'Your browser does not support the video tag.'+
                                             '</video>'+
                                         '</div>';
-                          });
+                          }); 
+                        
                         $(".video-slider").html( vds );
 
                           setTimeout(() => {
@@ -129,7 +128,7 @@ var slideIndex = 1;
                               });
                           }, 500);
                       }
-                      x++;
+                      xx++;
 
                       showVideo();
                 }); 
