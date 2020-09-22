@@ -3648,8 +3648,8 @@ __webpack_require__.r(__webpack_exports__);
       type: Object,
       "default": null
     },
-    product: {
-      type: Object,
+    products: {
+      type: Array,
       "default": []
     }
   },
@@ -3674,7 +3674,13 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     setPreviewUrl: function setPreviewUrl() {
-      this.previewUrl = this.baseUrl + '/product/' + this.product.slug;
+      var _this = this;
+
+      this.products.map(function (product) {
+        if (product.id == _this.$route.params.id) {
+          _this.previewUrl = _this.baseUrl + '/product/' + product.slug;
+        }
+      });
     },
     theSelectedItem: function theSelectedItem(v) {
       this.selected_item = v;
@@ -4358,9 +4364,9 @@ var allHps = [];
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
-    product: {
-      type: Object,
-      "default": null
+    products: {
+      type: Array,
+      "default": []
     },
     authUser: {
       type: Object,
@@ -4379,6 +4385,7 @@ var allHps = [];
   data: function data() {
     return {
       // UI
+      product: "",
       isItemsLoaded: false,
       enableButton: [],
       currentFrame: 1,
@@ -4649,11 +4656,17 @@ var allHps = [];
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
+                _this4.products.map(function (productItems) {
+                  if (productItems.id == _this4.$route.params.id) {
+                    _this4.product = productItems;
+                  }
+                });
+
                 _this4.show = false;
                 _this4.items = [];
                 _this4.options.frames = 0;
                 _this4.options.source = [];
-                _context2.next = 6;
+                _context2.next = 7;
                 return axios.get("/items/by-product/" + _this4.product.id).then(function (response) {
                   // console.log(response.data.items.length);
                   // If no items found
@@ -4679,7 +4692,7 @@ var allHps = [];
                   console.log(error);
                 });
 
-              case 6:
+              case 7:
               case "end":
                 return _context2.stop();
             }
@@ -30548,7 +30561,7 @@ var render = function() {
                 _c("exterior-panel", {
                   attrs: {
                     "auth-user": _vm.authUser,
-                    product: _vm.product,
+                    products: _vm.products,
                     "selected-hotspot-prop": _vm.selected_hotspot_prop
                   },
                   on: { selectedItem: _vm.theSelectedItem }
