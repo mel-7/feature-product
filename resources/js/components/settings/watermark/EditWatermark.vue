@@ -13,15 +13,28 @@
                 <form class="d-flex flex-column" style="height:100%;">
                   <div class="d-flex">
                     <v-switch
-                      v-model="watermarkOn"
-                      :label="`${watermarkOn == true ? 'Enabled' : 'Disabled' }`"
+                      v-model="watermark.status"
+                      :label="`${watermark.status == 1 ? 'Enabled' : 'Disabled' }`"
                       class="mt-0"
                     ></v-switch>
                   </div>
-                  <ValidationProvider v-slot="{ errors }" name="Name" rules="required">
+                  <ValidationProvider v-slot="{ errors }" rules="required">
                     <div class="d-flex">
                       <v-text-field
-                        v-model="watermark"
+                        v-model="watermark.title"
+                        outlined
+                        label="Title"
+                        required
+                        :error-messages="errors"
+                        dense
+                        readonly
+                      ></v-text-field>
+                    </div>
+                  </ValidationProvider>
+                  <ValidationProvider v-slot="{ errors }" rules="required">
+                    <div class="d-flex">
+                      <v-text-field
+                        v-model="watermark.path"
                         outlined
                         label="Watermark Image"
                         required
@@ -36,7 +49,7 @@
                   </ValidationProvider>
                   <div>
                     <v-select
-                      v-model="position"
+                      v-model="watermark.position"
                       :items="positions"
                       item-text="label"
                       item-value="value"
@@ -53,7 +66,7 @@
                   >
                     <v-text-field
                       type="number"
-                      v-model="imageWidth"
+                      v-model="watermark.image_width"
                       outlined
                       :error-messages="errors"
                       label="Width (px)"
@@ -64,16 +77,16 @@
                   <div class="d-flex">
                     <div class="subtitle-1" style="width:120px">
                       Offset:
-                      <strong class="primary--text ml-auto">{{offsetSpace}}px</strong>
+                      <strong class="primary--text ml-auto">{{watermark.offset_space}}px</strong>
                     </div>
-                    <v-slider v-model="offsetSpace" min="1" max="100" class="pt-0"></v-slider>
+                    <v-slider v-model="watermark.offset_space" min="1" max="100" class="pt-0"></v-slider>
                   </div>
                   <div class="d-flex">
                     <div class="subtitle-1" style="width:120px">
                       Opacity:
-                      <strong class="primary--text ml-auto">{{imageOpacity}}%</strong>
+                      <strong class="primary--text ml-auto">{{watermark.image_opacity}}%</strong>
                     </div>
-                    <v-slider v-model="imageOpacity" min="1" max="100" class="pt-0"></v-slider>
+                    <v-slider v-model="watermark.image_opacity" min="1" max="100" class="pt-0"></v-slider>
                   </div>
                   <v-spacer></v-spacer>
                   <v-divider class="mb-5"></v-divider>
@@ -99,11 +112,10 @@
                     width="100"
                     min-height="50"
                     contain
-                    :class="`${position.value ? position.value : position } grey lighten-4 rounded elevation-0`"
-                    :src="watermark == '' ? baseUrl+'/images/no-image-placeholder.jpg': baseUrl+'/storage/uploads/'+authUser.company_id+'/'+ watermark"
-                    :style="`position:absolute; margin:${offsetSpace}px;opacity: ${imageOpacity == 100 ? '1' : imageOpacity < 10 ? '.0'+imageOpacity : '.'+imageOpacity};`"
+                    :class="`${watermark.position } grey lighten-4 rounded elevation-0`"
+                    :src="watermark.path == null ? baseUrl+'/images/no-image-placeholder.jpg': baseUrl+'/storage/uploads/'+authUser.company_id+'/'+ watermark.path"
+                    :style="`position:absolute; margin:${watermark.offset_space}px;opacity: ${watermark.image_opacity == 100 ? '1' : watermark.image_opacity < 10 ? '.0'+watermark.image_opacity : '.'+watermark.image_opacity};`"
                   >
-                    <!-- baseUrl+'/storage/uploads/'+authUser.company_id+'/'+ watermark :  -->
                     <template v-slot:placeholder>
                       <v-img
                         :src="baseUrl+'/images/no-image-placeholder.jpg'"
@@ -131,6 +143,7 @@ import {
   ValidationObserver,
   ValidationProvider,
 } from "vee-validate/dist/vee-validate.full";
+// import { computesRequired } from 'vee-validate/dist/types/rules/required';
 
 export default {
   components: {
@@ -156,13 +169,27 @@ export default {
 
       selectedImage: [],
 
-      watermarkId: null,
-      watermarkOn: false,
-      watermark: "",
-      imageWidth: "300",
-      imageOpacity: 50,
-      position: "center",
-      offsetSpace: "15",
+      watermark: {
+        id: null,
+        title: "",
+        path: null,
+        position: "center",
+        offset_space: "",
+        image_width: "",
+        image_opacity: "",
+        company_id: null,
+        status: 0,
+        media_file_id: null,
+      },
+      watermarkPath: "",
+      //   title: "",
+      //   watermarkId: null,
+      //   watermarkOn: false,
+      //   watermark: "",
+      //   imageWidth: "300",
+      //   imageOpacity: 50,
+      //   position: "center",
+      //   offsetSpace: "15",
 
       positions: [
         { label: "Top Left", value: "top-left" },
@@ -204,9 +231,7 @@ export default {
         .dialogStatus;
     },
     resetFields() {
-      this.watermark = this.fetchedwatermark;
-      this.position = this.fetchedposition;
-      this.offsetSpace = this.fetchedoffsetSpace;
+        this.watermark = Object.assign({}, this.fetchedwatermark);
     },
     deleteWatermark() {
       axios
@@ -251,26 +276,31 @@ export default {
     fetchedCompanyWatermark() {
       this.loading = true;
       axios
-        .get("/settings/watermark/fetch")
+        .get("/settings/watermark/get/" + this.$route.params.id)
         .then((response) => {
           this.loading = false;
           let w = response.data;
           if (Object.keys(w).length != 0) {
-            this.fetchedwatermark = w.media_file.path;
-            this.fetchedposition = w.position;
-            this.fetchedoffsetSpace = w.offset_space;
-            this.fetchedImageWidth = w.image_width;
-            this.fetchedImageOpacity = w.image_opacity;
-            this.fetchedWatermarkOn = w.status;
+            this.watermark = Object.assign({}, w);
+            this.fetchedwatermark = Object.assign({}, w);
+            //   this.watermarkPath = w.path;
+            // this.fetchedwatermark = w;
+            // this.fetchedwatermark = w.media_file.path;
+            // this.fetchedposition = w.position;
+            // this.fetchedoffsetSpace = w.offset_space;
+            // this.fetchedImageWidth = w.image_width;
+            // this.fetchedImageOpacity = w.image_opacity;
+            // this.fetchedWatermarkOn = w.status;
 
-            this.selectedImage = w.media_file;
-            this.watermarkId = w.id;
-            this.watermarkOn = w.status;
-            this.watermark = w.media_file.path;
-            this.imageWidth = w.image_width;
-            this.imageOpacity = w.image_opacity;
-            this.position = w.position;
-            this.offsetSpace = w.offset_space;
+            // this.title = w.title;
+            // this.selectedImage = w.media_file;
+            // this.watermarkId = w.id;
+            // this.watermarkOn = w.status;
+            // this.watermark = w.media_file.path ? w.media_file.path : "";
+            // this.imageWidth = w.image_width;
+            // this.imageOpacity = w.image_opacity;
+            // this.position = w.position;
+            // this.offsetSpace = w.offset_space;
           } else {
             console.log("Watermark is not set");
           }

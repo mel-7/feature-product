@@ -6,7 +6,8 @@ import UploadVideo from "../js/components/builder/UploadVideo";
 
 // Settings
 import Account from "../js/components/settings/Account"
-import Watermark from "../js/components/settings/Watermark"
+import Watermarks from "../js/components/settings/watermarks"
+import EditWatermark from "../js/components/settings/watermark/EditWatermark"
 import Teams from "../js/components/settings/Teams"
 import Organization from "../js/components/settings/Organization"
 import Companies from "../js/components/settings/Companies"
@@ -72,9 +73,15 @@ export const routes = [
         props: true
     },
     {
-        path: "/settings/watermark",
+        path: "/settings/watermarks",
+        name: 'Watermarks',
+        component: Watermarks,
+        props: true
+    },
+    {
+        path: "/settings/watermark/edit/:id",
         name: 'Watermark',
-        component: Watermark,
+        component: EditWatermark,
         props: true
     },
     {

@@ -6,31 +6,28 @@ use App\Watermark;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Auth as Auth;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 
 class WatermarksController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+
+    public function __construct()
     {
-        //
+        $this->middleware('auth');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    public function fetchWatermarks()
+    {
+        $companyId = Auth::user()->company_id;
+        $watermarks = Watermark::where('company_id', $companyId)->get();
+        return response()->json($watermarks, 200);
+    }
+
     public function store(Request $request)
     {
-        $companyId = Auth::user()->company_id; 
+        $companyId = Auth::user()->company_id;
         $uploadDate = Carbon::now()->format('YmdHis');
 
         // Create Director if does not exist
@@ -100,7 +97,10 @@ class WatermarksController extends Controller
         }
     }
 
-    public function fetchWatermark()
+    /**
+     * Edit Watermark
+     */
+    public function getWatermark()
     {
         $watermark = Watermark::where('company_id', Auth::user()->company_id)->with('media_file')->first();
         return response()->json($watermark);
