@@ -110,9 +110,9 @@ export default {
     },
     dropFunction(e) {
       e.preventDefault();
+      console.log(e);
       this.preview = false;
-      // this.sendWithFile = true;
-      // this.dragging = false;
+      
     },
     sendingEvent(file, xhr, formData) {
       //   console.log(formData);
