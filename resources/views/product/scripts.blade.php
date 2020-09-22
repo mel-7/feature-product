@@ -210,9 +210,8 @@ var slideIndex = 1;
                     height: 768, 
                     sense: -1,
                     renderer: "canvas",
-                    responsive: false,
-                    animate: false,  
-                    detectSubsampling : true,         
+                    responsive: true, 
+                    animate: false,
                     preloadCount: 6,
                     plugins: [ 
                     "drag", 
