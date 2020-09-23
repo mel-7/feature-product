@@ -1,24 +1,31 @@
 <template>
   <v-row>
     <div class="col-12 px-5">
-      <h3 class="font-weight-light mb-5">Edit {{fetchedwatermark.title}}</h3>
+      <h3 class="font-weight-light mb-5">Edit {{ fetchedwatermark.title }}</h3>
       <v-card>
         <v-card-text>
           <div class="row">
-            <div class="col-12 col-md-6" style="position:relative;">
+            <div class="col-12 col-md-6" style="position: relative">
               <v-overlay absolute :value="loading" color="white" opacity=".75">
-                <v-progress-circular indeterminate color="primary"></v-progress-circular>
+                <v-progress-circular
+                  indeterminate
+                  color="primary"
+                ></v-progress-circular>
               </v-overlay>
-              <ValidationObserver ref="observer">
-                <form class="d-flex flex-column" style="height:100%;">
-                  <div class="d-flex">
+              <ValidationObserver ref="observer" v-slot="{ valid }">
+                <form class="d-flex flex-column" style="height: 100%">
+                  <!-- <div class="d-flex">
                     <v-switch
                       v-model="watermark.status"
                       :label="`${watermark.status == 1 ? 'Enabled' : 'Disabled' }`"
                       class="mt-0"
                     ></v-switch>
-                  </div>
-                  <ValidationProvider v-slot="{ errors }" rules="required">
+                  </div> -->
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    rules="required"
+                    mode="eager"
+                  >
                     <div class="d-flex">
                       <v-text-field
                         v-model="watermark.title"
@@ -30,7 +37,11 @@
                       ></v-text-field>
                     </div>
                   </ValidationProvider>
-                  <ValidationProvider v-slot="{ errors }" rules="required">
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    rules="required"
+                    mode="eager"
+                  >
                     <div class="d-flex">
                       <v-text-field
                         v-model="watermark.path"
@@ -41,7 +52,12 @@
                         dense
                         readonly
                       ></v-text-field>
-                      <v-btn class="mt-2 ml-3" small icon @click="openMediaFiles">
+                      <v-btn
+                        class="mt-2 ml-3"
+                        small
+                        icon
+                        @click="openMediaFiles"
+                      >
                         <v-icon small>mdi-folder-image</v-icon>
                       </v-btn>
                     </div>
@@ -62,6 +78,7 @@
                     v-slot="{ errors }"
                     name="Width"
                     rules="required|numeric|min_value:50|max_value:1366"
+                    mode="eager"
                   >
                     <v-text-field
                       type="number"
@@ -74,24 +91,57 @@
                     ></v-text-field>
                   </ValidationProvider>
                   <div class="d-flex">
-                    <div class="subtitle-1" style="width:120px">
+                    <div class="subtitle-1" style="width: 120px">
                       Offset:
-                      <strong class="primary--text ml-auto">{{watermark.offset_space}}px</strong>
+                      <strong class="primary--text ml-auto"
+                        >{{ watermark.offset_space }}px</strong
+                      >
                     </div>
-                    <v-slider v-model="watermark.offset_space" min="1" max="100" class="pt-0"></v-slider>
+                    <v-slider
+                      v-model="watermark.offset_space"
+                      min="1"
+                      max="100"
+                      class="pt-0"
+                    ></v-slider>
                   </div>
                   <div class="d-flex">
-                    <div class="subtitle-1" style="width:120px">
+                    <div class="subtitle-1" style="width: 120px">
                       Opacity:
-                      <strong class="primary--text ml-auto">{{watermark.image_opacity}}%</strong>
+                      <strong class="primary--text ml-auto"
+                        >{{ watermark.image_opacity }}%</strong
+                      >
                     </div>
-                    <v-slider v-model="watermark.image_opacity" min="1" max="100" class="pt-0"></v-slider>
+                    <v-slider
+                      v-model="watermark.image_opacity"
+                      min="1"
+                      max="100"
+                      class="pt-0"
+                    ></v-slider>
                   </div>
                   <v-spacer></v-spacer>
                   <v-divider class="mb-5"></v-divider>
-                  <div class="d-flex justify-end mt-auto">
-                    <v-btn class="mr-1" text color="grey" @click="resetFields">reset</v-btn>
-                    <v-btn class="primary" @click="updateWatermark">Save</v-btn>
+                  <div class="d-flex align-center justify-end mt-auto">
+                    <div class="d-flex">
+                      <v-checkbox
+                        :disabled="
+                          watermark.path != null && watermark.path != ''
+                            ? false
+                            : true
+                        "
+                        v-model="watermark.default"
+                        label="Set as default"
+                      ></v-checkbox>
+                    </div>
+                    <v-spacer></v-spacer>
+                    <v-btn class="mr-1" text color="grey" @click="resetFields"
+                      >reset</v-btn
+                    >
+                    <v-btn
+                      class="primary"
+                      :disabled="!valid"
+                      @click="updateWatermark"
+                      >Save</v-btn
+                    >
                   </div>
                 </form>
               </ValidationObserver>
@@ -99,18 +149,45 @@
             <div class="col-12 col-md-6">
               <span class="overline">Preview</span>
               <v-card-text class="grey lighten-4 pa-0">
-                <div style="position:relative;width:100%;height:100%;padding-bottom:75%;">
+                <div
+                  style="
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                    padding-bottom: 75%;
+                  "
+                >
                   <v-img
                     width="100"
                     min-height="50"
                     contain
-                    :class="`${typeof watermark.position === 'object' ? watermark.position.value : watermark.position } grey lighten-4 rounded elevation-0`"
-                    :src="watermark.path == null ? baseUrl+'/images/no-image-placeholder.jpg': baseUrl+'/storage/uploads/'+authUser.company_id+'/'+ watermark.path"
-                    :style="`border:1px dashed #ddd !important;position:absolute; margin:${watermark.offset_space}px;opacity: ${watermark.image_opacity == 100 ? '1' : watermark.image_opacity < 10 ? '.0'+watermark.image_opacity : '.'+watermark.image_opacity};`"
+                    :class="`${
+                      typeof watermark.position === 'object'
+                        ? watermark.position.value
+                        : watermark.position
+                    } grey lighten-4 rounded elevation-0`"
+                    :src="
+                      watermark.path == null
+                        ? baseUrl + '/images/no-image-placeholder.jpg'
+                        : baseUrl +
+                          '/storage/uploads/' +
+                          authUser.company_id +
+                          '/' +
+                          watermark.path
+                    "
+                    :style="`border:1px dashed #ddd !important;position:absolute; margin:${
+                      watermark.offset_space
+                    }px;opacity: ${
+                      watermark.image_opacity == 100
+                        ? '1'
+                        : watermark.image_opacity < 10
+                        ? '.0' + watermark.image_opacity
+                        : '.' + watermark.image_opacity
+                    };`"
                   >
                     <template v-slot:placeholder>
                       <v-img
-                        :src="baseUrl+'/images/no-image-placeholder.jpg'"
+                        :src="baseUrl + '/images/no-image-placeholder.jpg'"
                         width="100"
                         height="50"
                         cover
@@ -125,17 +202,18 @@
         </v-card-text>
       </v-card>
     </div>
-    <media-files :mediaOptions="mediaFilesSettings" @responded="mediaResponse" />
+    <media-files
+      :mediaOptions="mediaFilesSettings"
+      @responded="mediaResponse"
+    />
   </v-row>
 </template>
 
 <script>
-import { required, name } from "vee-validate/dist/rules";
 import {
-  ValidationObserver,
   ValidationProvider,
+  ValidationObserver,
 } from "vee-validate/dist/vee-validate.full";
-// import { computesRequired } from 'vee-validate/dist/types/rules/required';
 
 export default {
   components: {
@@ -151,6 +229,7 @@ export default {
   data() {
     return {
       // ui
+      valid: true,
       loading: false,
 
       fetchedwatermark: [],
@@ -166,6 +245,7 @@ export default {
         image_opacity: "",
         company_id: null,
         status: 0,
+        watermark: 0,
         media_file_id: null,
       },
       watermarkPath: "",
@@ -227,8 +307,10 @@ export default {
             ? this.watermark.position.value
             : this.watermark.position,
         offset_space: this.watermark.offset_space,
-        status: this.watermark.status,
+        // status: this.watermark.status,
+        default: this.watermark.default,
       };
+      console.log(data);
       axios
         .post("/settings/watermark/update/" + this.$route.params.id, data)
         .then((response) => {

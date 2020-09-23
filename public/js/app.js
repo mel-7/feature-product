@@ -3038,7 +3038,7 @@ __webpack_require__.r(__webpack_exports__);
         this.clientSettings = [{
           icon: "mdi-watermark",
           text: "Watermark",
-          location: "/settings/watermark"
+          location: "/settings/watermarks"
         }, {
           icon: "mdi-star",
           text: "Organization",
@@ -3483,6 +3483,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -3525,7 +3526,7 @@ __webpack_require__.r(__webpack_exports__);
       dropzone: null,
       preview: true,
       btnLoading: false,
-      withWatermark: this.watermarkOptions,
+      withWatermark: this.watermarkOptions ? true : false,
       watermarks: [],
       selectedWatermark: null
     };
@@ -3553,8 +3554,8 @@ __webpack_require__.r(__webpack_exports__);
       formData.append("product", this.$route.params.id);
       formData.append("add_items", this.addItems);
       formData.append("item_type", this.itemType);
-      formData.append("with_watermark", this.withWatermark);
-      formData.append("selected_watermark", this.selectedWatermark.id);
+      this.withWatermark && formData.append("with_watermark", this.withWatermark);
+      this.selectedWatermark && formData.append("selected_watermark", this.selectedWatermark.id);
     },
     removeAllFiles: function removeAllFiles() {
       this.$refs.myVueDropzone.removeAllFiles();
@@ -3586,6 +3587,7 @@ __webpack_require__.r(__webpack_exports__);
         _this.selectedWatermark = _this.watermarks.filter(function (w) {
           return w["default"] === 1;
         })[0];
+        console.log(_this.watermarks.length);
       })["catch"](function (error) {
         console.log("Error Fetching Org Users");
         console.log("Error: " + error);
@@ -5106,7 +5108,7 @@ __webpack_require__.r(__webpack_exports__);
         action: "save",
         data: null,
         product: this.product,
-        itemType: "panorama",
+        itemType: "image",
         returnUrl: true
       }
     };
@@ -5432,7 +5434,8 @@ var toSaveHotspot = [];
         action: "save",
         data: null,
         product: this.product,
-        itemType: "panorama"
+        itemType: "panorama",
+        watermarkOptions: false
       },
       hotspotText: "this is the hotspot Text"
     };
@@ -6582,9 +6585,8 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vee_validate_dist_rules__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vee-validate/dist/rules */ "./node_modules/vee-validate/dist/rules.js");
-/* harmony import */ var vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vee-validate/dist/vee-validate.full */ "./node_modules/vee-validate/dist/vee-validate.full.js");
-/* harmony import */ var vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vee-validate/dist/vee-validate.full */ "./node_modules/vee-validate/dist/vee-validate.full.js");
+/* harmony import */ var vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_0__);
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 //
@@ -6718,13 +6720,91 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 //
 //
 //
-
- // import { computesRequired } from 'vee-validate/dist/types/rules/required';
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
-    ValidationProvider: vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_1__["ValidationProvider"],
-    ValidationObserver: vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_1__["ValidationObserver"]
+    ValidationProvider: vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_0__["ValidationProvider"],
+    ValidationObserver: vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_0__["ValidationObserver"]
   },
   props: {
     authUser: {
@@ -6735,6 +6815,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
   data: function data() {
     return {
       // ui
+      valid: true,
       loading: false,
       fetchedwatermark: [],
       selectedImage: [],
@@ -6748,6 +6829,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         image_opacity: "",
         company_id: null,
         status: 0,
+        watermark: 0,
         media_file_id: null
       },
       watermarkPath: "",
@@ -6821,8 +6903,10 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         image_opacity: this.watermark.image_opacity,
         position: _typeof(this.watermark.position) === "object" ? this.watermark.position.value : this.watermark.position,
         offset_space: this.watermark.offset_space,
-        status: this.watermark.status
+        // status: this.watermark.status,
+        "default": this.watermark["default"]
       };
+      console.log(data);
       axios.post("/settings/watermark/update/" + this.$route.params.id, data).then(function (response) {
         _this.loading = false;
       })["catch"](function (error) {
@@ -7146,7 +7230,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.top-left {\r\n  top: 0;\r\n  left: 0;\r\n  right: auto;\r\n  bottom: auto;\n}\n.top {\r\n  margin-left: 0 !important;\r\n  margin-right: 0 !important;\r\n  top: 0;\r\n  left: 50%;\r\n  right: auto;\r\n  bottom: auto;\r\n  transform: translateX(-50%);\n}\n.top-right {\r\n  top: 0;\r\n  right: 0;\r\n  left: auto;\r\n  bottom: auto;\n}\n.left {\r\n  margin-top: 0 !important;\r\n  margin-bottom: 0 !important;\r\n  left: 0;\r\n  top: 50%;\r\n  right: auto;\r\n  bottom: auto;\r\n  transform: translateY(-50%);\n}\n.center {\r\n  margin: 0 !important;\r\n  left: 50%;\r\n  top: 50%;\r\n  right: auto;\r\n  bottom: auto;\r\n  transform: translate(-50%, -50%);\n}\n.right {\r\n  margin-top: 0 !important;\r\n  margin-bottom: 0 !important;\r\n  left: auto;\r\n  top: 50%;\r\n  right: 0;\r\n  bottom: auto;\r\n  transform: translateY(-50%);\n}\n.bottom-left {\r\n  left: 0;\r\n  top: auto;\r\n  right: auto;\r\n  bottom: 0;\n}\n.bottom {\r\n  margin-left: 0 !important;\r\n  margin-right: 0 !important;\r\n  top: auto;\r\n  left: 50%;\r\n  right: auto;\r\n  bottom: 0;\r\n  transform: translateX(-50%);\n}\n.bottom-right {\r\n  left: auto;\r\n  top: auto;\r\n  right: 0;\r\n  bottom: 0;\n}\r\n", ""]);
+exports.push([module.i, "\n.top-left {\n  top: 0;\n  left: 0;\n  right: auto;\n  bottom: auto;\n}\n.top {\n  margin-left: 0 !important;\n  margin-right: 0 !important;\n  top: 0;\n  left: 50%;\n  right: auto;\n  bottom: auto;\n  transform: translateX(-50%);\n}\n.top-right {\n  top: 0;\n  right: 0;\n  left: auto;\n  bottom: auto;\n}\n.left {\n  margin-top: 0 !important;\n  margin-bottom: 0 !important;\n  left: 0;\n  top: 50%;\n  right: auto;\n  bottom: auto;\n  transform: translateY(-50%);\n}\n.center {\n  margin: 0 !important;\n  left: 50%;\n  top: 50%;\n  right: auto;\n  bottom: auto;\n  transform: translate(-50%, -50%);\n}\n.right {\n  margin-top: 0 !important;\n  margin-bottom: 0 !important;\n  left: auto;\n  top: 50%;\n  right: 0;\n  bottom: auto;\n  transform: translateY(-50%);\n}\n.bottom-left {\n  left: 0;\n  top: auto;\n  right: auto;\n  bottom: 0;\n}\n.bottom {\n  margin-left: 0 !important;\n  margin-right: 0 !important;\n  top: auto;\n  left: 50%;\n  right: auto;\n  bottom: 0;\n  transform: translateX(-50%);\n}\n.bottom-right {\n  left: auto;\n  top: auto;\n  right: 0;\n  bottom: 0;\n}\n", ""]);
 
 // exports
 
@@ -30821,7 +30905,9 @@ var render = function() {
         _vm._v(" "),
         _c("v-spacer"),
         _vm._v(" "),
-        _vm.watermarkOptions == true
+        _vm.watermarkOptions == true &&
+        _vm.watermarks.length != 0 &&
+        _vm.itemType != "video"
           ? _c(
               "div",
               { staticClass: "d-flex align-center justify-end" },
@@ -30874,7 +30960,15 @@ var render = function() {
               ],
               1
             )
-          : _vm._e(),
+          : _c("small", { staticClass: "caption grey--text" }, [
+              _vm._v(
+                _vm._s(
+                  _vm.watermarkOptions == false || _vm.itemType == "video"
+                    ? ""
+                    : "No Watermark is set"
+                )
+              )
+            ]),
         _vm._v(" "),
         _c(
           "v-btn",
@@ -34883,328 +34977,405 @@ var render = function() {
                         1
                       ),
                       _vm._v(" "),
-                      _c("ValidationObserver", { ref: "observer" }, [
-                        _c(
-                          "form",
+                      _c("ValidationObserver", {
+                        ref: "observer",
+                        scopedSlots: _vm._u([
                           {
-                            staticClass: "d-flex flex-column",
-                            staticStyle: { height: "100%" }
-                          },
-                          [
-                            _c(
-                              "div",
-                              { staticClass: "d-flex" },
-                              [
-                                _c("v-switch", {
-                                  staticClass: "mt-0",
-                                  attrs: {
-                                    label:
-                                      "" +
-                                      (_vm.watermark.status == 1
-                                        ? "Enabled"
-                                        : "Disabled")
+                            key: "default",
+                            fn: function(ref) {
+                              var valid = ref.valid
+                              return [
+                                _c(
+                                  "form",
+                                  {
+                                    staticClass: "d-flex flex-column",
+                                    staticStyle: { height: "100%" }
                                   },
-                                  model: {
-                                    value: _vm.watermark.status,
-                                    callback: function($$v) {
-                                      _vm.$set(_vm.watermark, "status", $$v)
-                                    },
-                                    expression: "watermark.status"
-                                  }
-                                })
-                              ],
-                              1
-                            ),
-                            _vm._v(" "),
-                            _c("ValidationProvider", {
-                              attrs: { rules: "required" },
-                              scopedSlots: _vm._u([
-                                {
-                                  key: "default",
-                                  fn: function(ref) {
-                                    var errors = ref.errors
-                                    return [
-                                      _c(
-                                        "div",
-                                        { staticClass: "d-flex" },
+                                  [
+                                    _c("ValidationProvider", {
+                                      attrs: {
+                                        rules: "required",
+                                        mode: "eager"
+                                      },
+                                      scopedSlots: _vm._u(
                                         [
-                                          _c("v-text-field", {
-                                            attrs: {
-                                              outlined: "",
-                                              label: "Title",
-                                              required: "",
-                                              "error-messages": errors,
-                                              dense: ""
-                                            },
-                                            model: {
-                                              value: _vm.watermark.title,
-                                              callback: function($$v) {
-                                                _vm.$set(
-                                                  _vm.watermark,
-                                                  "title",
-                                                  $$v
+                                          {
+                                            key: "default",
+                                            fn: function(ref) {
+                                              var errors = ref.errors
+                                              return [
+                                                _c(
+                                                  "div",
+                                                  { staticClass: "d-flex" },
+                                                  [
+                                                    _c("v-text-field", {
+                                                      attrs: {
+                                                        outlined: "",
+                                                        label: "Title",
+                                                        required: "",
+                                                        "error-messages": errors,
+                                                        dense: ""
+                                                      },
+                                                      model: {
+                                                        value:
+                                                          _vm.watermark.title,
+                                                        callback: function(
+                                                          $$v
+                                                        ) {
+                                                          _vm.$set(
+                                                            _vm.watermark,
+                                                            "title",
+                                                            $$v
+                                                          )
+                                                        },
+                                                        expression:
+                                                          "watermark.title"
+                                                      }
+                                                    })
+                                                  ],
+                                                  1
                                                 )
-                                              },
-                                              expression: "watermark.title"
+                                              ]
                                             }
-                                          })
+                                          }
                                         ],
-                                        1
+                                        null,
+                                        true
                                       )
-                                    ]
-                                  }
-                                }
-                              ])
-                            }),
-                            _vm._v(" "),
-                            _c("ValidationProvider", {
-                              attrs: { rules: "required" },
-                              scopedSlots: _vm._u([
-                                {
-                                  key: "default",
-                                  fn: function(ref) {
-                                    var errors = ref.errors
-                                    return [
-                                      _c(
-                                        "div",
-                                        { staticClass: "d-flex" },
+                                    }),
+                                    _vm._v(" "),
+                                    _c("ValidationProvider", {
+                                      attrs: {
+                                        rules: "required",
+                                        mode: "eager"
+                                      },
+                                      scopedSlots: _vm._u(
                                         [
-                                          _c("v-text-field", {
-                                            attrs: {
-                                              outlined: "",
-                                              label: "Watermark Image",
-                                              required: "",
-                                              "error-messages": errors,
-                                              dense: "",
-                                              readonly: ""
-                                            },
-                                            model: {
-                                              value: _vm.watermark.path,
-                                              callback: function($$v) {
-                                                _vm.$set(
-                                                  _vm.watermark,
-                                                  "path",
-                                                  $$v
+                                          {
+                                            key: "default",
+                                            fn: function(ref) {
+                                              var errors = ref.errors
+                                              return [
+                                                _c(
+                                                  "div",
+                                                  { staticClass: "d-flex" },
+                                                  [
+                                                    _c("v-text-field", {
+                                                      attrs: {
+                                                        outlined: "",
+                                                        label:
+                                                          "Watermark Image",
+                                                        required: "",
+                                                        "error-messages": errors,
+                                                        dense: "",
+                                                        readonly: ""
+                                                      },
+                                                      model: {
+                                                        value:
+                                                          _vm.watermark.path,
+                                                        callback: function(
+                                                          $$v
+                                                        ) {
+                                                          _vm.$set(
+                                                            _vm.watermark,
+                                                            "path",
+                                                            $$v
+                                                          )
+                                                        },
+                                                        expression:
+                                                          "watermark.path"
+                                                      }
+                                                    }),
+                                                    _vm._v(" "),
+                                                    _c(
+                                                      "v-btn",
+                                                      {
+                                                        staticClass:
+                                                          "mt-2 ml-3",
+                                                        attrs: {
+                                                          small: "",
+                                                          icon: ""
+                                                        },
+                                                        on: {
+                                                          click:
+                                                            _vm.openMediaFiles
+                                                        }
+                                                      },
+                                                      [
+                                                        _c(
+                                                          "v-icon",
+                                                          {
+                                                            attrs: { small: "" }
+                                                          },
+                                                          [
+                                                            _vm._v(
+                                                              "mdi-folder-image"
+                                                            )
+                                                          ]
+                                                        )
+                                                      ],
+                                                      1
+                                                    )
+                                                  ],
+                                                  1
                                                 )
-                                              },
-                                              expression: "watermark.path"
+                                              ]
                                             }
-                                          }),
-                                          _vm._v(" "),
-                                          _c(
-                                            "v-btn",
-                                            {
-                                              staticClass: "mt-2 ml-3",
-                                              attrs: { small: "", icon: "" },
-                                              on: { click: _vm.openMediaFiles }
-                                            },
-                                            [
-                                              _c(
-                                                "v-icon",
-                                                { attrs: { small: "" } },
-                                                [_vm._v("mdi-folder-image")]
-                                              )
-                                            ],
-                                            1
-                                          )
+                                          }
                                         ],
-                                        1
+                                        null,
+                                        true
                                       )
-                                    ]
-                                  }
-                                }
-                              ])
-                            }),
-                            _vm._v(" "),
-                            _c(
-                              "div",
-                              [
-                                _c("v-select", {
-                                  attrs: {
-                                    items: _vm.positions,
-                                    "item-text": "label",
-                                    "item-value": "value",
-                                    label: "Position",
-                                    "return-object": "",
-                                    outlined: "",
-                                    dense: ""
-                                  },
-                                  model: {
-                                    value: _vm.watermark.position,
-                                    callback: function($$v) {
-                                      _vm.$set(_vm.watermark, "position", $$v)
-                                    },
-                                    expression: "watermark.position"
-                                  }
-                                })
-                              ],
-                              1
-                            ),
-                            _vm._v(" "),
-                            _c("ValidationProvider", {
-                              attrs: {
-                                name: "Width",
-                                rules:
-                                  "required|numeric|min_value:50|max_value:1366"
-                              },
-                              scopedSlots: _vm._u([
-                                {
-                                  key: "default",
-                                  fn: function(ref) {
-                                    var errors = ref.errors
-                                    return [
-                                      _c("v-text-field", {
-                                        attrs: {
-                                          type: "number",
-                                          outlined: "",
-                                          "error-messages": errors,
-                                          label: "Width (px)",
-                                          required: "",
-                                          dense: ""
-                                        },
-                                        model: {
-                                          value: _vm.watermark.image_width,
-                                          callback: function($$v) {
-                                            _vm.$set(
-                                              _vm.watermark,
-                                              "image_width",
-                                              $$v
-                                            )
+                                    }),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      [
+                                        _c("v-select", {
+                                          attrs: {
+                                            items: _vm.positions,
+                                            "item-text": "label",
+                                            "item-value": "value",
+                                            label: "Position",
+                                            "return-object": "",
+                                            outlined: "",
+                                            dense: ""
                                           },
-                                          expression: "watermark.image_width"
-                                        }
-                                      })
-                                    ]
-                                  }
-                                }
-                              ])
-                            }),
-                            _vm._v(" "),
-                            _c(
-                              "div",
-                              { staticClass: "d-flex" },
-                              [
-                                _c(
-                                  "div",
-                                  {
-                                    staticClass: "subtitle-1",
-                                    staticStyle: { width: "120px" }
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                    Offset:\n                    "
+                                          model: {
+                                            value: _vm.watermark.position,
+                                            callback: function($$v) {
+                                              _vm.$set(
+                                                _vm.watermark,
+                                                "position",
+                                                $$v
+                                              )
+                                            },
+                                            expression: "watermark.position"
+                                          }
+                                        })
+                                      ],
+                                      1
                                     ),
-                                    _c(
-                                      "strong",
-                                      { staticClass: "primary--text ml-auto" },
-                                      [
-                                        _vm._v(
-                                          _vm._s(_vm.watermark.offset_space) +
-                                            "px"
-                                        )
-                                      ]
-                                    )
-                                  ]
-                                ),
-                                _vm._v(" "),
-                                _c("v-slider", {
-                                  staticClass: "pt-0",
-                                  attrs: { min: "1", max: "100" },
-                                  model: {
-                                    value: _vm.watermark.offset_space,
-                                    callback: function($$v) {
-                                      _vm.$set(
-                                        _vm.watermark,
-                                        "offset_space",
-                                        $$v
+                                    _vm._v(" "),
+                                    _c("ValidationProvider", {
+                                      attrs: {
+                                        name: "Width",
+                                        rules:
+                                          "required|numeric|min_value:50|max_value:1366",
+                                        mode: "eager"
+                                      },
+                                      scopedSlots: _vm._u(
+                                        [
+                                          {
+                                            key: "default",
+                                            fn: function(ref) {
+                                              var errors = ref.errors
+                                              return [
+                                                _c("v-text-field", {
+                                                  attrs: {
+                                                    type: "number",
+                                                    outlined: "",
+                                                    "error-messages": errors,
+                                                    label: "Width (px)",
+                                                    required: "",
+                                                    dense: ""
+                                                  },
+                                                  model: {
+                                                    value:
+                                                      _vm.watermark.image_width,
+                                                    callback: function($$v) {
+                                                      _vm.$set(
+                                                        _vm.watermark,
+                                                        "image_width",
+                                                        $$v
+                                                      )
+                                                    },
+                                                    expression:
+                                                      "watermark.image_width"
+                                                  }
+                                                })
+                                              ]
+                                            }
+                                          }
+                                        ],
+                                        null,
+                                        true
                                       )
-                                    },
-                                    expression: "watermark.offset_space"
-                                  }
-                                })
-                              ],
-                              1
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "div",
-                              { staticClass: "d-flex" },
-                              [
-                                _c(
-                                  "div",
-                                  {
-                                    staticClass: "subtitle-1",
-                                    staticStyle: { width: "120px" }
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                    Opacity:\n                    "
+                                    }),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      { staticClass: "d-flex" },
+                                      [
+                                        _c(
+                                          "div",
+                                          {
+                                            staticClass: "subtitle-1",
+                                            staticStyle: { width: "120px" }
+                                          },
+                                          [
+                                            _vm._v(
+                                              "\n                    Offset:\n                    "
+                                            ),
+                                            _c(
+                                              "strong",
+                                              {
+                                                staticClass:
+                                                  "primary--text ml-auto"
+                                              },
+                                              [
+                                                _vm._v(
+                                                  _vm._s(
+                                                    _vm.watermark.offset_space
+                                                  ) + "px"
+                                                )
+                                              ]
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
+                                        _c("v-slider", {
+                                          staticClass: "pt-0",
+                                          attrs: { min: "1", max: "100" },
+                                          model: {
+                                            value: _vm.watermark.offset_space,
+                                            callback: function($$v) {
+                                              _vm.$set(
+                                                _vm.watermark,
+                                                "offset_space",
+                                                $$v
+                                              )
+                                            },
+                                            expression: "watermark.offset_space"
+                                          }
+                                        })
+                                      ],
+                                      1
                                     ),
+                                    _vm._v(" "),
                                     _c(
-                                      "strong",
-                                      { staticClass: "primary--text ml-auto" },
+                                      "div",
+                                      { staticClass: "d-flex" },
                                       [
-                                        _vm._v(
-                                          _vm._s(_vm.watermark.image_opacity) +
-                                            "%"
+                                        _c(
+                                          "div",
+                                          {
+                                            staticClass: "subtitle-1",
+                                            staticStyle: { width: "120px" }
+                                          },
+                                          [
+                                            _vm._v(
+                                              "\n                    Opacity:\n                    "
+                                            ),
+                                            _c(
+                                              "strong",
+                                              {
+                                                staticClass:
+                                                  "primary--text ml-auto"
+                                              },
+                                              [
+                                                _vm._v(
+                                                  _vm._s(
+                                                    _vm.watermark.image_opacity
+                                                  ) + "%"
+                                                )
+                                              ]
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
+                                        _c("v-slider", {
+                                          staticClass: "pt-0",
+                                          attrs: { min: "1", max: "100" },
+                                          model: {
+                                            value: _vm.watermark.image_opacity,
+                                            callback: function($$v) {
+                                              _vm.$set(
+                                                _vm.watermark,
+                                                "image_opacity",
+                                                $$v
+                                              )
+                                            },
+                                            expression:
+                                              "watermark.image_opacity"
+                                          }
+                                        })
+                                      ],
+                                      1
+                                    ),
+                                    _vm._v(" "),
+                                    _c("v-spacer"),
+                                    _vm._v(" "),
+                                    _c("v-divider", { staticClass: "mb-5" }),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      {
+                                        staticClass:
+                                          "d-flex align-center justify-end mt-auto"
+                                      },
+                                      [
+                                        _c(
+                                          "div",
+                                          { staticClass: "d-flex" },
+                                          [
+                                            _c("v-checkbox", {
+                                              attrs: {
+                                                disabled:
+                                                  _vm.watermark.path != null &&
+                                                  _vm.watermark.path != ""
+                                                    ? false
+                                                    : true,
+                                                label: "Set as default"
+                                              },
+                                              model: {
+                                                value: _vm.watermark.default,
+                                                callback: function($$v) {
+                                                  _vm.$set(
+                                                    _vm.watermark,
+                                                    "default",
+                                                    $$v
+                                                  )
+                                                },
+                                                expression: "watermark.default"
+                                              }
+                                            })
+                                          ],
+                                          1
+                                        ),
+                                        _vm._v(" "),
+                                        _c("v-spacer"),
+                                        _vm._v(" "),
+                                        _c(
+                                          "v-btn",
+                                          {
+                                            staticClass: "mr-1",
+                                            attrs: { text: "", color: "grey" },
+                                            on: { click: _vm.resetFields }
+                                          },
+                                          [_vm._v("reset")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "v-btn",
+                                          {
+                                            staticClass: "primary",
+                                            attrs: { disabled: !valid },
+                                            on: { click: _vm.updateWatermark }
+                                          },
+                                          [_vm._v("Save")]
                                         )
-                                      ]
+                                      ],
+                                      1
                                     )
-                                  ]
-                                ),
-                                _vm._v(" "),
-                                _c("v-slider", {
-                                  staticClass: "pt-0",
-                                  attrs: { min: "1", max: "100" },
-                                  model: {
-                                    value: _vm.watermark.image_opacity,
-                                    callback: function($$v) {
-                                      _vm.$set(
-                                        _vm.watermark,
-                                        "image_opacity",
-                                        $$v
-                                      )
-                                    },
-                                    expression: "watermark.image_opacity"
-                                  }
-                                })
-                              ],
-                              1
-                            ),
-                            _vm._v(" "),
-                            _c("v-spacer"),
-                            _vm._v(" "),
-                            _c("v-divider", { staticClass: "mb-5" }),
-                            _vm._v(" "),
-                            _c(
-                              "div",
-                              { staticClass: "d-flex justify-end mt-auto" },
-                              [
-                                _c(
-                                  "v-btn",
-                                  {
-                                    staticClass: "mr-1",
-                                    attrs: { text: "", color: "grey" },
-                                    on: { click: _vm.resetFields }
-                                  },
-                                  [_vm._v("reset")]
-                                ),
-                                _vm._v(" "),
-                                _c(
-                                  "v-btn",
-                                  {
-                                    staticClass: "primary",
-                                    on: { click: _vm.updateWatermark }
-                                  },
-                                  [_vm._v("Save")]
+                                  ],
+                                  1
                                 )
-                              ],
-                              1
-                            )
-                          ],
-                          1
-                        )
-                      ])
+                              ]
+                            }
+                          }
+                        ])
+                      })
                     ],
                     1
                   ),

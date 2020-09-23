@@ -28,7 +28,7 @@
     <div class="pa-3 d-flex align-center">
       <v-btn color="grey" text @click="removeAllFiles">clear</v-btn>
       <v-spacer></v-spacer>
-      <div v-if="watermarkOptions == true" class="d-flex align-center justify-end">
+      <div v-if="watermarkOptions == true && watermarks.length != 0 && itemType != 'video'" class="d-flex align-center justify-end">
         <small>Enable Watermark</small>
           <v-checkbox
           class="ml-2"
@@ -50,6 +50,7 @@
           dense
         ></v-autocomplete>
       </div>
+      <small v-else class="caption grey--text">{{ watermarkOptions == false || itemType == 'video' ? '' : 'No Watermark is set'}}</small>
       <v-btn class="ml-3" color="primary" :loading="btnLoading" @click="upload">Upload</v-btn>
     </div>
   </div>
@@ -101,7 +102,7 @@ export default {
       dropzone: null,
       preview: true,
       btnLoading: false,
-      withWatermark: this.watermarkOptions,
+      withWatermark: this.watermarkOptions ? true : false,
       watermarks: [],
       selectedWatermark: null,
     };
@@ -157,8 +158,8 @@ export default {
       formData.append("product", this.$route.params.id);
       formData.append("add_items", this.addItems);
       formData.append("item_type", this.itemType);
-      formData.append("with_watermark", this.withWatermark);
-      formData.append("selected_watermark", this.selectedWatermark.id);
+      this.withWatermark && formData.append("with_watermark", this.withWatermark);
+      this.selectedWatermark && formData.append("selected_watermark", this.selectedWatermark.id);
     },
     removeAllFiles() {
       this.$refs.myVueDropzone.removeAllFiles();
@@ -193,6 +194,7 @@ export default {
           this.selectedWatermark = this.watermarks.filter(
             (w) => w.default === 1
           )[0];
+          console.log(this.watermarks.length);
         })
         .catch((error) => {
           console.log("Error Fetching Org Users");

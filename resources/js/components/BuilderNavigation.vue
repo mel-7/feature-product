@@ -20,12 +20,12 @@
           :to="setting.location"
 
         >
-          
+
           <v-list-item-action>
             <v-icon color="grey darken-1">{{ setting.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-title class="grey--text text--darken-1">{{ setting.text }}</v-list-item-title>
-       
+
         </v-list-item>
         <v-subheader class="mt-4 mt-auto grey--text text--darken-1">Admin</v-subheader>
         <v-list-item
@@ -105,7 +105,7 @@ export default {
         },
       ],
       clientSettings: [],
-      
+
       adminSettings: [
         {
           icon: "mdi-account-group",
@@ -122,12 +122,12 @@ export default {
     },
 
     settings: function(){
-     
+
       if(this.authUser.role < 4){
         this.clientSettings = [ {
             icon: "mdi-watermark",
             text: "Watermark",
-            location: "/settings/watermark",
+            location: "/settings/watermarks",
           },
           {
             icon: "mdi-star",
