@@ -18,7 +18,7 @@
     <!-- slick slider -->
     <link rel="stylesheet" type="text/css" href="{{ asset('css/slick-carousel.css') }}"/>
     <link rel="stylesheet" type="text/css" href="{{ asset('css/slick.css') }}"/>
-    <link rel="stylesheet" href="{{ asset('css/pannellum.css') }}" />  
+    <!-- <link rel="stylesheet" href="{{ asset('css/pannellum.css') }}" />   -->
    
 
     <style>
@@ -529,11 +529,9 @@ display: none;
     </div>
     @include('product.scripts')
 
-  <!-- Scripts -->
-  
-  <script src="{{ asset('js/app.js') }}" defer></script>
-    <script type="text/javascript" src="{{ asset('js/spritespin.js') }}"></script>
-
+  <!-- Scripts --> 
+ 
+    <script type="text/javascript" src="{{ asset('js/spritespin.js') }}"></script> 
    
     <script type="text/javascript" src="{{ asset('js/libpannellum.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/pannellum.js') }}"></script> 
