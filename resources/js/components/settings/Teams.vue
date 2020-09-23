@@ -1,7 +1,31 @@
 <template>
   <v-row>
     <v-col cols="12" class="px-5">
-      <h3 class="font-weight-light mb-5">Team Settings</h3>
+      <div class="d-flex align-center mb-5">
+        <!-- to="/builder/product/new" -->
+        <v-btn
+          @click="userNewFormDialog = true"
+          class="mr-3 text--primary"
+          elevation="2"
+          fab
+          dark
+          x-small
+          color="white"
+        >
+          <v-icon dark>mdi-plus</v-icon>
+        </v-btn>
+        <h3 class="font-weight-light">Users Account</h3>
+
+         <v-spacer></v-spacer>
+           
+        <v-text-field
+            v-model="searchData"
+            append-icon="mdi-cloud-search-outline"  
+            outlined label="Search" required class="py-0" dense
+            @click:append="searchButton()"
+          ></v-text-field>
+             
+      </div>
       <v-card>
         <v-simple-table>
           <template v-slot:default>
@@ -25,7 +49,8 @@
                   :class="`${item.status == 1 ? 'green--text' : 'blue--text'} text-left`"
                 >{{ item.status == 1 ? 'active' : 'inactive' }}</td>-->
                 <td class="text-right">
-                  <v-btn title="Edit" icon small @click="actionFunction('edit', item)" color="blue">
+                  <div  v-if="authUser.id != item.id">
+                  <v-btn  title="Edit" icon small @click="actionFunction('edit', item)" color="blue"> 
                     <v-icon small>mdi-pencil</v-icon>
                   </v-btn>
                   <v-btn
@@ -37,13 +62,61 @@
                   >
                     <v-icon small>mdi-trash-can-outline</v-icon>
                   </v-btn>
+                  </div>
                 </td>
               </tr>
             </tbody>
           </template>
         </v-simple-table>
       </v-card>
+      <v-pagination
+        v-if="pageCount > 1"
+        class="mt-3"
+        v-model="page"
+        :length="pageCount"
+        @input="onPageChange"
+      ></v-pagination>
     </v-col>
+     <v-dialog v-model="userNewFormDialog" max-width="600px">
+      <v-card>
+        <v-card-title>
+          <h4 class="pb-2">User Form</h4>
+        </v-card-title>
+        <v-card-text>
+          <form>
+            <v-text-field v-model="newname" outlined label="Name" required class="py-0" dense></v-text-field>
+            <v-text-field v-model="newphone" outlined label="Phone" required class="py-0" dense></v-text-field>
+            <v-text-field v-model="newemail" outlined label="Email" required class="py-0" dense></v-text-field>
+            <v-text-field
+                v-model="password"
+                :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" 
+                :type="show1 ? 'text' : 'password'"
+                outlined label="Password" required class="py-0" dense 
+                @click:append="show1 = !show1"
+              ></v-text-field>
+            <!-- :hint="`${role.role}, ${role.value}`" -->
+            <v-select
+              v-model="newrole"
+              :items="roleItems"
+              item-text="role"
+              item-value="value"
+              label="Role"
+              persistent-hint
+              return-object
+              outlined
+              single-line
+              required
+              class="py-0"
+              dense
+            ></v-select>
+            <div class="d-flex justify-end">
+              <v-btn class="mr-1" text color="grey" @click="userNewFormDialog = false">cancel</v-btn>
+              <v-btn class="primary" @click="saveUser('save')">Update</v-btn>
+            </div>
+          </form>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
     <v-dialog v-model="userFormDialog" max-width="600px">
       <v-card>
         <v-card-title>
@@ -77,6 +150,7 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
     <v-dialog v-model="deleteDialog" max-width="300px">
       <v-card>
         <v-card-title class="subtitle-1">Confirm delete</v-card-title>
@@ -104,7 +178,14 @@ export default {
   },
   data() {
     return {
+      searchData: "",
+      //pagination
+      page: 1,
+      pageCount: 0,
+      itemsPerPage: 10,
+
       dialogData: [],
+       userNewFormDialog: false,
       userFormDialog: false,
       deleteDialog: false,
       orgUsers: [], // Company Users
@@ -114,8 +195,16 @@ export default {
         { role: "Team Editor", value: 4 },
       ],
 
+      show1: false,
+      newname: "",
+      newemail: "",
+      newpassword: "",
+      newphone: "",
+      newrole: {},
+
       name: "",
       email: "",
+      password: "",
       phone: "",
       role: {},
     };
@@ -142,6 +231,7 @@ export default {
         this.userFormDialog = true;
         this.name = this.dialogData.name;
         this.email = this.dialogData.email;
+        this.password = this.dialogData.password;
         this.phone = this.dialogData.phone ? this.dialogData.phone : "";
         this.role = {
           role: this.dialogData.role == 3 ? "Admin" : "Editor",
@@ -157,7 +247,13 @@ export default {
         .then((response) => {
           this.deleteDialog = false;
           this.dialogData = [];
-          this.getOrgUsers();
+           
+           var curPage = this.page;
+          
+          if(this.page > 1 && this.dialogData.length == 1){
+             curPage = this.page-1
+          }
+          this.getOrgUsers(curPage);
         })
         .catch((error) => {
           console.log("Error Deleting User");
@@ -165,38 +261,62 @@ export default {
         });
     },
     saveUser(action) {
+      let data = {};
       let route = "save";
       if (action == "update") {
         route = "update/" + this.dialogData.id;
+
+          data = {
+          name: this.name,
+          phone: this.phone,
+          role: this.role.value,
+        };
+        if(this.email != this.dialogData.email){
+          data.email = this.email;
+        }
+      }else{
+          data = {
+          name: this.newname,
+          phone: this.newphone,
+          role: this.newrole.value,
+          email: this.newemail,
+          password: this.password
+        }; 
       }
-      let data = {
-        name: this.name,
-        phone: this.phone,
-        role: this.role.value,
-      };
-      if(this.email != this.dialogData.email){
-        data.email = this.email;
-      }
-      // console.log(data);
+     
+      
       axios
         .post("/settings/team/" + route, data)
         .then((response) => {
           if (action == "update") {
             this.userFormDialog = false;
+          }else{
+             this.userNewFormDialog = false;
           }
           this.dialogData = [];
-          this.getOrgUsers();
+           var curPage = this.page;
+          
+          if(this.page > 1 && this.dialogData.length == 1){
+             curPage = this.page-1
+          }
+          this.getOrgUsers(curPage);
         })
         .catch((error) => {
           console.log("Error Saving User");
           console.log(error);
         });
     },
-    getOrgUsers() {
+    onPageChange() {
+      this.getOrgUsers(this.page);
+    },
+    getOrgUsers(p) {
+     
       axios
-        .get("/settings/get-org-users/" + this.authUser.company_id)
+        .get("/settings/get-org-users/" + this.authUser.company_id+"?page=" + p)
         .then((response) => {
-          this.orgUsers = response.data;
+          this.orgUsers = response.data.data; 
+          this.page = response.data.current_page;
+          this.pageCount = response.data.last_page;
           // console.log(response);
         })
         .catch((error) => {
@@ -204,9 +324,27 @@ export default {
           console.log("Error: " + error);
         });
     },
+    searchButton(){ 
+      if(this.searchData){
+          axios
+            .post("/settings/team/search_data/" + this.searchData)
+            .then((response) => {
+             this.orgUsers = response.data.data; 
+              this.page = response.data.current_page;
+              this.pageCount = response.data.last_page;
+            })
+            .catch((error) => {
+             
+              console.log("Error Deleting Items");
+              console.log(error);
+            });
+      }else{
+        this.getOrgUsers(1); 
+      }
+    },
   },
   created() {
-    this.getOrgUsers();
+    this.getOrgUsers(1);
   },
 };
 </script>

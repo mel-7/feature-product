@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col cols="9" class="px-5">
-      <div class="d-flex align-center mb-5">
+      <div class="d-flex align-center">
         <!-- to="/builder/product/new" -->
         <v-btn
           @click="newProductDialog = true"
@@ -13,8 +13,19 @@
           color="white"
         >
           <v-icon dark>mdi-plus</v-icon>
-        </v-btn>
+        </v-btn> 
         <h3 class="font-weight-light">Products</h3>
+
+          <v-spacer></v-spacer>
+           
+        <v-text-field
+            v-model="searchProduct"
+            append-icon="mdi-cloud-search-outline"  
+            outlined label="Search" required class="py-0" dense
+            @click:append="searchButton()"
+          ></v-text-field>
+             
+          
       </div>
       <v-card>
         <v-simple-table>
@@ -58,7 +69,7 @@
                   <v-btn title="Edit" icon small @click="editProduct(item.id)" color="blue">
                     <v-icon small>mdi-pencil</v-icon>
                   </v-btn>
-                  <v-btn title="Delete" icon small @click="actionFn(item.id)" color="red">
+                  <v-btn title="Delete" icon small @click="actionFn(item)" color="red">
                     <v-icon small>mdi-trash-can-outline</v-icon>
                   </v-btn>
                 </td>
@@ -91,6 +102,25 @@
     <v-dialog v-model="newProductDialog" width="500">
       <new-product @close="newProductDialog = false"></new-product>
     </v-dialog>
+
+     <v-dialog v-model="actionDelete" max-width="300">
+      <v-card :loading="dialogDelete">
+        <v-card-title
+          class="subtitle-1"
+        >Are you sure you want to delete {{dialogItemDelete && dialogItemDelete.title}}?</v-card-title>
+        <v-card-text>You cannot retrieve once deleted.</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn :disabled="dialogDelete" color="primary" text @click="actionDelete = false">Cancel</v-btn>
+          <v-btn
+            :disabled="dialogDelete"
+            color="red"
+            text
+            @click="confirmDelete(dialogItemDelete.id)"
+          >Delete</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-row>
 </template>
 
@@ -103,7 +133,11 @@ export default {
   name: "Products",
   data() {
     return {
+      searchProduct: "",
       newProductDialog: false,
+      dialogDelete: false,
+      dialogItemDelete: null,
+      actionDelete: false,
       dialog: false,
       page: 1,
       pageCount: 0,
@@ -129,8 +163,33 @@ export default {
       theCode.select();
       document.execCommand("copy");
     },
-    actionFn(i) {
-      //console.log(i);
+    actionFn(item) {
+      
+      this.actionDelete = true;
+      this.dialogItemDelete = Object.assign({}, item);
+      
+    },
+    confirmDelete(item) {
+       
+      this.dialogDelete = true;
+      axios
+        .post("/product/delete/" + item)
+        .then((response) => {
+          this.actionDelete = false; 
+          this.dialogDelete = false;
+
+          var curPage = this.page;
+
+          if(this.page > 1 && this.products.length == 1){
+             curPage = this.page-1
+          }
+          this.getProducts(curPage);
+        })
+        .catch((error) => {
+          this.dialogDelete = false; 
+          console.log("Error Deleting Items");
+          console.log(error);
+        });
     },
     editProduct(i) {
       this.$router.push("/builder/product/edit/" + i);
@@ -165,9 +224,30 @@ export default {
           console.log(error.response);
         });
     },
-  },
+    searchButton(){ 
+      if(this.searchProduct){
+          axios
+            .post("/builder/products/searchProduct/" + this.searchProduct)
+            .then((response) => {
+              this.products = response.data.data;
+              this.page = response.data.current_page;
+              this.pageCount = response.data.last_page;
+            })
+            .catch((error) => {
+              
+              console.log("Error Deleting Items");
+              console.log(error);
+            });
+      }else{
+        this.getProducts(1); 
+      }
+    },
+ 
+
+  }, // end method
+ 
   mounted() {
-    this.getProducts(1);
+    this.getProducts(1); 
   },
 };
 </script>
