@@ -105,7 +105,7 @@ export default {
         {
           icon: "mdi-watermark",
           text: "Watermark",
-          location: "/settings/watermark",
+          location: "/settings/watermarks",
         },
         {
           icon: "mdi-star",
