@@ -24,6 +24,7 @@ class CreateWatermarksTable extends Migration
             $table->unsignedInteger('company_id');
             $table->unsignedInteger('media_file_id')->nullable();
             $table->boolean('status')->default(false);
+            $table->boolean('default')->default(false);
             $table->timestamps();
         });
     }

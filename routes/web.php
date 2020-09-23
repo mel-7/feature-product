@@ -52,6 +52,8 @@ Route::get('/settings/watermark/get/{id}', 'WatermarksController@getWatermark')-
 Route::post('/settings/watermark/delete/{id}', 'WatermarksController@destroy')->name('settings.watermark.delete');
 Route::post('/settings/watermark/update/{id}', 'WatermarksController@update')->name('settings.watermark.update');
 
+Route::get('/settings/watermarks/all', 'WatermarksController@fetchWatermarksForUploadZone')->name('settings.watermarks.uploadzone'); // needs to transfer to vuex!!
+
 // Teams
 Route::get('/settings/organization', 'BuilderController@index')->name('settings.organization');
 Route::get('/settings/organization/fetch', 'SettingsController@fetchOrg')->name('settings.fetch.org');

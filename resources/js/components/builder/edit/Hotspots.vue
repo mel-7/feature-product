@@ -194,7 +194,7 @@ export default {
         action: "save",
         data: null,
         product: this.product,
-        itemType: "panorama",
+        itemType: "image",
         returnUrl: true,
       },
     };
@@ -373,14 +373,14 @@ export default {
             hotspot_settings: '{"top":"5%","left":"5%","display":"block"}',
           }],
         title: h.title
-   
+
       };
-       
-     
+
+
       if (this.selectedItem.length != 0) {
-       
+
         if($("div").hasClass("hotspot-id-"+h.id)){
-          
+
             $(".hotspot-id-"+h.id).css({
               left:"5%",
               top: "5%",

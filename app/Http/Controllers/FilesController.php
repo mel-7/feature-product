@@ -26,6 +26,7 @@ class FilesController extends Controller
 
     public function upload(Request $request)
     {
+        // dd($request->with_watermark);
         // Validate request
         // $this->validate($request, [
         //     'file' => 'required|image|mimes:jpeg,png,jpg|max:204800',
@@ -53,7 +54,9 @@ class FilesController extends Controller
         $files = Collection::wrap(request()->file('file'));
 
         // Get the Company's Watermark settings
-        $watermark = Watermark::where('company_id', $companyId)->first();
+        if($request->with_watermark == "true"){
+            $watermark = Watermark::where('id', $request->selected_watermark)->first();
+        }
 
         // Do something on each files uploaded
         $files->each(function ($file, $key) use (&$watermark, &$companyId, &$userStorage, &$itemsArray, &$fileArray, &$request, &$uploadKey) {
@@ -64,7 +67,7 @@ class FilesController extends Controller
             $extn = $file->getClientOriginalExtension();
             $slugTitle = Str::slug($title, '-');
             $path = $slugTitle."-".$uploadKey.".".$extn;
-           
+
             $jpgExtensions = array('jpeg', 'jpg', 'JPEG', 'JPG');
             $pngExtensions = array('png', 'PNG');
             $format = 'jpg';
@@ -74,19 +77,18 @@ class FilesController extends Controller
 
             // Check file if image or video
             if($request->item_type == 'video'){
-               
                 $file->move('storage/uploads/'.$companyId.'/', $path); // add user id
-                
             }else{
                 // File Optimization
                 // $img = Image::make($file)->fit(3840,2160); // UHD
                 $img = Image::make($file);
-               
+
                 $img->save($userStorageDir . '/original/' . $path); // Save to directory
 
-                if($watermark && $watermark->status == true && $request->item_type != "panorama"){
-                    $img->insert('storage/uploads/'.$companyId.'/watermark/'.$watermark->path, $watermark->position, $watermark->offset_space, $watermark->offset_space);
-                   
+                if($request->with_watermark == "true"){
+                    if($watermark && $request->item_type != "panorama" && ($watermark->path != null || $watermark->path != "")){
+                        $img->insert('storage/uploads/'.$companyId.'/watermark/'.$watermark->path, $watermark->position, $watermark->offset_space, $watermark->offset_space);
+                    }
                 }
                 $img->save($userStorageDir . '/' . $path); // Save to directory
             }
@@ -123,7 +125,7 @@ class FilesController extends Controller
                 'item_id' => null,
                 'created_at' => Carbon::now(),
             ));
-        }); 
+        });
 
         // Save the files to Media_files table
         Media_file::insert($fileArray);
@@ -134,8 +136,8 @@ class FilesController extends Controller
 
             // Get the files by original_name
             $originaNamesArray = array_column($fileArray, 'original_name');
-            $recentlySavedFiles = Media_file::whereIn('original_name', $originaNamesArray )->get(); 
-          
+            $recentlySavedFiles = Media_file::whereIn('original_name', $originaNamesArray )->get();
+
             foreach ($recentlySavedFiles as $key => $file) {
                 $itemsArray[$key]['media_file_id'] = $file->id;
             }
@@ -153,20 +155,20 @@ class FilesController extends Controller
     {
 
         $user = Auth::user();
-        $companyId = $user->company_id;  
-        $userStorage = public_path('storage/uploads/'). $companyId;   
-        
-        $watermark = Watermark::where('company_id', $companyId)->first(); 
-        
+        $companyId = $user->company_id;
+        $userStorage = public_path('storage/uploads/'). $companyId;
+
+        $watermark = Watermark::where('company_id', $companyId)->first();
+
         $files = Collection::wrap($request->selected);
- 
+
         // Do something on each files uploaded
         foreach($files AS $k => $file) {
-            $source = storage_path() . '/app/public/uploads/'.$companyId.'/original/'.$file; 
-           
-            $selectedImg = Image::make($source);    
+            $source = storage_path() . '/app/public/uploads/'.$companyId.'/original/'.$file;
+
+            $selectedImg = Image::make($source);
             if($watermark && $watermark->status == true ){
-                $selectedImg->insert('storage/uploads/'.$companyId.'/watermark/'.$watermark->path, $watermark->position, $watermark->offset_space, $watermark->offset_space); 
+                $selectedImg->insert('storage/uploads/'.$companyId.'/watermark/'.$watermark->path, $watermark->position, $watermark->offset_space, $watermark->offset_space);
             }
                 $selectedImg->save($userStorage . '/' . $file); // Save to directory
         }
@@ -176,19 +178,19 @@ class FilesController extends Controller
     public function remove_watermark(Request $request)
     {
         $user = Auth::user();
-        $companyId = $user->company_id;  
-        $userStorage = public_path('storage/uploads/'). $companyId;   
-        
-        $watermark = Watermark::where('company_id', $companyId)->first(); 
-        
+        $companyId = $user->company_id;
+        $userStorage = public_path('storage/uploads/'). $companyId;
+
+        $watermark = Watermark::where('company_id', $companyId)->first();
+
         $files = Collection::wrap($request->selected);
- 
+
         // Do something on each files uploaded
         foreach($files AS $k => $file) {
-            $source = storage_path() . '/app/public/uploads/'.$companyId.'/original/'.$file; 
-           
-            $selectedImg = Image::make($source);    
-             
+            $source = storage_path() . '/app/public/uploads/'.$companyId.'/original/'.$file;
+
+            $selectedImg = Image::make($source);
+
             $selectedImg->save($userStorage . '/' . $file); // Save to directory
         }
         return response()->json("Success", 200);
