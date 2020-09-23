@@ -33,6 +33,15 @@ class ProductsController extends Controller
       
     }
 
+    public function searchProduct($search)
+    {
+       
+        $company_id = Auth::user()->company_id;
+        $products = Product::where('company_id', $company_id)->where('title', 'like', '%'.$search.'%')->orderBy('created_at', 'desc')->paginate(10);
+        
+        return response()->json($products, 200);
+    }
+
     public function productsAPI()
     {
         $company_id = Auth::user()->company_id;
@@ -58,6 +67,15 @@ class ProductsController extends Controller
         } 
        
         return response()->json(["dataItems" => false]);;
+    }
+
+    public function destroy($id)
+    {
+       
+        $product = Product::where('id', '=', $id)->firstOrFail();
+        $product->delete(); 
+        
+        return response()->json('Item has been deleted', 200);
     }
 
     /**

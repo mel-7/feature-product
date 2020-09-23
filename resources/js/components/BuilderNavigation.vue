@@ -12,17 +12,20 @@
         </v-list-item>
         <v-spacer></v-spacer>
         <!-- Client Settings -->
-        <v-subheader class="mt-4 mt-auto grey--text text--darken-1">Settings</v-subheader>
+        <v-subheader v-if="authUser.role < 4" class="mt-4 mt-auto grey--text text--darken-1">Settings</v-subheader>
         <v-list-item
           link
           v-for="setting in clientSettings"
           :key="setting.text"
           :to="setting.location"
+
         >
+          
           <v-list-item-action>
             <v-icon color="grey darken-1">{{ setting.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-title class="grey--text text--darken-1">{{ setting.text }}</v-list-item-title>
+       
         </v-list-item>
         <v-subheader class="mt-4 mt-auto grey--text text--darken-1">Admin</v-subheader>
         <v-list-item
@@ -101,28 +104,8 @@ export default {
           location: "/builder/products",
         },
       ],
-      clientSettings: [
-        {
-          icon: "mdi-watermark",
-          text: "Watermark",
-          location: "/settings/watermarks",
-        },
-        {
-          icon: "mdi-star",
-          text: "Organization",
-          location: "/settings/organization",
-        },
-        {
-          icon: "mdi-account-group",
-          text: "Teams",
-          location: "/settings/teams",
-        },
-        {
-          icon: "mdi-account",
-          text: "Account",
-          location: "/settings/account",
-        },
-      ],
+      clientSettings: [],
+      
       adminSettings: [
         {
           icon: "mdi-account-group",
@@ -137,6 +120,35 @@ export default {
       event.preventDefault();
       document.getElementById("logout-form").submit();
     },
+
+    settings: function(){
+     
+      if(this.authUser.role < 4){
+        this.clientSettings = [ {
+            icon: "mdi-watermark",
+            text: "Watermark",
+            location: "/settings/watermark",
+          },
+          {
+            icon: "mdi-star",
+            text: "Organization",
+            location: "/settings/organization",
+          },
+          {
+            icon: "mdi-account-group",
+            text: "Teams",
+            location: "/settings/teams",
+          },
+          {
+            icon: "mdi-account",
+            text: "Account",
+            location: "/settings/account",
+          }]
+      }
+    }
   },
+  created: function(){
+    this.settings();
+  }
 };
 </script>

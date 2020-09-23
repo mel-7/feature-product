@@ -52,8 +52,12 @@ class SettingsController extends Controller
     }
 
     public function getOrgUsers($id)
-    {
-        $users = User::where('company_id', $id)->orderBy('created_at', 'desc')->get();
+    {   
+        if(Auth::user()->id > 1){
+            $users = User::where('company_id', $id)->where('role', "<>", 1)->orderBy('role', 'asc')->orderBy('created_at', 'desc')->paginate(10);
+        }else{
+            $users = User::where('company_id', $id)->orderBy('role', 'asc')->orderBy('created_at', 'desc')->paginate(10);
+        }
         return response()->json($users, 200);
     }
 
@@ -73,10 +77,12 @@ class SettingsController extends Controller
     {
         $user = User::where('id', $id)->firstOrFail();
 
-        if($user->role == 3 && $this->hasOneAdmin() == false){
-            return response()->json([
-                'message' => 'Unable to delete user. A team should have at least one Administrator.',
-            ], 422);
+        if(Auth::user()->id > 1){
+            if($user->role == 3 && $this->hasOneAdmin() == false){
+                return response()->json([
+                    'message' => 'Unable to delete user. A team should have at least one Administrator.',
+                ], 422);
+            }
         }
 
         $user->delete();
@@ -87,14 +93,44 @@ class SettingsController extends Controller
     public function updateOrgUser(Request $request, $id)
     {
         $user = User::where('id', $id)->firstOrFail();
-        if($this->hasOneAdmin() == false && ($user->role == 3 && $request->role != 3) ){
-            return response()->json([
-                'message' => 'Unable to update user. A team should have at least one Administrator.',
-            ], 422);
+        if(Auth::user()->id > 1){
+            if($this->hasOneAdmin() == false && ($user->role == 3 && $request->role != 3) ){
+                return response()->json([
+                    'message' => 'Unable to update user. A team should have at least one Administrator.',
+                ], 422);
+            }
         }
         $user->update($this->validateOrgTeamRequest());
         return response()->json([
             'message' => 'User has been updated',
+        ], 200);
+    }
+
+    public function searchData($search)
+    {
+       
+        $company_id = Auth::user()->company_id;
+        $user = User::where('company_id', $company_id)->where('name', 'like', '%'.$search.'%')->orWhere('phone', 'like', '%'.$search.'%')->orderBy('name', 'asc')->paginate(10);
+        
+        return response()->json($user, 200);
+    }
+
+    public function saveOrgUser(Request $request)
+    {
+        $this->validateOrgTeamRequest();
+       
+        // store request
+        $product = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'role' => $request->role,
+            'phone' => $request->phone,
+            'password' => Hash::make($request->password),
+            'company_id' => Auth::user()->company_id
+        ]);
+        // response
+        return response()->json([ 
+            'message' => 'Product has been created',
         ], 200);
     }
 

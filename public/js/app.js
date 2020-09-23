@@ -3001,6 +3001,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["authUser"],
   data: function data() {
@@ -3017,23 +3020,7 @@ __webpack_require__.r(__webpack_exports__);
         text: "Products",
         location: "/builder/products"
       }],
-      clientSettings: [{
-        icon: "mdi-watermark",
-        text: "Watermark",
-        location: "/settings/watermarks"
-      }, {
-        icon: "mdi-star",
-        text: "Organization",
-        location: "/settings/organization"
-      }, {
-        icon: "mdi-account-group",
-        text: "Teams",
-        location: "/settings/teams"
-      }, {
-        icon: "mdi-account",
-        text: "Account",
-        location: "/settings/account"
-      }],
+      clientSettings: [],
       adminSettings: [{
         icon: "mdi-account-group",
         text: "Companies",
@@ -3045,7 +3032,31 @@ __webpack_require__.r(__webpack_exports__);
     logout: function logout(event) {
       event.preventDefault();
       document.getElementById("logout-form").submit();
+    },
+    settings: function settings() {
+      if (this.authUser.role < 4) {
+        this.clientSettings = [{
+          icon: "mdi-watermark",
+          text: "Watermark",
+          location: "/settings/watermark"
+        }, {
+          icon: "mdi-star",
+          text: "Organization",
+          location: "/settings/organization"
+        }, {
+          icon: "mdi-account-group",
+          text: "Teams",
+          location: "/settings/teams"
+        }, {
+          icon: "mdi-account",
+          text: "Account",
+          location: "/settings/account"
+        }];
+      }
     }
+  },
+  created: function created() {
+    this.settings();
   }
 });
 
@@ -3910,6 +3921,37 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -3918,7 +3960,11 @@ __webpack_require__.r(__webpack_exports__);
   name: "Products",
   data: function data() {
     return {
+      searchProduct: "",
       newProductDialog: false,
+      dialogDelete: false,
+      dialogItemDelete: null,
+      actionDelete: false,
       dialog: false,
       page: 1,
       pageCount: 0,
@@ -3937,18 +3983,40 @@ __webpack_require__.r(__webpack_exports__);
       theCode.select();
       document.execCommand("copy");
     },
-    actionFn: function actionFn(i) {//console.log(i);
+    actionFn: function actionFn(item) {
+      this.actionDelete = true;
+      this.dialogItemDelete = Object.assign({}, item);
+    },
+    confirmDelete: function confirmDelete(item) {
+      var _this = this;
+
+      this.dialogDelete = true;
+      axios.post("/product/delete/" + item).then(function (response) {
+        _this.actionDelete = false;
+        _this.dialogDelete = false;
+        var curPage = _this.page;
+
+        if (_this.page > 1 && _this.products.length == 1) {
+          curPage = _this.page - 1;
+        }
+
+        _this.getProducts(curPage);
+      })["catch"](function (error) {
+        _this.dialogDelete = false;
+        console.log("Error Deleting Items");
+        console.log(error);
+      });
     },
     editProduct: function editProduct(i) {
       this.$router.push("/builder/product/edit/" + i);
     },
     getProducts: function getProducts(p) {
-      var _this = this;
+      var _this2 = this;
 
       axios.get("/builder/products/all/?page=" + p).then(function (response) {
-        _this.products = response.data.data;
-        _this.page = response.data.current_page;
-        _this.pageCount = response.data.last_page;
+        _this2.products = response.data.data;
+        _this2.page = response.data.current_page;
+        _this2.pageCount = response.data.last_page;
       })["catch"](function (error) {
         console.log("Error: " + error);
       });
@@ -3957,21 +4025,38 @@ __webpack_require__.r(__webpack_exports__);
       this.getProducts(this.page);
     },
     saveProduct: function saveProduct() {
-      var _this2 = this;
+      var _this3 = this;
 
       var data = {
         title: "auto draft",
         slug: "auto-draft"
       };
       axios.post("/builder/product/store", data).then(function (response) {
-        _this2.valid = true;
+        _this3.valid = true;
 
-        _this2.$router.push("/builder/product/edit/" + data.slug);
+        _this3.$router.push("/builder/product/edit/" + data.slug);
       })["catch"](function (error) {
         console.log(error.response);
       });
+    },
+    searchButton: function searchButton() {
+      var _this4 = this;
+
+      if (this.searchProduct) {
+        axios.post("/builder/products/searchProduct/" + this.searchProduct).then(function (response) {
+          _this4.products = response.data.data;
+          _this4.page = response.data.current_page;
+          _this4.pageCount = response.data.last_page;
+        })["catch"](function (error) {
+          console.log("Error Deleting Items");
+          console.log(error);
+        });
+      } else {
+        this.getProducts(1);
+      }
     }
   },
+  // end method
   mounted: function mounted() {
     this.getProducts(1);
   }
@@ -4011,7 +4096,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      valid: true,
+      valid: false,
       title: "",
       titleRules: [function (v) {
         return !!v || "Name is required";
@@ -4031,29 +4116,10 @@ __webpack_require__.r(__webpack_exports__);
         slug: slugify(this.title)
       };
       axios.post("/builder/product/store", data).then(function (response) {
-        //   console.log(response.data.product);
-        _this.valid = true;
-
-        _this.$router.push("/builder/product/edit/" + response.data.product); //  window.location = "/builder/product/edit/" + response.data.product;
-
+        _this.$router.push("/builder/product/edit/" + response.data.product);
       })["catch"](function (error) {
         console.log("invalid");
-        console.log(error.response); //   if (error.response.status == 403) {
-        //     this.errorUI(error);
-        //   }
-        //   if (error.response && error.response.status == 422) {
-        //     this.errors.setErrors(error.response.data.errors);
-        //     this.errorUI("Unprocessable Entity");
-        //     // Input error messages
-        //     if (this.errors.hasError("slug")) {
-        //       this.slugError = true;
-        //       this.slugErrMsg = this.errors.first("slug");
-        //     }
-        //     if (this.errors.hasError("position")) {
-        //       this.positionError = true;
-        //       this.positionErrMsg = this.errors.first("position");
-        //     }
-        //   }
+        console.log(error.response);
       });
     }
   }
@@ -6253,6 +6319,81 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     authUser: {
@@ -6262,7 +6403,13 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      searchData: "",
+      //pagination
+      page: 1,
+      pageCount: 0,
+      itemsPerPage: 10,
       dialogData: [],
+      userNewFormDialog: false,
       userFormDialog: false,
       deleteDialog: false,
       orgUsers: [],
@@ -6274,8 +6421,15 @@ __webpack_require__.r(__webpack_exports__);
         role: "Team Editor",
         value: 4
       }],
+      show1: false,
+      newname: "",
+      newemail: "",
+      newpassword: "",
+      newphone: "",
+      newrole: {},
       name: "",
       email: "",
+      password: "",
       phone: "",
       role: {}
     };
@@ -6305,6 +6459,7 @@ __webpack_require__.r(__webpack_exports__);
         this.userFormDialog = true;
         this.name = this.dialogData.name;
         this.email = this.dialogData.email;
+        this.password = this.dialogData.password;
         this.phone = this.dialogData.phone ? this.dialogData.phone : "";
         this.role = {
           role: this.dialogData.role == 3 ? "Admin" : "Editor",
@@ -6320,8 +6475,13 @@ __webpack_require__.r(__webpack_exports__);
       axios.post("/settings/team/delete/" + this.dialogData.id).then(function (response) {
         _this.deleteDialog = false;
         _this.dialogData = [];
+        var curPage = _this.page;
 
-        _this.getOrgUsers();
+        if (_this.page > 1 && _this.dialogData.length == 1) {
+          curPage = _this.page - 1;
+        }
+
+        _this.getOrgUsers(curPage);
       })["catch"](function (error) {
         console.log("Error Deleting User");
         console.log(error);
@@ -6330,49 +6490,84 @@ __webpack_require__.r(__webpack_exports__);
     saveUser: function saveUser(action) {
       var _this2 = this;
 
+      var data = {};
       var route = "save";
 
       if (action == "update") {
         route = "update/" + this.dialogData.id;
+        data = {
+          name: this.name,
+          phone: this.phone,
+          role: this.role.value
+        };
+
+        if (this.email != this.dialogData.email) {
+          data.email = this.email;
+        }
+      } else {
+        data = {
+          name: this.newname,
+          phone: this.newphone,
+          role: this.newrole.value,
+          email: this.newemail,
+          password: this.password
+        };
       }
-
-      var data = {
-        name: this.name,
-        phone: this.phone,
-        role: this.role.value
-      };
-
-      if (this.email != this.dialogData.email) {
-        data.email = this.email;
-      } // console.log(data);
-
 
       axios.post("/settings/team/" + route, data).then(function (response) {
         if (action == "update") {
           _this2.userFormDialog = false;
+        } else {
+          _this2.userNewFormDialog = false;
         }
 
         _this2.dialogData = [];
+        var curPage = _this2.page;
 
-        _this2.getOrgUsers();
+        if (_this2.page > 1 && _this2.dialogData.length == 1) {
+          curPage = _this2.page - 1;
+        }
+
+        _this2.getOrgUsers(curPage);
       })["catch"](function (error) {
         console.log("Error Saving User");
         console.log(error);
       });
     },
-    getOrgUsers: function getOrgUsers() {
+    onPageChange: function onPageChange() {
+      this.getOrgUsers(this.page);
+    },
+    getOrgUsers: function getOrgUsers(p) {
       var _this3 = this;
 
-      axios.get("/settings/get-org-users/" + this.authUser.company_id).then(function (response) {
-        _this3.orgUsers = response.data; // console.log(response);
+      axios.get("/settings/get-org-users/" + this.authUser.company_id + "?page=" + p).then(function (response) {
+        _this3.orgUsers = response.data.data;
+        _this3.page = response.data.current_page;
+        _this3.pageCount = response.data.last_page; // console.log(response);
       })["catch"](function (error) {
         console.log("Error Fetching Org Users");
         console.log("Error: " + error);
       });
+    },
+    searchButton: function searchButton() {
+      var _this4 = this;
+
+      if (this.searchData) {
+        axios.post("/settings/team/search_data/" + this.searchData).then(function (response) {
+          _this4.orgUsers = response.data.data;
+          _this4.page = response.data.current_page;
+          _this4.pageCount = response.data.last_page;
+        })["catch"](function (error) {
+          console.log("Error Deleting Items");
+          console.log(error);
+        });
+      } else {
+        this.getOrgUsers(1);
+      }
     }
   },
   created: function created() {
-    this.getOrgUsers();
+    this.getOrgUsers(1);
   }
 });
 
@@ -29922,11 +30117,13 @@ var render = function() {
               _vm._v(" "),
               _c("v-spacer"),
               _vm._v(" "),
-              _c(
-                "v-subheader",
-                { staticClass: "mt-4 mt-auto grey--text text--darken-1" },
-                [_vm._v("Settings")]
-              ),
+              _vm.authUser.role < 4
+                ? _c(
+                    "v-subheader",
+                    { staticClass: "mt-4 mt-auto grey--text text--darken-1" },
+                    [_vm._v("Settings")]
+                  )
+                : _vm._e(),
               _vm._v(" "),
               _vm._l(_vm.clientSettings, function(setting) {
                 return _c(
@@ -30964,7 +31161,7 @@ var render = function() {
         [
           _c(
             "div",
-            { staticClass: "d-flex align-center mb-5" },
+            { staticClass: "d-flex align-center" },
             [
               _c(
                 "v-btn",
@@ -30989,7 +31186,43 @@ var render = function() {
               _vm._v(" "),
               _c("h3", { staticClass: "font-weight-light" }, [
                 _vm._v("Products")
-              ])
+              ]),
+              _vm._v(" "),
+              _c("v-spacer"),
+              _vm._v(" "),
+              _c("v-text-field", {
+                staticClass: "py-0",
+                attrs: {
+                  "append-icon": "mdi-cloud-search-outline",
+                  outlined: "",
+                  label: "Search",
+                  required: "",
+                  dense: ""
+                },
+                on: {
+                  keydown: function($event) {
+                    if (
+                      !$event.type.indexOf("key") &&
+                      _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                    ) {
+                      return null
+                    }
+                    $event.preventDefault()
+                    return _vm.searchButton($event)
+                  },
+                  "click:append": function($event) {
+                    $event.preventDefault()
+                    return _vm.searchButton($event)
+                  }
+                },
+                model: {
+                  value: _vm.searchProduct,
+                  callback: function($$v) {
+                    _vm.searchProduct = $$v
+                  },
+                  expression: "searchProduct"
+                }
+              })
             ],
             1
           ),
@@ -31138,7 +31371,7 @@ var render = function() {
                                       },
                                       on: {
                                         click: function($event) {
-                                          return _vm.actionFn(item.id)
+                                          return _vm.actionFn(item)
                                         }
                                       }
                                     },
@@ -31280,6 +31513,81 @@ var render = function() {
           })
         ],
         1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-dialog",
+        {
+          attrs: { "max-width": "300" },
+          model: {
+            value: _vm.actionDelete,
+            callback: function($$v) {
+              _vm.actionDelete = $$v
+            },
+            expression: "actionDelete"
+          }
+        },
+        [
+          _c(
+            "v-card",
+            { attrs: { loading: _vm.dialogDelete } },
+            [
+              _c("v-card-title", { staticClass: "subtitle-1" }, [
+                _vm._v(
+                  "Are you sure you want to delete " +
+                    _vm._s(_vm.dialogItemDelete && _vm.dialogItemDelete.title) +
+                    "?"
+                )
+              ]),
+              _vm._v(" "),
+              _c("v-card-text", [_vm._v("You cannot retrieve once deleted.")]),
+              _vm._v(" "),
+              _c(
+                "v-card-actions",
+                [
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: {
+                        disabled: _vm.dialogDelete,
+                        color: "primary",
+                        text: ""
+                      },
+                      on: {
+                        click: function($event) {
+                          _vm.actionDelete = false
+                        }
+                      }
+                    },
+                    [_vm._v("Cancel")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: {
+                        disabled: _vm.dialogDelete,
+                        color: "red",
+                        text: ""
+                      },
+                      on: {
+                        click: function($event) {
+                          return _vm.confirmDelete(_vm.dialogItemDelete.id)
+                        }
+                      }
+                    },
+                    [_vm._v("Delete")]
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
       )
     ],
     1
@@ -31342,13 +31650,14 @@ var render = function() {
               required: ""
             },
             on: {
-              keyup: function($event) {
+              keydown: function($event) {
                 if (
                   !$event.type.indexOf("key") &&
                   _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
                 ) {
                   return null
                 }
+                $event.preventDefault()
                 return _vm.saveProduct($event)
               }
             },
@@ -33917,9 +34226,73 @@ var render = function() {
         "v-col",
         { staticClass: "px-5", attrs: { cols: "12" } },
         [
-          _c("h3", { staticClass: "font-weight-light mb-5" }, [
-            _vm._v("Team Settings")
-          ]),
+          _c(
+            "div",
+            { staticClass: "d-flex align-center mb-5" },
+            [
+              _c(
+                "v-btn",
+                {
+                  staticClass: "mr-3 text--primary",
+                  attrs: {
+                    elevation: "2",
+                    fab: "",
+                    dark: "",
+                    "x-small": "",
+                    color: "white"
+                  },
+                  on: {
+                    click: function($event) {
+                      _vm.userNewFormDialog = true
+                    }
+                  }
+                },
+                [_c("v-icon", { attrs: { dark: "" } }, [_vm._v("mdi-plus")])],
+                1
+              ),
+              _vm._v(" "),
+              _c("h3", { staticClass: "font-weight-light" }, [
+                _vm._v("Users Account")
+              ]),
+              _vm._v(" "),
+              _c("v-spacer"),
+              _vm._v(" "),
+              _c("v-text-field", {
+                staticClass: "py-0",
+                attrs: {
+                  "append-icon": "mdi-cloud-search-outline",
+                  outlined: "",
+                  label: "Search",
+                  required: "",
+                  dense: ""
+                },
+                on: {
+                  keydown: function($event) {
+                    if (
+                      !$event.type.indexOf("key") &&
+                      _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                    ) {
+                      return null
+                    }
+                    $event.preventDefault()
+                    return _vm.searchButton($event)
+                  },
+                  "click:append": function($event) {
+                    $event.preventDefault()
+                    return _vm.searchButton($event)
+                  }
+                },
+                model: {
+                  value: _vm.searchData,
+                  callback: function($$v) {
+                    _vm.searchData = $$v
+                  },
+                  expression: "searchData"
+                }
+              })
+            ],
+            1
+          ),
           _vm._v(" "),
           _c(
             "v-card",
@@ -33977,64 +34350,71 @@ var render = function() {
                                 [_vm._v(_vm._s(_vm.printRole(item.role)))]
                               ),
                               _vm._v(" "),
-                              _c(
-                                "td",
-                                { staticClass: "text-right" },
-                                [
-                                  _c(
-                                    "v-btn",
-                                    {
-                                      attrs: {
-                                        title: "Edit",
-                                        icon: "",
-                                        small: "",
-                                        color: "blue"
-                                      },
-                                      on: {
-                                        click: function($event) {
-                                          return _vm.actionFunction(
-                                            "edit",
-                                            item
-                                          )
-                                        }
-                                      }
-                                    },
-                                    [
-                                      _c("v-icon", { attrs: { small: "" } }, [
-                                        _vm._v("mdi-pencil")
-                                      ])
-                                    ],
-                                    1
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "v-btn",
-                                    {
-                                      attrs: {
-                                        title: "Delete",
-                                        icon: "",
-                                        small: "",
-                                        color: "red"
-                                      },
-                                      on: {
-                                        click: function($event) {
-                                          return _vm.actionFunction(
-                                            "delete",
-                                            item
-                                          )
-                                        }
-                                      }
-                                    },
-                                    [
-                                      _c("v-icon", { attrs: { small: "" } }, [
-                                        _vm._v("mdi-trash-can-outline")
-                                      ])
-                                    ],
-                                    1
-                                  )
-                                ],
-                                1
-                              )
+                              _c("td", { staticClass: "text-right" }, [
+                                _vm.authUser.id != item.id
+                                  ? _c(
+                                      "div",
+                                      [
+                                        _c(
+                                          "v-btn",
+                                          {
+                                            attrs: {
+                                              title: "Edit",
+                                              icon: "",
+                                              small: "",
+                                              color: "blue"
+                                            },
+                                            on: {
+                                              click: function($event) {
+                                                return _vm.actionFunction(
+                                                  "edit",
+                                                  item
+                                                )
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _c(
+                                              "v-icon",
+                                              { attrs: { small: "" } },
+                                              [_vm._v("mdi-pencil")]
+                                            )
+                                          ],
+                                          1
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "v-btn",
+                                          {
+                                            attrs: {
+                                              title: "Delete",
+                                              icon: "",
+                                              small: "",
+                                              color: "red"
+                                            },
+                                            on: {
+                                              click: function($event) {
+                                                return _vm.actionFunction(
+                                                  "delete",
+                                                  item
+                                                )
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _c(
+                                              "v-icon",
+                                              { attrs: { small: "" } },
+                                              [_vm._v("mdi-trash-can-outline")]
+                                            )
+                                          ],
+                                          1
+                                        )
+                                      ],
+                                      1
+                                    )
+                                  : _vm._e()
+                              ])
                             ])
                           }),
                           0
@@ -34045,6 +34425,187 @@ var render = function() {
                   }
                 ])
               })
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _vm.pageCount > 1
+            ? _c("v-pagination", {
+                staticClass: "mt-3",
+                attrs: { length: _vm.pageCount },
+                on: { input: _vm.onPageChange },
+                model: {
+                  value: _vm.page,
+                  callback: function($$v) {
+                    _vm.page = $$v
+                  },
+                  expression: "page"
+                }
+              })
+            : _vm._e()
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-dialog",
+        {
+          attrs: { "max-width": "600px" },
+          model: {
+            value: _vm.userNewFormDialog,
+            callback: function($$v) {
+              _vm.userNewFormDialog = $$v
+            },
+            expression: "userNewFormDialog"
+          }
+        },
+        [
+          _c(
+            "v-card",
+            [
+              _c("v-card-title", [
+                _c("h4", { staticClass: "pb-2" }, [_vm._v("User Form")])
+              ]),
+              _vm._v(" "),
+              _c("v-card-text", [
+                _c(
+                  "form",
+                  [
+                    _c("v-text-field", {
+                      staticClass: "py-0",
+                      attrs: {
+                        outlined: "",
+                        label: "Name",
+                        required: "",
+                        dense: ""
+                      },
+                      model: {
+                        value: _vm.newname,
+                        callback: function($$v) {
+                          _vm.newname = $$v
+                        },
+                        expression: "newname"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("v-text-field", {
+                      staticClass: "py-0",
+                      attrs: {
+                        outlined: "",
+                        label: "Phone",
+                        required: "",
+                        dense: ""
+                      },
+                      model: {
+                        value: _vm.newphone,
+                        callback: function($$v) {
+                          _vm.newphone = $$v
+                        },
+                        expression: "newphone"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("v-text-field", {
+                      staticClass: "py-0",
+                      attrs: {
+                        outlined: "",
+                        label: "Email",
+                        required: "",
+                        dense: ""
+                      },
+                      model: {
+                        value: _vm.newemail,
+                        callback: function($$v) {
+                          _vm.newemail = $$v
+                        },
+                        expression: "newemail"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("v-text-field", {
+                      staticClass: "py-0",
+                      attrs: {
+                        "append-icon": _vm.show1 ? "mdi-eye" : "mdi-eye-off",
+                        type: _vm.show1 ? "text" : "password",
+                        outlined: "",
+                        label: "Password",
+                        required: "",
+                        dense: ""
+                      },
+                      on: {
+                        "click:append": function($event) {
+                          _vm.show1 = !_vm.show1
+                        }
+                      },
+                      model: {
+                        value: _vm.password,
+                        callback: function($$v) {
+                          _vm.password = $$v
+                        },
+                        expression: "password"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("v-select", {
+                      staticClass: "py-0",
+                      attrs: {
+                        items: _vm.roleItems,
+                        "item-text": "role",
+                        "item-value": "value",
+                        label: "Role",
+                        "persistent-hint": "",
+                        "return-object": "",
+                        outlined: "",
+                        "single-line": "",
+                        required: "",
+                        dense: ""
+                      },
+                      model: {
+                        value: _vm.newrole,
+                        callback: function($$v) {
+                          _vm.newrole = $$v
+                        },
+                        expression: "newrole"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "d-flex justify-end" },
+                      [
+                        _c(
+                          "v-btn",
+                          {
+                            staticClass: "mr-1",
+                            attrs: { text: "", color: "grey" },
+                            on: {
+                              click: function($event) {
+                                _vm.userNewFormDialog = false
+                              }
+                            }
+                          },
+                          [_vm._v("cancel")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "v-btn",
+                          {
+                            staticClass: "primary",
+                            on: {
+                              click: function($event) {
+                                return _vm.saveUser("save")
+                              }
+                            }
+                          },
+                          [_vm._v("Update")]
+                        )
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                )
+              ])
             ],
             1
           )
@@ -95810,8 +96371,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
