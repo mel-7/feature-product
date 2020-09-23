@@ -20,9 +20,10 @@
            
         <v-text-field
             v-model="searchData"
+            v-on:keydown.enter.prevent="searchButton"
             append-icon="mdi-cloud-search-outline"  
             outlined label="Search" required class="py-0" dense
-            @click:append="searchButton()"
+            @click:append.prevent="searchButton"
           ></v-text-field>
              
       </div>
