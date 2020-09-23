@@ -3182,6 +3182,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -3450,6 +3451,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -3461,6 +3483,10 @@ __webpack_require__.r(__webpack_exports__);
     itemType: {
       type: String,
       "default": "360"
+    },
+    watermarkOptions: {
+      type: Boolean,
+      "default": true
     }
   },
   components: {
@@ -3488,7 +3514,9 @@ __webpack_require__.r(__webpack_exports__);
       dropzone: null,
       preview: true,
       btnLoading: false,
-      withWatermark: true
+      withWatermark: this.watermarkOptions,
+      watermarks: [],
+      selectedWatermark: null
     };
   },
   methods: {
@@ -3515,6 +3543,7 @@ __webpack_require__.r(__webpack_exports__);
       formData.append("add_items", this.addItems);
       formData.append("item_type", this.itemType);
       formData.append("with_watermark", this.withWatermark);
+      formData.append("selected_watermark", this.selectedWatermark.id);
     },
     removeAllFiles: function removeAllFiles() {
       this.$refs.myVueDropzone.removeAllFiles();
@@ -3535,10 +3564,34 @@ __webpack_require__.r(__webpack_exports__);
     },
     upload: function upload() {
       this.$refs.myVueDropzone.processQueue();
+    },
+    fetchWatermarks: function fetchWatermarks() {
+      var _this = this;
+
+      // needs to transfer the fetching in vuex!!
+      axios.get("/settings/watermarks/all").then(function (response) {
+        _this.watermarks = response.data; // Set the default value
+
+        _this.selectedWatermark = _this.watermarks.filter(function (w) {
+          return w["default"] === 1;
+        })[0];
+      })["catch"](function (error) {
+        console.log("Error Fetching Org Users");
+        console.log("Error: " + error);
+      });
     }
   },
-  mounted: function mounted() {//   console.log(this.addItems);
-    //   console.log(this.itemType);
+  created: function created() {
+    if (this.watermarkOptions == true) {
+      //   this.withWatermark = true;
+      this.fetchWatermarks();
+    } // else{
+    //   this.withWatermark = false;
+    // }
+
+  },
+  mounted: function mounted() {
+    console.log("WatermarkOptions: " + this.watermarkOptions);
   }
 });
 
@@ -6543,7 +6596,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         itemType: "image",
         returnUrl: false,
         returnPath: false,
-        returnObject: true
+        returnObject: true,
+        watermarkOptions: false
       }
     };
   },
@@ -30252,7 +30306,8 @@ var render = function() {
                       _c("upload-zone", {
                         attrs: {
                           "add-items": false,
-                          "item-type": _vm.mediaOptions.itemType
+                          "item-type": _vm.mediaOptions.itemType,
+                          "watermark-options": _vm.mediaOptions.watermarkOptions
                         },
                         on: { uploaded: _vm.uploadZoneResponse }
                       })
@@ -30558,8 +30613,6 @@ var render = function() {
       "div",
       { staticClass: "pa-3 d-flex align-center" },
       [
-        _c("v-spacer"),
-        _vm._v(" "),
         _c(
           "v-btn",
           {
@@ -30568,6 +30621,63 @@ var render = function() {
           },
           [_vm._v("clear")]
         ),
+        _vm._v(" "),
+        _c("v-spacer"),
+        _vm._v(" "),
+        _vm.watermarkOptions == true
+          ? _c(
+              "div",
+              { staticClass: "d-flex align-center justify-end" },
+              [
+                _c("small", [_vm._v("Enable Watermark")]),
+                _vm._v(" "),
+                _c("v-checkbox", {
+                  staticClass: "ml-2",
+                  attrs: {
+                    color: "primary",
+                    title: "Enable Watermark",
+                    dense: ""
+                  },
+                  model: {
+                    value: _vm.withWatermark,
+                    callback: function($$v) {
+                      _vm.withWatermark = $$v
+                    },
+                    expression: "withWatermark"
+                  }
+                }),
+                _vm._v(" "),
+                _c("v-autocomplete", {
+                  directives: [
+                    {
+                      name: "show",
+                      rawName: "v-show",
+                      value: _vm.withWatermark == true,
+                      expression: "withWatermark == true"
+                    }
+                  ],
+                  attrs: {
+                    items: _vm.watermarks,
+                    "item-text": "title",
+                    label: "Select Watermark",
+                    "return-object": "",
+                    "hide-details": "",
+                    outlined: "",
+                    required: "",
+                    dense: ""
+                  },
+                  model: {
+                    value: _vm.selectedWatermark,
+                    callback: function($$v) {
+                      _vm.selectedWatermark = $$v
+                    },
+                    expression: "selectedWatermark"
+                  }
+                })
+              ],
+              1
+            )
+          : _vm._e(),
         _vm._v(" "),
         _c(
           "v-btn",

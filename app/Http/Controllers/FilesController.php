@@ -26,6 +26,7 @@ class FilesController extends Controller
 
     public function upload(Request $request)
     {
+        // dd(gettype($request->with_watermark));
         // Validate request
         // $this->validate($request, [
         //     'file' => 'required|image|mimes:jpeg,png,jpg|max:204800',
@@ -53,7 +54,9 @@ class FilesController extends Controller
         $files = Collection::wrap(request()->file('file'));
 
         // Get the Company's Watermark settings
-        $watermark = Watermark::where('company_id', $companyId)->first();
+        if($request->with_watermark == "true"){
+            $watermark = Watermark::where('id', $request->selected_watermark)->first();
+        }
 
         // Do something on each files uploaded
         $files->each(function ($file, $key) use (&$watermark, &$companyId, &$userStorage, &$itemsArray, &$fileArray, &$request, &$uploadKey) {
@@ -74,9 +77,7 @@ class FilesController extends Controller
 
             // Check file if image or video
             if($request->item_type == 'video'){
-               
                 $file->move('storage/uploads/'.$companyId.'/', $path); // add user id
-                
             }else{
                 // File Optimization
                 // $img = Image::make($file)->fit(3840,2160); // UHD
@@ -84,9 +85,10 @@ class FilesController extends Controller
                
                 $img->save($userStorageDir . '/original/' . $path); // Save to directory
 
-                if($watermark && $watermark->status == true && $request->item_type != "panorama"){
-                    $img->insert('storage/uploads/'.$companyId.'/watermark/'.$watermark->path, $watermark->position, $watermark->offset_space, $watermark->offset_space);
-                   
+                if($request->with_watermark == "true"){   
+                    if($watermark && $watermark->status == true && $request->item_type != "panorama"){
+                        $img->insert('storage/uploads/'.$companyId.'/watermark/'.$watermark->path, $watermark->position, $watermark->offset_space, $watermark->offset_space);                   
+                    }
                 }
                 $img->save($userStorageDir . '/' . $path); // Save to directory
             }

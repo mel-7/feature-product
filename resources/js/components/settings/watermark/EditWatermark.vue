@@ -195,6 +195,7 @@ export default {
         returnUrl: false,
         returnPath: false,
         returnObject: true,
+        watermarkOptions: false,
       },
     };
   },

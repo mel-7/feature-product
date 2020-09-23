@@ -41,6 +41,7 @@
           <upload-zone
             :add-items="false"
             :item-type="mediaOptions.itemType"
+            :watermark-options="mediaOptions.watermarkOptions"
             @uploaded="uploadZoneResponse"
           />
         </v-card-text>

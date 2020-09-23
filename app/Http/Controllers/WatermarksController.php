@@ -18,6 +18,13 @@ class WatermarksController extends Controller
         $this->middleware('auth');
     }
 
+    public function fetchWatermarksForUploadZone()
+    {
+        $companyId = Auth::user()->company_id;
+        $watermarks = Watermark::where('company_id', $companyId)->orderBy('title', 'asc')->get();
+        return response()->json($watermarks, 200);
+    }
+
     public function fetchWatermarks()
     {
         $companyId = Auth::user()->company_id;
