@@ -122,7 +122,7 @@ export default {
     },
 
     settings: function(){
-      console.log(this.authUser.role);
+     
       if(this.authUser.role < 4){
         this.clientSettings = [ {
             icon: "mdi-watermark",
