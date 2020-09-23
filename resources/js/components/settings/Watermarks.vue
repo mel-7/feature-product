@@ -1,7 +1,20 @@
 <template>
   <v-row>
     <div class="col-12 col-md-6 px-5">
-      <h3 class="font-weight-light mb-5">Watermarks</h3>
+      <div class="d-flex align-center mb-5">
+        <v-btn
+          @click="watermarkDialog = true"
+          class="mr-3 text--primary"
+          elevation="2"
+          fab
+          dark
+          x-small
+          color="white"
+        >
+          <v-icon dark>mdi-plus</v-icon>
+        </v-btn>
+        <h3 class="font-weight-light">Watermarks</h3>
+      </div>
       <v-card>
         <v-simple-table>
           <template v-slot:default>
@@ -18,13 +31,7 @@
                   <v-btn title="Edit" icon small @click="editWatermark(item.id)" color="blue">
                     <v-icon small>mdi-pencil</v-icon>
                   </v-btn>
-                  <v-btn
-                    title="Delete"
-                    icon
-                    small
-                    @click="actionFunction('delete', item)"
-                    color="red"
-                  >
+                  <v-btn title="Delete" icon small @click="deleteWatermark(item)" color="red">
                     <v-icon small>mdi-trash-can-outline</v-icon>
                   </v-btn>
                 </td>
@@ -33,35 +40,25 @@
           </template>
         </v-simple-table>
       </v-card>
+      <v-pagination
+        v-if="pageCount > 1"
+        class="mt-3"
+        v-model="page"
+        :length="pageCount"
+        @input="onPageChange"
+      ></v-pagination>
     </div>
-    <v-dialog v-model="userFormDialog" max-width="600px">
+    <v-dialog v-model="watermarkDialog" max-width="600px">
       <v-card>
         <v-card-title>
-          <h4 class="pb-2">User Form</h4>
+          <h4 class="pb-2">Add Watermark</h4>
         </v-card-title>
         <v-card-text>
           <form>
-            <v-text-field v-model="name" outlined label="Name" required class="py-0" dense></v-text-field>
-            <v-text-field v-model="email" outlined label="Email" required class="py-0" dense></v-text-field>
-            <v-text-field v-model="phone" outlined label="Phone" required class="py-0" dense></v-text-field>
-            <!-- :hint="`${role.role}, ${role.value}`" -->
-            <v-select
-              v-model="role"
-              :items="roleItems"
-              item-text="role"
-              item-value="value"
-              label="Role"
-              persistent-hint
-              return-object
-              outlined
-              single-line
-              required
-              class="py-0"
-              dense
-            ></v-select>
+            <v-text-field v-model="title" outlined label="Name" required class="py-0" dense></v-text-field>
             <div class="d-flex justify-end">
-              <v-btn class="mr-1" text color="grey" @click="userFormDialog = false">cancel</v-btn>
-              <v-btn class="primary" @click="saveUser('update')">Update</v-btn>
+              <v-btn class="mr-1" text color="grey" @click="watermarkDialog = false">cancel</v-btn>
+              <v-btn class="primary" @click="addWatermark">Update</v-btn>
             </div>
           </form>
         </v-card-text>
@@ -72,7 +69,7 @@
         <v-card-title class="subtitle-1">Confirm delete</v-card-title>
         <v-card-text>
           Are you sure you want to delete
-          <strong>{{dialogData.name}}</strong>'s account?
+          <strong>{{dialogData.title}}</strong> watermark?
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -95,87 +92,69 @@ export default {
   data() {
     return {
       dialogData: [],
-      userFormDialog: false,
+      watermarkDialog: false,
       deleteDialog: false,
       watermarks: [],
+      title: "",
 
-      roleItems: [
-        { role: "Team Admin", value: 3 },
-        { role: "Team Editor", value: 4 },
-      ],
-
-      name: "",
-      email: "",
-      phone: "",
-      role: {},
+      page: 1,
+      pageCount: 0,
+      itemsPerPage: 10,
     };
   },
+  watch: {
+    $route(to, from) {
+      this.fetchWatermarks(this.$route.params.page);
+    },
+  },
   methods: {
-    editWatermark(id) {
-      this.$router.push("/settings/watermark/edit/" + id);
-    },
-    actionFunction(action, value) {
-      this.dialogData = [];
-      this.dialogData = value;
-      if (action == "edit") {
-        this.userFormDialog = true;
-        this.name = this.dialogData.name;
-        this.email = this.dialogData.email;
-        this.phone = this.dialogData.phone ? this.dialogData.phone : "";
-        this.role = {
-          role: this.dialogData.role == 3 ? "Admin" : "Editor",
-          value: this.dialogData.role,
-        };
-      } else {
-        this.deleteDialog = true;
-      }
-    },
-    confirmDelete() {
-    //   axios
-    //     .post("/settings/team/delete/" + this.dialogData.id)
-    //     .then((response) => {
-    //       this.deleteDialog = false;
-    //       this.dialogData = [];
-    //       this.fetchWatermarks();
-    //     })
-    //     .catch((error) => {
-    //       console.log("Error Deleting User");
-    //       console.log(error);
-    //     });
-    },
-    saveUser(action) {
-      let route = "save";
-      if (action == "update") {
-        route = "update/" + this.dialogData.id;
-      }
+    addWatermark() {
       let data = {
-        name: this.name,
-        phone: this.phone,
-        role: this.role.value,
+        title: this.title,
       };
-      if (this.email != this.dialogData.email) {
-        data.email = this.email;
-      }
-      // console.log(data);
       axios
-        .post("/settings/team/" + route, data)
+        .post("/settings/watermark/add", data)
         .then((response) => {
-          if (action == "update") {
-            this.userFormDialog = false;
-          }
-          this.dialogData = [];
-          this.fetchWatermarks();
+          this.$router.push("/settings/watermark/edit/" + response.data.id);
         })
         .catch((error) => {
-          console.log("Error Saving User");
+          console.log("Error adding Watermark");
           console.log(error);
         });
     },
-    fetchWatermarks() {
+    editWatermark(id) {
+      this.$router.push("/settings/watermark/edit/" + id);
+    },
+    deleteWatermark(w) {
+      this.dialogData = [];
+      this.dialogData = w;
+      this.deleteDialog = true;
+    },
+    confirmDelete() {
       axios
-        .get("/settings/watermarks/fetch")
+        .post("/settings/watermark/delete/" + this.dialogData.id)
         .then((response) => {
-          this.watermarks = response.data;
+          this.deleteDialog = false;
+          this.fetchWatermarks(this.page);
+        })
+        .catch((error) => {
+          this.deleteDialog = false;
+          console.log("Error deleting Watermark");
+          console.log(error);
+        });
+    },
+    onPageChange() {
+      this.$router
+        .push("/settings/watermarks/page/" + this.page)
+        .catch((err) => {});
+    },
+    fetchWatermarks(p) {
+      axios
+        .get("/settings/watermarks/fetch/?page=" + p)
+        .then((response) => {
+          this.page = response.data.current_page;
+          this.pageCount = response.data.last_page;
+          this.watermarks = response.data.data;
         })
         .catch((error) => {
           console.log("Error Fetching Org Users");
@@ -184,7 +163,11 @@ export default {
     },
   },
   created() {
-    this.fetchWatermarks();
+    if (this.$route.params.page) {
+      this.fetchWatermarks(this.$route.params.page);
+    } else {
+      this.fetchWatermarks(1);
+    }
   },
 };
 </script>

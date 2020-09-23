@@ -6337,14 +6337,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vee_validate_dist_rules__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vee-validate/dist/rules */ "./node_modules/vee-validate/dist/rules.js");
 /* harmony import */ var vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vee-validate/dist/vee-validate.full */ "./node_modules/vee-validate/dist/vee-validate.full.js");
 /* harmony import */ var vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_1__);
-//
-//
-//
-//
-//
-//
-//
-//
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 //
 //
 //
@@ -6494,11 +6488,7 @@ __webpack_require__.r(__webpack_exports__);
     return {
       // ui
       loading: false,
-      fetchedwatermark: "",
-      fetchedposition: "",
-      fetchedoffsetSpace: "",
-      fetchedImageWidth: "",
-      fetchedImageOpacity: "",
+      fetchedwatermark: [],
       selectedImage: [],
       watermark: {
         id: null,
@@ -6513,14 +6503,6 @@ __webpack_require__.r(__webpack_exports__);
         media_file_id: null
       },
       watermarkPath: "",
-      //   title: "",
-      //   watermarkId: null,
-      //   watermarkOn: false,
-      //   watermark: "",
-      //   imageWidth: "300",
-      //   imageOpacity: 50,
-      //   position: "center",
-      //   offsetSpace: "15",
       positions: [{
         label: "Top Left",
         value: "top-left"
@@ -6565,11 +6547,12 @@ __webpack_require__.r(__webpack_exports__);
       }
     };
   },
+  watch: {},
   methods: {
     mediaResponse: function mediaResponse(v) {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
       this.selectedImage = v;
-      this.watermark = v ? v.path : this.watermark;
+      this.watermark.path = v ? v.path : this.watermark.path;
     },
     openMediaFiles: function openMediaFiles() {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
@@ -6577,71 +6560,39 @@ __webpack_require__.r(__webpack_exports__);
     resetFields: function resetFields() {
       this.watermark = Object.assign({}, this.fetchedwatermark);
     },
-    deleteWatermark: function deleteWatermark() {
+    updateWatermark: function updateWatermark() {
       var _this = this;
-
-      axios.post("/settings/watermark/delete/" + this.watermarkId).then(function (response) {
-        _this.watermarkOn = false;
-        _this.watermark = "";
-        _this.position = _this.positions[4];
-        _this.offsetSpace = "15";
-        _this.imageOpacity = 50;
-        _this.imageWidth = "300";
-      })["catch"](function (error) {
-        console.log("Error deleting Watermark settings");
-        console.log(error);
-      });
-    },
-    saveWatermark: function saveWatermark() {
-      var _this2 = this;
 
       this.loading = true;
       var data = {
+        title: this.watermark.title,
         media_file_id: this.selectedImage.id,
-        watermark: this.watermark.replace("watermark/", ""),
-        image_width: this.imageWidth,
-        image_opacity: this.imageOpacity,
-        position: this.position.value ? this.position.value : this.position,
-        offset_space: this.offsetSpace,
-        status: this.watermarkOn
+        watermark: this.watermark.path.replace("watermark/", ""),
+        image_width: this.watermark.image_width,
+        image_opacity: this.watermark.image_opacity,
+        position: _typeof(this.watermark.position) === "object" ? this.watermark.position.value : this.watermark.position,
+        offset_space: this.watermark.offset_space,
+        status: this.watermark.status
       };
-      axios.post("/settings/watermark/save", data).then(function (response) {
-        //   this.fetchOrg();
-        console.log(response.data);
-        _this2.loading = false;
+      axios.post("/settings/watermark/update/" + this.$route.params.id, data).then(function (response) {
+        _this.loading = false;
       })["catch"](function (error) {
-        _this2.loading = false;
+        _this.loading = false;
         console.log("Error saving Watermark");
         console.log(error);
       });
     },
     fetchedCompanyWatermark: function fetchedCompanyWatermark() {
-      var _this3 = this;
+      var _this2 = this;
 
       this.loading = true;
       axios.get("/settings/watermark/get/" + this.$route.params.id).then(function (response) {
-        _this3.loading = false;
+        _this2.loading = false;
         var w = response.data;
 
         if (Object.keys(w).length != 0) {
-          _this3.watermark = Object.assign({}, w);
-          _this3.fetchedwatermark = Object.assign({}, w); //   this.watermarkPath = w.path;
-          // this.fetchedwatermark = w;
-          // this.fetchedwatermark = w.media_file.path;
-          // this.fetchedposition = w.position;
-          // this.fetchedoffsetSpace = w.offset_space;
-          // this.fetchedImageWidth = w.image_width;
-          // this.fetchedImageOpacity = w.image_opacity;
-          // this.fetchedWatermarkOn = w.status;
-          // this.title = w.title;
-          // this.selectedImage = w.media_file;
-          // this.watermarkId = w.id;
-          // this.watermarkOn = w.status;
-          // this.watermark = w.media_file.path ? w.media_file.path : "";
-          // this.imageWidth = w.image_width;
-          // this.imageOpacity = w.image_opacity;
-          // this.position = w.position;
-          // this.offsetSpace = w.offset_space;
+          _this2.watermark = Object.assign({}, w);
+          _this2.fetchedwatermark = Object.assign({}, w);
         } else {
           console.log("Watermark is not set");
         }
@@ -6753,9 +6704,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     authUser: {
@@ -6766,93 +6714,65 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       dialogData: [],
-      userFormDialog: false,
+      watermarkDialog: false,
       deleteDialog: false,
       watermarks: [],
-      roleItems: [{
-        role: "Team Admin",
-        value: 3
-      }, {
-        role: "Team Editor",
-        value: 4
-      }],
-      name: "",
-      email: "",
-      phone: "",
-      role: {}
+      title: "",
+      page: 1,
+      pageCount: 0,
+      itemsPerPage: 10
     };
   },
+  watch: {
+    $route: function $route(to, from) {
+      this.fetchWatermarks(this.$route.params.page);
+    }
+  },
   methods: {
-    editWatermark: function editWatermark(id) {
-      this.$router.push("/settings/watermark/edit/" + id);
-    },
-    actionFunction: function actionFunction(action, value) {
-      this.dialogData = [];
-      this.dialogData = value;
-
-      if (action == "edit") {
-        this.userFormDialog = true;
-        this.name = this.dialogData.name;
-        this.email = this.dialogData.email;
-        this.phone = this.dialogData.phone ? this.dialogData.phone : "";
-        this.role = {
-          role: this.dialogData.role == 3 ? "Admin" : "Editor",
-          value: this.dialogData.role
-        };
-      } else {
-        this.deleteDialog = true;
-      }
-    },
-    confirmDelete: function confirmDelete() {//   axios
-      //     .post("/settings/team/delete/" + this.dialogData.id)
-      //     .then((response) => {
-      //       this.deleteDialog = false;
-      //       this.dialogData = [];
-      //       this.fetchWatermarks();
-      //     })
-      //     .catch((error) => {
-      //       console.log("Error Deleting User");
-      //       console.log(error);
-      //     });
-    },
-    saveUser: function saveUser(action) {
+    addWatermark: function addWatermark() {
       var _this = this;
 
-      var route = "save";
-
-      if (action == "update") {
-        route = "update/" + this.dialogData.id;
-      }
-
       var data = {
-        name: this.name,
-        phone: this.phone,
-        role: this.role.value
+        title: this.title
       };
-
-      if (this.email != this.dialogData.email) {
-        data.email = this.email;
-      } // console.log(data);
-
-
-      axios.post("/settings/team/" + route, data).then(function (response) {
-        if (action == "update") {
-          _this.userFormDialog = false;
-        }
-
-        _this.dialogData = [];
-
-        _this.fetchWatermarks();
+      axios.post("/settings/watermark/add", data).then(function (response) {
+        _this.$router.push("/settings/watermark/edit/" + response.data.id);
       })["catch"](function (error) {
-        console.log("Error Saving User");
+        console.log("Error adding Watermark");
         console.log(error);
       });
     },
-    fetchWatermarks: function fetchWatermarks() {
+    editWatermark: function editWatermark(id) {
+      this.$router.push("/settings/watermark/edit/" + id);
+    },
+    deleteWatermark: function deleteWatermark(w) {
+      this.dialogData = [];
+      this.dialogData = w;
+      this.deleteDialog = true;
+    },
+    confirmDelete: function confirmDelete() {
       var _this2 = this;
 
-      axios.get("/settings/watermarks/fetch").then(function (response) {
-        _this2.watermarks = response.data;
+      axios.post("/settings/watermark/delete/" + this.dialogData.id).then(function (response) {
+        _this2.deleteDialog = false;
+
+        _this2.fetchWatermarks(_this2.page);
+      })["catch"](function (error) {
+        _this2.deleteDialog = false;
+        console.log("Error deleting Watermark");
+        console.log(error);
+      });
+    },
+    onPageChange: function onPageChange() {
+      this.$router.push("/settings/watermarks/page/" + this.page)["catch"](function (err) {});
+    },
+    fetchWatermarks: function fetchWatermarks(p) {
+      var _this3 = this;
+
+      axios.get("/settings/watermarks/fetch/?page=" + p).then(function (response) {
+        _this3.page = response.data.current_page;
+        _this3.pageCount = response.data.last_page;
+        _this3.watermarks = response.data.data;
       })["catch"](function (error) {
         console.log("Error Fetching Org Users");
         console.log("Error: " + error);
@@ -6860,7 +6780,11 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   created: function created() {
-    this.fetchWatermarks();
+    if (this.$route.params.page) {
+      this.fetchWatermarks(this.$route.params.page);
+    } else {
+      this.fetchWatermarks(1);
+    }
   }
 });
 
@@ -6973,7 +6897,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.top-left {\n  top: 0;\n  left: 0;\n  right: auto;\n  bottom: auto;\n}\n.top {\n  margin-left: 0 !important;\n  margin-right: 0 !important;\n  top: 0;\n  left: 50%;\n  right: auto;\n  bottom: auto;\n  transform: translateX(-50%);\n}\n.top-right {\n  top: 0;\n  right: 0;\n  left: auto;\n  bottom: auto;\n}\n.left {\n  margin-top: 0 !important;\n  margin-bottom: 0 !important;\n  left: 0;\n  top: 50%;\n  right: auto;\n  bottom: auto;\n  transform: translateY(-50%);\n}\n.center {\n  margin: 0 !important;\n  left: 50%;\n  top: 50%;\n  right: auto;\n  bottom: auto;\n  transform: translate(-50%, -50%);\n}\n.right {\n  margin-top: 0 !important;\n  margin-bottom: 0 !important;\n  left: auto;\n  top: 50%;\n  right: 0;\n  bottom: auto;\n  transform: translateY(-50%);\n}\n.bottom-left {\n  left: 0;\n  top: auto;\n  right: auto;\n  bottom: 0;\n}\n.bottom {\n  margin-left: 0 !important;\n  margin-right: 0 !important;\n  top: auto;\n  left: 50%;\n  right: auto;\n  bottom: 0;\n  transform: translateX(-50%);\n}\n.bottom-right {\n  left: auto;\n  top: auto;\n  right: 0;\n  bottom: 0;\n}\n", ""]);
+exports.push([module.i, "\n.top-left {\r\n  top: 0;\r\n  left: 0;\r\n  right: auto;\r\n  bottom: auto;\n}\n.top {\r\n  margin-left: 0 !important;\r\n  margin-right: 0 !important;\r\n  top: 0;\r\n  left: 50%;\r\n  right: auto;\r\n  bottom: auto;\r\n  transform: translateX(-50%);\n}\n.top-right {\r\n  top: 0;\r\n  right: 0;\r\n  left: auto;\r\n  bottom: auto;\n}\n.left {\r\n  margin-top: 0 !important;\r\n  margin-bottom: 0 !important;\r\n  left: 0;\r\n  top: 50%;\r\n  right: auto;\r\n  bottom: auto;\r\n  transform: translateY(-50%);\n}\n.center {\r\n  margin: 0 !important;\r\n  left: 50%;\r\n  top: 50%;\r\n  right: auto;\r\n  bottom: auto;\r\n  transform: translate(-50%, -50%);\n}\n.right {\r\n  margin-top: 0 !important;\r\n  margin-bottom: 0 !important;\r\n  left: auto;\r\n  top: 50%;\r\n  right: 0;\r\n  bottom: auto;\r\n  transform: translateY(-50%);\n}\n.bottom-left {\r\n  left: 0;\r\n  top: auto;\r\n  right: auto;\r\n  bottom: 0;\n}\n.bottom {\r\n  margin-left: 0 !important;\r\n  margin-right: 0 !important;\r\n  top: auto;\r\n  left: 50%;\r\n  right: auto;\r\n  bottom: 0;\r\n  transform: translateX(-50%);\n}\n.bottom-right {\r\n  left: auto;\r\n  top: auto;\r\n  right: 0;\r\n  bottom: 0;\n}\r\n", ""]);
 
 // exports
 
@@ -34255,7 +34179,7 @@ var render = function() {
         { staticClass: "col-12 px-5" },
         [
           _c("h3", { staticClass: "font-weight-light mb-5" }, [
-            _vm._v("Watermark Settings")
+            _vm._v("Edit " + _vm._s(_vm.fetchedwatermark.title))
           ]),
           _vm._v(" "),
           _c(
@@ -34339,8 +34263,7 @@ var render = function() {
                                               label: "Title",
                                               required: "",
                                               "error-messages": errors,
-                                              dense: "",
-                                              readonly: ""
+                                              dense: ""
                                             },
                                             model: {
                                               value: _vm.watermark.title,
@@ -34589,20 +34512,6 @@ var render = function() {
                                 _c(
                                   "v-btn",
                                   {
-                                    staticClass: "mr-auto",
-                                    attrs: {
-                                      text: "",
-                                      color: "red",
-                                      title: "Delete Watermark Settings"
-                                    },
-                                    on: { click: _vm.deleteWatermark }
-                                  },
-                                  [_vm._v("Delete")]
-                                ),
-                                _vm._v(" "),
-                                _c(
-                                  "v-btn",
-                                  {
                                     staticClass: "mr-1",
                                     attrs: { text: "", color: "grey" },
                                     on: { click: _vm.resetFields }
@@ -34614,7 +34523,7 @@ var render = function() {
                                   "v-btn",
                                   {
                                     staticClass: "primary",
-                                    on: { click: _vm.saveWatermark }
+                                    on: { click: _vm.updateWatermark }
                                   },
                                   [_vm._v("Save")]
                                 )
@@ -34654,10 +34563,12 @@ var render = function() {
                             [
                               _c("v-img", {
                                 class:
-                                  _vm.watermark.position +
+                                  (typeof _vm.watermark.position === "object"
+                                    ? _vm.watermark.position.value
+                                    : _vm.watermark.position) +
                                   " grey lighten-4 rounded elevation-0",
                                 style:
-                                  "position:absolute; margin:" +
+                                  "border:1px dashed #ddd !important;position:absolute; margin:" +
                                   _vm.watermark.offset_space +
                                   "px;opacity: " +
                                   (_vm.watermark.image_opacity == 100
@@ -34756,9 +34667,37 @@ var render = function() {
         "div",
         { staticClass: "col-12 col-md-6 px-5" },
         [
-          _c("h3", { staticClass: "font-weight-light mb-5" }, [
-            _vm._v("Watermarks")
-          ]),
+          _c(
+            "div",
+            { staticClass: "d-flex align-center mb-5" },
+            [
+              _c(
+                "v-btn",
+                {
+                  staticClass: "mr-3 text--primary",
+                  attrs: {
+                    elevation: "2",
+                    fab: "",
+                    dark: "",
+                    "x-small": "",
+                    color: "white"
+                  },
+                  on: {
+                    click: function($event) {
+                      _vm.watermarkDialog = true
+                    }
+                  }
+                },
+                [_c("v-icon", { attrs: { dark: "" } }, [_vm._v("mdi-plus")])],
+                1
+              ),
+              _vm._v(" "),
+              _c("h3", { staticClass: "font-weight-light" }, [
+                _vm._v("Watermarks")
+              ])
+            ],
+            1
+          ),
           _vm._v(" "),
           _c(
             "v-card",
@@ -34836,10 +34775,7 @@ var render = function() {
                                       },
                                       on: {
                                         click: function($event) {
-                                          return _vm.actionFunction(
-                                            "delete",
-                                            item
-                                          )
+                                          return _vm.deleteWatermark(item)
                                         }
                                       }
                                     },
@@ -34865,7 +34801,22 @@ var render = function() {
               })
             ],
             1
-          )
+          ),
+          _vm._v(" "),
+          _vm.pageCount > 1
+            ? _c("v-pagination", {
+                staticClass: "mt-3",
+                attrs: { length: _vm.pageCount },
+                on: { input: _vm.onPageChange },
+                model: {
+                  value: _vm.page,
+                  callback: function($$v) {
+                    _vm.page = $$v
+                  },
+                  expression: "page"
+                }
+              })
+            : _vm._e()
         ],
         1
       ),
@@ -34875,11 +34826,11 @@ var render = function() {
         {
           attrs: { "max-width": "600px" },
           model: {
-            value: _vm.userFormDialog,
+            value: _vm.watermarkDialog,
             callback: function($$v) {
-              _vm.userFormDialog = $$v
+              _vm.watermarkDialog = $$v
             },
-            expression: "userFormDialog"
+            expression: "watermarkDialog"
           }
         },
         [
@@ -34887,7 +34838,7 @@ var render = function() {
             "v-card",
             [
               _c("v-card-title", [
-                _c("h4", { staticClass: "pb-2" }, [_vm._v("User Form")])
+                _c("h4", { staticClass: "pb-2" }, [_vm._v("Add Watermark")])
               ]),
               _vm._v(" "),
               _c("v-card-text", [
@@ -34903,68 +34854,11 @@ var render = function() {
                         dense: ""
                       },
                       model: {
-                        value: _vm.name,
+                        value: _vm.title,
                         callback: function($$v) {
-                          _vm.name = $$v
+                          _vm.title = $$v
                         },
-                        expression: "name"
-                      }
-                    }),
-                    _vm._v(" "),
-                    _c("v-text-field", {
-                      staticClass: "py-0",
-                      attrs: {
-                        outlined: "",
-                        label: "Email",
-                        required: "",
-                        dense: ""
-                      },
-                      model: {
-                        value: _vm.email,
-                        callback: function($$v) {
-                          _vm.email = $$v
-                        },
-                        expression: "email"
-                      }
-                    }),
-                    _vm._v(" "),
-                    _c("v-text-field", {
-                      staticClass: "py-0",
-                      attrs: {
-                        outlined: "",
-                        label: "Phone",
-                        required: "",
-                        dense: ""
-                      },
-                      model: {
-                        value: _vm.phone,
-                        callback: function($$v) {
-                          _vm.phone = $$v
-                        },
-                        expression: "phone"
-                      }
-                    }),
-                    _vm._v(" "),
-                    _c("v-select", {
-                      staticClass: "py-0",
-                      attrs: {
-                        items: _vm.roleItems,
-                        "item-text": "role",
-                        "item-value": "value",
-                        label: "Role",
-                        "persistent-hint": "",
-                        "return-object": "",
-                        outlined: "",
-                        "single-line": "",
-                        required: "",
-                        dense: ""
-                      },
-                      model: {
-                        value: _vm.role,
-                        callback: function($$v) {
-                          _vm.role = $$v
-                        },
-                        expression: "role"
+                        expression: "title"
                       }
                     }),
                     _vm._v(" "),
@@ -34979,7 +34873,7 @@ var render = function() {
                             attrs: { text: "", color: "grey" },
                             on: {
                               click: function($event) {
-                                _vm.userFormDialog = false
+                                _vm.watermarkDialog = false
                               }
                             }
                           },
@@ -34990,11 +34884,7 @@ var render = function() {
                           "v-btn",
                           {
                             staticClass: "primary",
-                            on: {
-                              click: function($event) {
-                                return _vm.saveUser("update")
-                              }
-                            }
+                            on: { click: _vm.addWatermark }
                           },
                           [_vm._v("Update")]
                         )
@@ -35034,8 +34924,8 @@ var render = function() {
               _vm._v(" "),
               _c("v-card-text", [
                 _vm._v("\n        Are you sure you want to delete\n        "),
-                _c("strong", [_vm._v(_vm._s(_vm.dialogData.name))]),
-                _vm._v("'s account?\n      ")
+                _c("strong", [_vm._v(_vm._s(_vm.dialogData.title))]),
+                _vm._v(" watermark?\n      ")
               ]),
               _vm._v(" "),
               _c(
@@ -95741,6 +95631,11 @@ var routes = [{
   component: _js_components_settings_watermarks__WEBPACK_IMPORTED_MODULE_5__["default"],
   props: true
 }, {
+  path: "/settings/watermarks/page/:page",
+  name: 'Watermarks',
+  component: _js_components_settings_watermarks__WEBPACK_IMPORTED_MODULE_5__["default"],
+  props: true
+}, {
   path: "/settings/watermark/edit/:id",
   name: 'Watermark',
   component: _js_components_settings_watermark_EditWatermark__WEBPACK_IMPORTED_MODULE_6__["default"],
@@ -95805,8 +95700,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

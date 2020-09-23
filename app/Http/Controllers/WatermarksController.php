@@ -21,11 +21,11 @@ class WatermarksController extends Controller
     public function fetchWatermarks()
     {
         $companyId = Auth::user()->company_id;
-        $watermarks = Watermark::where('company_id', $companyId)->get();
+        $watermarks = Watermark::where('company_id', $companyId)->orderBy('created_at', 'desc')->paginate(10);
         return response()->json($watermarks, 200);
     }
 
-    public function store(Request $request)
+    public function update(Request $request, $id)
     {
         $companyId = Auth::user()->company_id;
         $uploadDate = Carbon::now()->format('YmdHis');
@@ -54,21 +54,22 @@ class WatermarksController extends Controller
         $watermark->save($userWatermakrStorageDir . '/'.$request->watermark);
 
         // Check if company has Watermark
-        $watermarkExist = Watermark::where('company_id', $companyId)->first();
+        $watermarkToUpdate = Watermark::where('id', $id)->first();
 
         // Set Watermark Array
-        $createWaterMarkArray = [
-            'path' => $request['watermark'],
-            'media_file_id' => $request['media_file_id'],
-            'position' => $request['position'],
-            'offset_space' => $request['offset_space'],
-            'image_width' => $request['image_width'],
-            'image_opacity' => $request['image_opacity'],
-            'company_id' => $companyId,
-            'status' => $request['status'],
-            'updated_at' => Carbon::now(),
-        ];
+        // $createWaterMarkArray = [
+        //     'path' => $request['watermark'],
+        //     'media_file_id' => $request['media_file_id'],
+        //     'position' => $request['position'],
+        //     'offset_space' => $request['offset_space'],
+        //     'image_width' => $request['image_width'],
+        //     'image_opacity' => $request['image_opacity'],
+        //     'company_id' => $companyId,
+        //     'status' => $request['status'],
+        //     'updated_at' => Carbon::now(),
+        // ];
         $updateWaterMarkArray = [
+            'title' => $request['title'],
             'path' => $request['watermark'],
             'media_file_id' => $request['media_file_id'],
             'position' => $request['position'],
@@ -78,12 +79,12 @@ class WatermarksController extends Controller
             'status' => $request['status'],
             'updated_at' => Carbon::now(),
         ];
-
-        if($watermarkExist){
-            $watermarkQuery = $watermarkExist->update($updateWaterMarkArray);
-        }else{
-            $watermarkQuery = Watermark::create($createWaterMarkArray);
-        }
+        // dd($updateWaterMarkArray);
+        // if($watermarkExist){
+            $watermarkQuery = $watermarkToUpdate->update($updateWaterMarkArray);
+        // }else{
+        //     $watermarkQuery = Watermark::create($createWaterMarkArray);
+        // }
 
         // Return response
         if($watermarkQuery){
@@ -97,18 +98,29 @@ class WatermarksController extends Controller
         }
     }
 
+    public function addWatermark(Request $request)
+    {
+        $request['company_id'] = Auth::user()->company_id;
+        $validatedData = $request->validate([
+            'title' => 'required|min:3|max:50',
+            'company_id' => 'required',
+
+        ]);
+        $watermark = Watermark::create($validatedData);
+        return response()->json($watermark);
+    }
     /**
      * Edit Watermark
      */
-    public function getWatermark()
+    public function getWatermark($id)
     {
-        $watermark = Watermark::where('company_id', Auth::user()->company_id)->with('media_file')->first();
+        $watermark = Watermark::where('id', $id)->with('media_file')->first();
         return response()->json($watermark);
     }
 
-    public function destroy()
+    public function destroy($id)
     {
-        $watermarkDelete = Watermark::where('company_id', Auth::user()->company_id)->first();
+        $watermarkDelete = Watermark::where('id', $id)->first();
         $watermarkDelete->delete();
         return response()->json([
             'message' => 'Watermark has been deleted',

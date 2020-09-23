@@ -43,11 +43,13 @@ Route::post('/builder/scene/store', 'ScenesController@store')->name('builder.sto
 // Watermarks
 Route::get('/settings/account', 'BuilderController@index')->name('settings.watermark');
 Route::get('/settings/watermarks', 'BuilderController@index')->name('settings.watermarks');
+Route::get('/settings/watermarks/page/{page}', 'BuilderController@index')->name('settings.watermarks.page');
 Route::get('/settings/watermarks/fetch', 'WatermarksController@fetchWatermarks')->name('settings.watermarks.fetch');
+Route::post('/settings/watermark/add', 'WatermarksController@addWatermark')->name('settings.watermark.add');
 Route::get('/settings/watermark/edit/{id}', 'BuilderController@index')->name('settings.watermark.edit');
 Route::get('/settings/watermark/get/{id}', 'WatermarksController@getWatermark')->name('settings.get.watermark');
 Route::post('/settings/watermark/delete/{id}', 'WatermarksController@destroy')->name('settings.watermark.delete');
-Route::post('/settings/watermark/save', 'WatermarksController@store')->name('settings.watermark.save');
+Route::post('/settings/watermark/update/{id}', 'WatermarksController@update')->name('settings.watermark.update');
 
 // Teams
 Route::get('/settings/organization', 'BuilderController@index')->name('settings.organization');

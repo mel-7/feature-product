@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <div class="col-12 px-5">
-      <h3 class="font-weight-light mb-5">Watermark Settings</h3>
+      <h3 class="font-weight-light mb-5">Edit {{fetchedwatermark.title}}</h3>
       <v-card>
         <v-card-text>
           <div class="row">
@@ -27,7 +27,6 @@
                         required
                         :error-messages="errors"
                         dense
-                        readonly
                       ></v-text-field>
                     </div>
                   </ValidationProvider>
@@ -91,15 +90,8 @@
                   <v-spacer></v-spacer>
                   <v-divider class="mb-5"></v-divider>
                   <div class="d-flex justify-end mt-auto">
-                    <v-btn
-                      class="mr-auto"
-                      text
-                      color="red"
-                      title="Delete Watermark Settings"
-                      @click="deleteWatermark"
-                    >Delete</v-btn>
                     <v-btn class="mr-1" text color="grey" @click="resetFields">reset</v-btn>
-                    <v-btn class="primary" @click="saveWatermark">Save</v-btn>
+                    <v-btn class="primary" @click="updateWatermark">Save</v-btn>
                   </div>
                 </form>
               </ValidationObserver>
@@ -112,9 +104,9 @@
                     width="100"
                     min-height="50"
                     contain
-                    :class="`${watermark.position } grey lighten-4 rounded elevation-0`"
+                    :class="`${typeof watermark.position === 'object' ? watermark.position.value : watermark.position } grey lighten-4 rounded elevation-0`"
                     :src="watermark.path == null ? baseUrl+'/images/no-image-placeholder.jpg': baseUrl+'/storage/uploads/'+authUser.company_id+'/'+ watermark.path"
-                    :style="`position:absolute; margin:${watermark.offset_space}px;opacity: ${watermark.image_opacity == 100 ? '1' : watermark.image_opacity < 10 ? '.0'+watermark.image_opacity : '.'+watermark.image_opacity};`"
+                    :style="`border:1px dashed #ddd !important;position:absolute; margin:${watermark.offset_space}px;opacity: ${watermark.image_opacity == 100 ? '1' : watermark.image_opacity < 10 ? '.0'+watermark.image_opacity : '.'+watermark.image_opacity};`"
                   >
                     <template v-slot:placeholder>
                       <v-img
@@ -161,12 +153,7 @@ export default {
       // ui
       loading: false,
 
-      fetchedwatermark: "",
-      fetchedposition: "",
-      fetchedoffsetSpace: "",
-      fetchedImageWidth: "",
-      fetchedImageOpacity: "",
-
+      fetchedwatermark: [],
       selectedImage: [],
 
       watermark: {
@@ -182,14 +169,6 @@ export default {
         media_file_id: null,
       },
       watermarkPath: "",
-      //   title: "",
-      //   watermarkId: null,
-      //   watermarkOn: false,
-      //   watermark: "",
-      //   imageWidth: "300",
-      //   imageOpacity: 50,
-      //   position: "center",
-      //   offsetSpace: "15",
 
       positions: [
         { label: "Top Left", value: "top-left" },
@@ -219,52 +198,39 @@ export default {
       },
     };
   },
+  watch: {},
   methods: {
     mediaResponse(v) {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings
         .dialogStatus;
       this.selectedImage = v;
-      this.watermark = v ? v.path : this.watermark;
+      this.watermark.path = v ? v.path : this.watermark.path;
     },
     openMediaFiles() {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings
         .dialogStatus;
     },
     resetFields() {
-        this.watermark = Object.assign({}, this.fetchedwatermark);
+      this.watermark = Object.assign({}, this.fetchedwatermark);
     },
-    deleteWatermark() {
-      axios
-        .post("/settings/watermark/delete/" + this.watermarkId)
-        .then((response) => {
-          this.watermarkOn = false;
-          this.watermark = "";
-          this.position = this.positions[4];
-          this.offsetSpace = "15";
-          this.imageOpacity = 50;
-          this.imageWidth = "300";
-        })
-        .catch((error) => {
-          console.log("Error deleting Watermark settings");
-          console.log(error);
-        });
-    },
-    saveWatermark() {
+    updateWatermark() {
       this.loading = true;
       let data = {
+        title: this.watermark.title,
         media_file_id: this.selectedImage.id,
-        watermark: this.watermark.replace("watermark/", ""),
-        image_width: this.imageWidth,
-        image_opacity: this.imageOpacity,
-        position: this.position.value ? this.position.value : this.position,
-        offset_space: this.offsetSpace,
-        status: this.watermarkOn,
+        watermark: this.watermark.path.replace("watermark/", ""),
+        image_width: this.watermark.image_width,
+        image_opacity: this.watermark.image_opacity,
+        position:
+          typeof this.watermark.position === "object"
+            ? this.watermark.position.value
+            : this.watermark.position,
+        offset_space: this.watermark.offset_space,
+        status: this.watermark.status,
       };
       axios
-        .post("/settings/watermark/save", data)
+        .post("/settings/watermark/update/" + this.$route.params.id, data)
         .then((response) => {
-          //   this.fetchOrg();
-          console.log(response.data);
           this.loading = false;
         })
         .catch((error) => {
@@ -283,24 +249,6 @@ export default {
           if (Object.keys(w).length != 0) {
             this.watermark = Object.assign({}, w);
             this.fetchedwatermark = Object.assign({}, w);
-            //   this.watermarkPath = w.path;
-            // this.fetchedwatermark = w;
-            // this.fetchedwatermark = w.media_file.path;
-            // this.fetchedposition = w.position;
-            // this.fetchedoffsetSpace = w.offset_space;
-            // this.fetchedImageWidth = w.image_width;
-            // this.fetchedImageOpacity = w.image_opacity;
-            // this.fetchedWatermarkOn = w.status;
-
-            // this.title = w.title;
-            // this.selectedImage = w.media_file;
-            // this.watermarkId = w.id;
-            // this.watermarkOn = w.status;
-            // this.watermark = w.media_file.path ? w.media_file.path : "";
-            // this.imageWidth = w.image_width;
-            // this.imageOpacity = w.image_opacity;
-            // this.position = w.position;
-            // this.offsetSpace = w.offset_space;
           } else {
             console.log("Watermark is not set");
           }

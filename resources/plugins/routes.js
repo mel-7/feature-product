@@ -79,6 +79,12 @@ export const routes = [
         props: true
     },
     {
+        path: "/settings/watermarks/page/:page",
+        name: 'Watermarks',
+        component: Watermarks,
+        props: true
+    },
+    {
         path: "/settings/watermark/edit/:id",
         name: 'Watermark',
         component: EditWatermark,
