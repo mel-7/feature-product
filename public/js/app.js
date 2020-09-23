@@ -4042,7 +4042,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      valid: true,
+      valid: false,
       title: "",
       titleRules: [function (v) {
         return !!v || "Name is required";
@@ -4062,29 +4062,10 @@ __webpack_require__.r(__webpack_exports__);
         slug: slugify(this.title)
       };
       axios.post("/builder/product/store", data).then(function (response) {
-        //   console.log(response.data.product);
-        _this.valid = true;
-
-        _this.$router.push("/builder/product/edit/" + response.data.product); //  window.location = "/builder/product/edit/" + response.data.product;
-
+        _this.$router.push("/builder/product/edit/" + response.data.product);
       })["catch"](function (error) {
         console.log("invalid");
-        console.log(error.response); //   if (error.response.status == 403) {
-        //     this.errorUI(error);
-        //   }
-        //   if (error.response && error.response.status == 422) {
-        //     this.errors.setErrors(error.response.data.errors);
-        //     this.errorUI("Unprocessable Entity");
-        //     // Input error messages
-        //     if (this.errors.hasError("slug")) {
-        //       this.slugError = true;
-        //       this.slugErrMsg = this.errors.first("slug");
-        //     }
-        //     if (this.errors.hasError("position")) {
-        //       this.positionError = true;
-        //       this.positionErrMsg = this.errors.first("position");
-        //     }
-        //   }
+        console.log(error.response);
       });
     }
   }
@@ -31504,13 +31485,14 @@ var render = function() {
               required: ""
             },
             on: {
-              keyup: function($event) {
+              keydown: function($event) {
                 if (
                   !$event.type.indexOf("key") &&
                   _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
                 ) {
                   return null
                 }
+                $event.preventDefault()
                 return _vm.saveProduct($event)
               }
             },
