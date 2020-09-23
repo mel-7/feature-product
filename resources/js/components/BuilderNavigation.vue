@@ -105,6 +105,7 @@ export default {
         },
       ],
       clientSettings: [],
+      
       adminSettings: [
         {
           icon: "mdi-account-group",

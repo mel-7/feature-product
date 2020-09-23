@@ -15,7 +15,8 @@ class CreateWatermarksTable extends Migration
     {
         Schema::create('watermarks', function (Blueprint $table) {
             $table->id();
-            $table->string('path');
+            $table->string('title');
+            $table->string('path')->nullable();
             $table->string('position')->default('center');
             $table->string('offset_space')->default('15');
             $table->string('image_width')->default('600');
