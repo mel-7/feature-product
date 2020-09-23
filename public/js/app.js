@@ -3898,6 +3898,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -6169,6 +6170,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
 //
 //
 //
@@ -31046,8 +31048,19 @@ var render = function() {
                   dense: ""
                 },
                 on: {
+                  keydown: function($event) {
+                    if (
+                      !$event.type.indexOf("key") &&
+                      _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                    ) {
+                      return null
+                    }
+                    $event.preventDefault()
+                    return _vm.searchButton($event)
+                  },
                   "click:append": function($event) {
-                    return _vm.searchButton()
+                    $event.preventDefault()
+                    return _vm.searchButton($event)
                   }
                 },
                 model: {
@@ -34102,8 +34115,19 @@ var render = function() {
                   dense: ""
                 },
                 on: {
+                  keydown: function($event) {
+                    if (
+                      !$event.type.indexOf("key") &&
+                      _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                    ) {
+                      return null
+                    }
+                    $event.preventDefault()
+                    return _vm.searchButton($event)
+                  },
                   "click:append": function($event) {
-                    return _vm.searchButton()
+                    $event.preventDefault()
+                    return _vm.searchButton($event)
                   }
                 },
                 model: {
