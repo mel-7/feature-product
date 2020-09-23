@@ -32,6 +32,7 @@ Route::get('/builder/products', 'BuilderController@index')->name('builder.produc
 
 Route::get('/builder/products/all', 'ProductsController@productsAPI')->name('builder.all.products');
 Route::get('/builder/products/fetch/{id}', 'ProductsController@fetch')->name('builder.fetch.product');
+Route::post('/builder/products/searchProduct/{any}', 'ProductsController@searchProduct')->name('builder.search.product');
 Route::post('/builder/product/store', 'ProductsController@store')->name('builder.store.product');
 // Route::get('/builder/scenes/scenes', 'ProductsController@scenesByProductId')->name('builder.scenes.by.product.id');
 Route::get('/builder/product/upload-video', 'BuilderController@index')->name('builder.upload.video');
@@ -64,8 +65,11 @@ Route::get('/settings/companies', 'BuilderController@index')->name('settings.com
 Route::get('/settings/teams', 'BuilderController@index')->name('settings.teams');
 Route::post('/settings/team/delete/{id}', 'SettingsController@deleteOrgUser')->name('settings.team.delete');
 Route::post('/settings/team/update/{id}', 'SettingsController@updateOrgUser')->name('settings.team.update');
+Route::post('/settings/team/save', 'SettingsController@saveOrgUser')->name('settings.team.save');
+Route::post('/settings/team/search_data/{any}', 'SettingsController@searchData')->name('settings.search.data');
 
 Route::get('/product/{slug}', 'ProductsController@show')->name('single.product');
+Route::post('/product/delete/{id}', 'ProductsController@destroy')->name('product.delete');
 
 // Media_files
 Route::post('/files/upload', 'FilesController@upload')->name('upload');

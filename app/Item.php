@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Hotspot;
+//use App\Hotspot;
 use App\Hotspot_setting;
 use App\Product;
 use App\User_file;
@@ -17,10 +17,10 @@ class Item extends Model
     {
         return $this->belongsTo(Product::class);
     }
-    public function hotspots()
-    {
-        return $this->belongsToMany(Hotspot::class);
-    }
+    // public function hotspots()
+    // {
+    //     return $this->belongsToMany(Hotspot::class);
+    // }
     public function media_file()
     {
         return $this->belongsTo(Media_file::class);
