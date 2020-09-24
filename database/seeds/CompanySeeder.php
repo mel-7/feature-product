@@ -26,5 +26,12 @@ class CompanySeeder extends Seeder
             'description'   => 'This is Other Company or Organization.',
         ]);
         $comapny->save();
+
+        $faker = Faker\Factory::create();
+    	foreach (range(1,50) as $index) {
+	        DB::table('companies')->insert([
+	            'title' => $faker->words(3, true),
+	        ]);
+	    }
     }
 }
