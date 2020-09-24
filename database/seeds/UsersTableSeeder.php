@@ -22,23 +22,23 @@ class UsersTableSeeder extends Seeder
         ]);
         $user->save();
         $user = new \App\User([
-            'name'          => 'Test Account',
-            'email'         => 'test@test.com',
+            'name'          => 'Team Editor',
+            'email'         => 'teameditor@test.com',
             'password'      => Hash::make('123456789'),
             'phone'         => '05012345678',
             'role'          => 5,
             'status'        => true,
-            'company_id'    => 2,
+            'company_id'    => 1,
         ]);
         $user->save();
         $user = new \App\User([
-            'name'          => 'Employer Account',
-            'email'         => 'editor@editor.com',
+            'name'          => 'Team Admin',
+            'email'         => 'teamadmin@test.com',
             'password'      => Hash::make('123456789'),
             'phone'         => '05012345678',
             'role'          => 4,
             'status'        => true,
-            'company_id'    => 3,
+            'company_id'    => 1,
         ]);
         $user->save();
 

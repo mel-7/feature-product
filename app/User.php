@@ -51,4 +51,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Product::class);
     }
+
+    /**
+     * User Roles
+     * 1. Super Admin
+     * 2. App Admin
+     * 3. Team Admin
+     * 4. Team Editor
+     */
 }
