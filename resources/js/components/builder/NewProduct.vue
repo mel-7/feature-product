@@ -22,6 +22,7 @@
 export default {
   data() {
     return {
+     
       valid: false, 
       title: "",
       titleRules: [(v) => !!v || "Name is required"],

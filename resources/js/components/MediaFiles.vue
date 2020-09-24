@@ -36,6 +36,18 @@
             v-model="multiple"
             label="Multiple Selection"
           ></v-checkbox>
+
+             <v-spacer></v-spacer>
+           
+        <v-text-field
+             v-if="searchActive == true"
+            v-model="searchData"
+            v-on:keydown.enter.prevent="searchButton"
+            append-icon="mdi-cloud-search-outline"  
+            outlined label="Search" required class="py-0" dense
+            @click:append.prevent="searchButton"
+          ></v-text-field>
+          
         </v-card-title>
         <v-card-text class="blue-grey lighten-5 pt-3" v-show="tabItem == 'upload'">
           <upload-zone
@@ -142,6 +154,8 @@ export default {
   },
   data() {
     return {
+      searchActive: false,
+       searchData: "",
       imageClickActive: false,
       tabItem: "upload",
       companyId: this.mediaOptions.user.company_id,
@@ -184,6 +198,7 @@ export default {
       this.getUserFiles();
     },
     mediaTab() {
+      this.searchActive =  true;
       this.tabItem = "mediafiles";
       this.getUserFiles();
     },
@@ -345,6 +360,22 @@ export default {
       this.$emit("responded", false);
       this.selected = [];
        this.imageClickActive = false; 
+    },
+
+    searchButton(){ 
+      if(this.searchData){
+          axios
+            .post("/item/search/" + this.searchData)
+            .then((response) => {
+              this.files = Object.assign({}, response.data.data);
+            })
+            .catch((error) => {
+             console.log("Error Fetching Files in getUserFiles");
+              console.log(error);
+            });
+      }else{
+        this.getUserFiles(); 
+      }
     },
     getUserFiles() {
       if (this.selected.length == 0) {

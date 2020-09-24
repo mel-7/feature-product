@@ -1072,7 +1072,7 @@ function create(options) {
         if (!Array.isArray(data.source)) {
             data.source = [];
         }
-        data.source.push($$2(_this).attr('src').attr('alt',"test only"));
+        data.source.push($$2(_this).attr('src').attr('alt',"Moikzz SpinCar"));
     });
     // build inner html
     // <div>

@@ -12,6 +12,7 @@
     <title>Gallega Spinner</title> 
   
     <style>
+    html, body { margin: 0; padding: 0;}
       .spritespin-wrapper {
           max-width: 1366;
           margin: 0 auto;
@@ -375,13 +376,22 @@ display: none;
     z-index: 99;}
    
 .active{background-color: #fbad18;}
-.content-action{margin-top: -27px; 
-    justify-content: center;}
-    .divider{
-      margin: 0 10px;
-    border: 2px solid #007bc3;
-    z-index: 9;
+.content-action{ position: absolute;
+    bottom:0;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    left:50%;
+    -webkit-transform:translateX(-50%);
+        -ms-transform:translateX(-50%);
+            transform:translateX(-50%);
     }
+
+.divider{
+  margin: 0 10px;
+border: 2px solid #007bc3;
+z-index: 9;
+}
     
   
   .slick-slide{ width: 230px !important;}
@@ -392,7 +402,7 @@ display: none;
     width: 1300px;
     margin-left: 30px;}
     .slick-initialized { visibility: visible; }
-    .container{width: 100%;  max-width: 1366px; height:768px; padding:0}
+    .container{width: 100%;  max-width: 1366px; height:auto; padding:0; margin: 0 auto; position: relative; }
 
 @media (max-width:970px) {
   .center-con { bottom: 35px; height: 40px;width: 40%; left: 30%; } 
@@ -409,9 +419,7 @@ display: none;
 
   .hp-contents p, .hp-contents a { font-size: 11px; }
   .cd-single-point > a { width: 18px; height: 18px;}
-    .container {
-        height: 275px;
-    } 
+    
 
     .center-con {
       bottom: 35px;
@@ -510,7 +518,7 @@ var base_url = "{{URL::to('/')}}";
 
     <script type="text/javascript" src="{{ asset('js/jquery-3.3.1.js') }}"></script>
      <!-- Styles -->
-     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+     <!-- <link href="{{ asset('css/app.css') }}" rel="stylesheet"> -->
    
 
     <!-- slick slider -->
