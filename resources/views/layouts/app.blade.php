@@ -7,6 +7,8 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <meta name="auth_user" content="" />
+
     {{-- <title>{{ config('app.name', 'Laravel') }}</title> --}}
     <title>Gallega Demo</title>
 

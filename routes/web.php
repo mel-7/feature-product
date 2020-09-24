@@ -34,6 +34,7 @@ Auth::routes([
  */
 Route::group(['middleware' => 'can:accessSuperAdmin, App\User', 'prefix'=>'settings', 'as'=>'settings.'], function(){
     Route::get('/companies', 'BuilderController@index')->name('companies');
+    Route::get('/companies/fetch', 'CompaniesController@fetchCompanies')->name('fetch.companies');
 });
 
 

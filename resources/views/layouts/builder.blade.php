@@ -10,7 +10,7 @@
 
     @if (Auth::check()) 
         <meta name="auth_user" content="{{ Auth::user() }}" />
-    @endif 
+    @endif
     
     <title>Gallega Spinner - Alpha</title>
 

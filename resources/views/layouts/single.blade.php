@@ -11,8 +11,8 @@
     {{-- <title>{{ config('app.name', 'Laravel') }}</title> --}}
     <title>Gallega Spinner</title>
     <script type="text/javascript" src="{{ asset('js/jquery-3.3.1.js') }}"></script>
-     <!-- Styles -->
-     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <!-- Styles -->
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
    
 
     <!-- slick slider -->
