@@ -28,7 +28,7 @@ class UsersTableSeeder extends Seeder
             'phone'         => '05012345678',
             'role'          => 1,
             'status'        => true,
-            'company_id'    => 2,
+            'company_id'    => 1,
         ]);
         $user->save();
         $user = new \App\User([
@@ -38,7 +38,7 @@ class UsersTableSeeder extends Seeder
             'phone'         => '05012345678',
             'role'          => 4,
             'status'        => true,
-            'company_id'    => 3,
+            'company_id'    => 1,
         ]);
         $user->save();
 

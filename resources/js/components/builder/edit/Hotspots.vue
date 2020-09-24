@@ -128,10 +128,6 @@ export default {
       type: Number,
       default: null,
     },
-    authUser: {
-      type: Object,
-      default: null,
-    },
     currentPanel: {
       type: String,
       default: ""
@@ -142,6 +138,7 @@ export default {
   },
   data() {
     return {
+      authUser: this.$authUser,
       deleteDialog: false,
       editDialog: false,
       dialogHotspot: [],
@@ -191,7 +188,7 @@ export default {
       mediaFilesSettings: {
         dialog: true,
         dialogStatus: false,
-        user: this.authUser,
+        user: this.$authUser,
         action: "save",
         data: null,
         product: this.product,

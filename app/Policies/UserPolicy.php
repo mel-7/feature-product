@@ -29,4 +29,20 @@ class UserPolicy
         // return in_array($user->company_id, );
         return $user->company_id == $product->company_id;
     }
+
+    public function accessTeamAdmin(User $user)
+    {
+        $allowedRoles = array(1, 4);
+        return in_array($user->role, $allowedRoles);
+    }
+
+    public function accessTeamEditor(User $user)
+    {
+        return $user->role === 5;
+    }
+
+    public function accessSuperAdmin(User $user)
+    {
+        return $user->role === 1;
+    }
 }

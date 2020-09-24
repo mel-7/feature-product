@@ -1,16 +1,20 @@
-import BuilderDashboard from "../js/components/builder/BuilderDashboard";
-import BuilderProducts from "../js/components/builder/BuilderProducts";
-// import BuilderNewProduct from "../js/components/builder/BuilderNewProduct";
-import BuilderEditProduct from "../js/components/builder/BuilderEditProduct";
-import UploadVideo from "../js/components/builder/UploadVideo";
+import BuilderDashboard from "../components/builder/BuilderDashboard";
+import BuilderProducts from "../components/builder/BuilderProducts";
+// import BuilderNewProduct from "../components/builder/BuilderNewProduct";
+import BuilderEditProduct from "../components/builder/BuilderEditProduct";
+import UploadVideo from "../components/builder/UploadVideo";
 
 // Settings
-import Account from "../js/components/settings/Account"
-import Watermarks from "../js/components/settings/watermarks"
-import EditWatermark from "../js/components/settings/watermark/EditWatermark"
-import Teams from "../js/components/settings/Teams"
-import Organization from "../js/components/settings/Organization"
-import Companies from "../js/components/settings/Companies"
+import Account from "../components/settings/Account";
+import Watermarks from "../components/settings/watermarks";
+import EditWatermark from "../components/settings/watermark/EditWatermark";
+import Teams from "../components/settings/Teams";
+import Organization from "../components/settings/Organization";
+import Companies from "../components/settings/Companies";
+
+const authUser = JSON.parse(
+    document.querySelector("meta[name='auth_user']").getAttribute("content")
+);
 
 export const routes = [
     {
@@ -39,7 +43,7 @@ export const routes = [
     },
     {
         path: "/builder/product/edit/:id",
-        name: 'BuilderEditProduct',
+        name: "BuilderEditProduct",
         component: BuilderEditProduct,
         props: true
     },
@@ -60,45 +64,59 @@ export const routes = [
     /**
      * Settings
      */
-     {
+    {
         path: "/settings/companies",
-        name: 'Companies',
+        name: "Companies",
         component: Companies,
-        props: true
+        props: true,
+        beforeEnter: (to, from, next) => {
+            if (authUser.role == 1) {
+                next();
+            }
+        }
     },
     {
         path: "/settings/account",
-        name: 'Account',
+        name: "Account",
         component: Account,
         props: true
     },
     {
         path: "/settings/watermarks",
-        name: 'Watermarks',
+        name: "Watermarks",
         component: Watermarks,
         props: true
     },
     {
         path: "/settings/watermarks/page/:page",
-        name: 'Watermarks',
+        name: "Watermarks",
         component: Watermarks,
         props: true
     },
     {
         path: "/settings/watermark/edit/:id",
-        name: 'Watermark',
+        name: "Watermark",
         component: EditWatermark,
         props: true
     },
     {
         path: "/settings/organization",
-        name: 'Organization',
+        name: "Organization",
         component: Organization,
-        props: true
+        props: true,
+        beforeEnter: (to, from, next) => {
+            if (authUser.role != 5) {
+                next();
+            } else {
+                next({
+                    name: "/dashboard"
+                });
+            }
+        }
     },
     {
         path: "/settings/teams",
-        name: 'Teams',
+        name: "Teams",
         component: Teams,
         props: true
     }

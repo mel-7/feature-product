@@ -9,6 +9,33 @@ require("./bootstrap");
 // window.Vue = require('vue');
 
 /**
+ * Next, we will create a fresh Vue application instance and attach it to
+ * the page. Then, you may begin adding components to this application
+ * or customize the JavaScript scaffolding to fit your unique needs.
+ */
+
+import Vue from "vue";
+import vuetify from "./plugins/vuetify"; // path to vuetify export
+import VueRouter from "vue-router";
+import { routes } from "./plugins/routes";
+
+// Vuex
+// import store from "./store/index";
+
+// Vue Router
+Vue.use(VueRouter);
+const router = new VueRouter({
+    routes,
+    mode: "history"
+});
+
+/**
+ * Authenticated User Object
+ */
+Vue.prototype.$authUser = JSON.parse(document.querySelector("meta[name='auth_user']").getAttribute('content'));
+// Vue.prototype.$authUser = document.querySelector("meta[name='auth_user']").getAttribute('content');
+
+/**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
  * components and automatically register them with their "basename".
@@ -23,64 +50,43 @@ Vue.component(
     "builder-navigation",
     require("./components/BuilderNavigation.vue").default
 );
-Vue.component(
-  "media-files",
-  require("./components/MediaFiles.vue").default
-);
+Vue.component("media-files", require("./components/MediaFiles.vue").default);
 
-
-Vue.component('spritespin', {
-    props: ['options'],
+Vue.component("spritespin", {
+    props: ["options"],
     template: '<div class="sp-container"></div>',
-    data: function () {
-      return {
-        api: null,
-        data: null,
-      }
+    data: function() {
+        return {
+            api: null,
+            data: null
+        };
     },
     mounted: function() {
-      // create spritespin
-      $(this.$el).spritespin(this.options)
-      // access api object
-      this.api = $(this.$el).spritespin('api')
-      // access data object
-      this.data = $(this.$el).spritespin('data')
-      // watch changes and update spritespin
-      this.$watch('options', (newVal, oldVal) => {
-        $(this.$el).spritespin(newVal)
-      })
+        // create spritespin
+        $(this.$el).spritespin(this.options);
+        // access api object
+        this.api = $(this.$el).spritespin("api");
+        // access data object
+        this.data = $(this.$el).spritespin("data");
+        // watch changes and update spritespin
+        this.$watch("options", (newVal, oldVal) => {
+            $(this.$el).spritespin(newVal);
+        });
     },
     updated: function() {
-      // $(this.$el).spritespin(this.options)
+        // $(this.$el).spritespin(this.options)
     },
     beforeDestroy: function() {
-      // destroy spritespin before Vue node is destroyed
-      $(this.$el).spritespin('destroy')
-    },
-  })
-
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
-
-import Vue from "vue";
-import vuetify from "../plugins/vuetify"; // path to vuetify export
-import VueRouter from "vue-router";
-import { routes } from "../plugins/routes";
-
-// Vue Router
-Vue.use(VueRouter);
-const router = new VueRouter({
-    routes,
-    mode: "history"
+        // destroy spritespin before Vue node is destroyed
+        $(this.$el).spritespin("destroy");
+    }
 });
 
 const app = new Vue({
     el: "#app",
     router,
     vuetify,
+    // store,
     data() {
         return {
             //login
@@ -100,14 +106,17 @@ const app = new Vue({
         };
     },
     methods: {
-        validate () {
+        validate() {
             if (this.$refs.form.validate()) {
-            this.snackbar = true;
+                this.snackbar = true;
             }
         },
-        logout: function (event) {
+        logout: function(event) {
             event.preventDefault();
-            document.getElementById('logout-form').submit();
-        },
+            document.getElementById("logout-form").submit();
+        }
+    },
+    mounted() {
+      // console.log(typeof this.$authUser)
     },
 });
