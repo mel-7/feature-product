@@ -306,11 +306,16 @@ var slideIndex = 1;
                             }); 
                         }
 
-                        $(".open-exterior").show();
-                        $(".content-action").attr("style","display:flex");
+                        
+                       
                     },
                     onComplete: function(){
-                     // $(".lds-spinner").remove();
+                      if(data.hpItems.length > 0 || panaromicImg.length > 0){
+                        $(".content-action").attr("style","display:flex");
+                        $(".open-exterior").show();
+                      }
+                      
+                      $("#loading-wrapper").remove();
                       $(".center-con").show();
                       $(".icon-360").show();
                     }
@@ -327,6 +332,7 @@ var slideIndex = 1;
                   $(".photos.img").show();
                 }
 
+                
                 if(panaromicImg.length > 0){
                       $('.open-interior').show();
                     var x = 1;
