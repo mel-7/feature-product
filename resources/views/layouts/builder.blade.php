@@ -8,6 +8,9 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    @if (Auth::check()) 
+        <meta name="auth_user" content="{{ Auth::user() }}" />
+    @endif 
     
     <title>Gallega Spinner - Alpha</title>
 
