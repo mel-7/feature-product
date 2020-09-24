@@ -9,17 +9,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     {{-- <title>{{ config('app.name', 'Laravel') }}</title> --}}
-    <title>Gallega Spinner</title>
-    <script type="text/javascript" src="{{ asset('js/jquery-3.3.1.js') }}"></script>
-     <!-- Styles -->
-     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-   
-
-    <!-- slick slider -->
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/slick-carousel.css') }}"/>
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/slick.css') }}"/>
-    <!-- <link rel="stylesheet" href="{{ asset('css/pannellum.css') }}" />   -->
-   
+    <title>Gallega Spinner</title> 
   
     <style>
       .spritespin-wrapper {
@@ -492,6 +482,7 @@ display: none;
       transform: rotate(360deg);
     }
   }
+   
     </style>
 <script> 
 var base_url = "{{URL::to('/')}}";  
@@ -516,6 +507,16 @@ var base_url = "{{URL::to('/')}}";
             @yield('content')
         </v-app>
     </div>
+
+    <script type="text/javascript" src="{{ asset('js/jquery-3.3.1.js') }}"></script>
+     <!-- Styles -->
+     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+   
+
+    <!-- slick slider -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/slick-carousel.css') }}"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/slick.css') }}"/>
+    <!-- <link rel="stylesheet" href="{{ asset('css/pannellum.css') }}" />   -->
     @include('product.scripts')
 
   <!-- Scripts --> 
