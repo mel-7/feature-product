@@ -52,6 +52,8 @@ Route::get('/settings/watermark/get/{id}', 'WatermarksController@getWatermark')-
 Route::post('/settings/watermark/delete/{id}', 'WatermarksController@destroy')->name('settings.watermark.delete');
 Route::post('/settings/watermark/update/{id}', 'WatermarksController@update')->name('settings.watermark.update');
 
+Route::get('/settings/watermarks/all', 'WatermarksController@fetchWatermarksForUploadZone')->name('settings.watermarks.uploadzone'); // needs to transfer to vuex!!
+
 // Teams
 Route::get('/settings/organization', 'BuilderController@index')->name('settings.organization');
 Route::get('/settings/organization/fetch', 'SettingsController@fetchOrg')->name('settings.fetch.org');
@@ -76,8 +78,8 @@ Route::post('/files/upload', 'FilesController@upload')->name('upload');
 Route::post('/files/apply_watermark/', 'FilesController@apply_watermark')->name('apply_watermark');
 Route::post('/files/remove_watermark/', 'FilesController@remove_watermark')->name('remove_watermark');
 
-Route::get('/files/fetch', 'FilesController@getItemImages')->name('fetch.item.files'); // has static
-Route::get('/display/file/{path}', 'FilesController@showImage')->name('show.file'); // has static
+Route::get('/files/fetch', 'FilesController@getItemImages')->name('fetch.item.files'); // has static, used in UploadVideo component
+Route::get('/display/file/{path}', 'FilesController@showImage')->name('show.file'); // has static, used in UploadVideo component
 
 Route::get('/user/files/{id}', 'FilesController@getUserFilesByID')->name('get.user.files');
 

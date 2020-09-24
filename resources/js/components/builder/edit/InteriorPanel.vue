@@ -133,6 +133,7 @@ export default {
         data: null,
         product: this.product,
         itemType: "panorama",
+        watermarkOptions: false,
       },
 
       hotspotText: "this is the hotspot Text",

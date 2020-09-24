@@ -26,9 +26,31 @@
       </vue-dropzone>
     </div>
     <div class="pa-3 d-flex align-center">
-      <v-spacer></v-spacer>
       <v-btn color="grey" text @click="removeAllFiles">clear</v-btn>
-      <!-- <v-checkbox class="ma-0 caption" v-model="withWatermark" label="Apply Watermark" color="primary" hide-details></v-checkbox> -->
+      <v-spacer></v-spacer>
+      <div v-if="watermarkOptions == true && watermarks.length != 0 && itemType != 'video'" class="d-flex align-center justify-end">
+        <small>Enable Watermark</small>
+          <v-checkbox
+          class="ml-2"
+          v-model="withWatermark"
+          color="primary"
+          title="Enable Watermark"
+          dense
+        ></v-checkbox>
+        <v-autocomplete
+          v-show="withWatermark == true"
+          v-model="selectedWatermark"
+          :items="watermarks"
+          item-text="title"
+          label="Select Watermark"
+          return-object
+          hide-details
+          outlined
+          required
+          dense
+        ></v-autocomplete>
+      </div>
+      <small v-else class="caption grey--text">{{ watermarkOptions == false || itemType == 'video' ? '' : 'No Watermark is set'}}</small>
       <v-btn class="ml-3" color="primary" :loading="btnLoading" @click="upload">Upload</v-btn>
     </div>
   </div>
@@ -47,6 +69,10 @@ export default {
       type: String,
       default: "360",
     },
+    watermarkOptions:{
+      type: Boolean,
+      default: true
+    }
   },
   components: {
     vueDropzone: vue2Dropzone,
@@ -76,7 +102,9 @@ export default {
       dropzone: null,
       preview: true,
       btnLoading: false,
-      withWatermark: true,
+      withWatermark: this.watermarkOptions ? true : false,
+      watermarks: [],
+      selectedWatermark: null,
     };
   },
   methods: {
@@ -109,27 +137,29 @@ export default {
                 </button>
               </div>`;
     },
-    fileAdded(file){
+    fileAdded(file) {
       this.preview = false;
     },
     processing() {
       this.btnLoading = true;
     },
-    duplicateFile(e){
-      console.log("Duplicated file will not be inserted in upload queue: "+ e.name);
+    duplicateFile(e) {
+      console.log(
+        "Duplicated file will not be inserted in upload queue: " + e.name
+      );
     },
     dropFunction(e) {
       e.preventDefault();
       console.log(e);
       this.preview = false;
-      
     },
     sendingEvent(file, xhr, formData) {
       //   console.log(formData);
       formData.append("product", this.$route.params.id);
       formData.append("add_items", this.addItems);
       formData.append("item_type", this.itemType);
-      formData.append("with_watermark", this.withWatermark);
+      this.withWatermark && formData.append("with_watermark", this.withWatermark);
+      this.selectedWatermark && formData.append("selected_watermark", this.selectedWatermark.id);
     },
     removeAllFiles() {
       this.$refs.myVueDropzone.removeAllFiles();
@@ -154,10 +184,35 @@ export default {
     upload() {
       this.$refs.myVueDropzone.processQueue();
     },
+    fetchWatermarks() {
+      // needs to transfer the fetching in vuex!!
+      axios
+        .get("/settings/watermarks/all")
+        .then((response) => {
+          this.watermarks = response.data;
+          // Set the default value
+          this.selectedWatermark = this.watermarks.filter(
+            (w) => w.default === 1
+          )[0];
+          console.log(this.watermarks.length);
+        })
+        .catch((error) => {
+          console.log("Error Fetching Org Users");
+          console.log("Error: " + error);
+        });
+    },
+  },
+  created() {
+    if(this.watermarkOptions == true){
+    //   this.withWatermark = true;
+      this.fetchWatermarks();
+    }
+    // else{
+    //   this.withWatermark = false;
+    // }
   },
   mounted() {
-    //   console.log(this.addItems);
-    //   console.log(this.itemType);
+    console.log("WatermarkOptions: "+ this.watermarkOptions);
   },
 };
 </script>

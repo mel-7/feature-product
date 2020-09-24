@@ -3,11 +3,12 @@
     <v-btn small class="primary mb-3" @click="createHotspot">Add Hotspot</v-btn>
     <v-dialog v-model="newHotspotDialog" color="white" width="500">
       <v-card class="mr-auto pa-3" max-width="600">
-        <v-form ref="form" lazy-validation>
-          <h3 class="font-weight-light">New Hotspot</h3>
+        <v-form ref="form"  @submit.prevent="submitNewHotspot" lazy-validation>
+          <h3 class="font-weight-light">New Hotspot</h3> 
           <v-text-field
             v-model="hotspotTitle"
             label="Hotspot Title"
+            v-on:keydown.enter.prevent="submitNewHotspot"
             required
           ></v-text-field>
             <!-- v-on:keyup.enter="submitNewHotspot" -->
@@ -194,7 +195,7 @@ export default {
         action: "save",
         data: null,
         product: this.product,
-        itemType: "panorama",
+        itemType: "image",
         returnUrl: true,
       },
     };
@@ -373,14 +374,14 @@ export default {
             hotspot_settings: '{"top":"5%","left":"5%","display":"block"}',
           }],
         title: h.title
-   
+
       };
-       
-     
+
+
       if (this.selectedItem.length != 0) {
-       
+
         if($("div").hasClass("hotspot-id-"+h.id)){
-          
+
             $(".hotspot-id-"+h.id).css({
               left:"5%",
               top: "5%",

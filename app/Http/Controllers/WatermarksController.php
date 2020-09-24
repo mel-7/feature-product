@@ -18,6 +18,13 @@ class WatermarksController extends Controller
         $this->middleware('auth');
     }
 
+    public function fetchWatermarksForUploadZone()
+    {
+        $companyId = Auth::user()->company_id;
+        $watermarks = Watermark::where('company_id', $companyId)->orderBy('title', 'asc')->get();
+        return response()->json($watermarks, 200);
+    }
+
     public function fetchWatermarks()
     {
         $companyId = Auth::user()->company_id;
@@ -29,6 +36,15 @@ class WatermarksController extends Controller
     {
         $companyId = Auth::user()->company_id;
         $uploadDate = Carbon::now()->format('YmdHis');
+
+        // Set the previous default watermark to 0
+        
+        if($request->default == true){ 
+            $updateOldDefault = Watermark::where([
+                'default' => 1,
+                'company_id' => $companyId])->update(['default' => 0]);
+            
+        }
 
         // Create Director if does not exist
         $userStorage = '/public/uploads/' . $companyId.'/watermark';
@@ -71,17 +87,18 @@ class WatermarksController extends Controller
         $updateWaterMarkArray = [
             'title' => $request['title'],
             'path' => $request['watermark'],
-            'media_file_id' => $request['media_file_id'],
+            'media_file_id' => $request['media_file_id'] != null ? $request['media_file_id'] : $watermarkToUpdate->media_file_id,
             'position' => $request['position'],
             'offset_space' => $request['offset_space'],
             'image_width' => $request['image_width'],
             'image_opacity' => $request['image_opacity'],
-            'status' => $request['status'],
+            // 'status' => $request['status'],
+            'default' => $request['default'],
             'updated_at' => Carbon::now(),
         ];
         // dd($updateWaterMarkArray);
         // if($watermarkExist){
-            $watermarkQuery = $watermarkToUpdate->update($updateWaterMarkArray);
+        $watermarkQuery = $watermarkToUpdate->update($updateWaterMarkArray);
         // }else{
         //     $watermarkQuery = Watermark::create($createWaterMarkArray);
         // }

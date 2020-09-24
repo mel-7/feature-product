@@ -149,7 +149,7 @@ export default {
     product: {
       type: String,
       default: "",
-    }, 
+    },
     productDetails: {
       type: Object,
       default: null,
@@ -171,8 +171,8 @@ export default {
   data() {
     return {
       // UI
-      
-      isItemsLoaded: false, 
+
+      isItemsLoaded: false,
       enableButton: [],
       currentFrame:0,
       totalFrame: 0,
@@ -268,16 +268,16 @@ export default {
         return el != null;
       });
 
-      tempHotspots = JSON.stringify(filtered); 
-      
-    }, 
+      tempHotspots = JSON.stringify(filtered);
+
+    },
     applyHotspot() {
       // Get the selected item_id
       // Get the hotspot hotspot_id
       let data = {
         hotspot_settings: tempHotspots,
       };
-     
+
       axios
         .post("/hotspot/apply", data)
         .then((response) => {
@@ -291,7 +291,7 @@ export default {
         });
     },
     async getHotspotSettings() {
-      
+
       await axios
         .get("/hotspot/product/" + this.$route.params.id)
         .then((response) => {
@@ -308,12 +308,12 @@ export default {
       if (res.status == "error") {
         return;
       }
-     
+
       this.mediaFilesSettings.dialogStatus = false;
 
       if(res != false){
          this.loadExterior();
-      } 
+      }
     },
     editItem(item) {
       // Toggle Dialog
@@ -351,12 +351,12 @@ export default {
         let targetItem = $(".target-frame-" + targetFrame).data("targetid");
         // targetItem = JSON.parse(targetItem);
         this.currentFrame = targetFrame+1;
-         
+
         this.selected(targetFrame, targetItem);
       }
     },
     selected(index, id = []) {
-   
+
       allHps = this.hotspots;
       $(".draggable-hotspot").css({
         left: "5%",
@@ -431,9 +431,9 @@ export default {
       this.$emit("selectedItem", id.id);
       this.tempItemID = id.id;
     },
-    async getImagesByProduct() { 
-      
-      this.show = false; 
+    async getImagesByProduct() {
+
+      this.show = false;
       this.items = [];
       this.options.frames = 0;
       this.options.source = [];
@@ -541,7 +541,7 @@ export default {
     this.loadExterior();
   },
   mounted() {
-     
+
   },
 };
 </script>
