@@ -158,7 +158,7 @@ class FilesController extends Controller
         $companyId = $user->company_id;
         $userStorage = public_path('storage/uploads/'). $companyId;
 
-        $watermark = Watermark::where('company_id', $companyId)->first();
+        $watermark = Watermark::where(['company_id' => $companyId, 'default' => 1])->first();
 
         $files = Collection::wrap($request->selected);
 
@@ -167,7 +167,8 @@ class FilesController extends Controller
             $source = storage_path() . '/app/public/uploads/'.$companyId.'/original/'.$file;
 
             $selectedImg = Image::make($source);
-            if($watermark && $watermark->status == true ){
+            // if($watermark && $watermark->status == true ){
+            if($watermark){
                 $selectedImg->insert('storage/uploads/'.$companyId.'/watermark/'.$watermark->path, $watermark->position, $watermark->offset_space, $watermark->offset_space);
             }
                 $selectedImg->save($userStorage . '/' . $file); // Save to directory
@@ -181,7 +182,7 @@ class FilesController extends Controller
         $companyId = $user->company_id;
         $userStorage = public_path('storage/uploads/'). $companyId;
 
-        $watermark = Watermark::where('company_id', $companyId)->first();
+        $watermark = Watermark::where(['company_id' => $companyId, 'default' => 1])->first();
 
         $files = Collection::wrap($request->selected);
 
@@ -196,12 +197,14 @@ class FilesController extends Controller
         return response()->json("Success", 200);
     }
 
+    // has static, used in UploadVideo component
     public function getItemImages()
     {
         $files = Media_file::where(['user_id' => 1, 'file_type' => 'image'])->take(50)->get();
         return response()->json($files, 200);
     }
 
+    // has static, used in UploadVideo component
     public function showImage($path)
     {
         $m = Media_file::where('path', $path)->firstOrFail();

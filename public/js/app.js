@@ -7230,7 +7230,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.top-left {\n  top: 0;\n  left: 0;\n  right: auto;\n  bottom: auto;\n}\n.top {\n  margin-left: 0 !important;\n  margin-right: 0 !important;\n  top: 0;\n  left: 50%;\n  right: auto;\n  bottom: auto;\n  transform: translateX(-50%);\n}\n.top-right {\n  top: 0;\n  right: 0;\n  left: auto;\n  bottom: auto;\n}\n.left {\n  margin-top: 0 !important;\n  margin-bottom: 0 !important;\n  left: 0;\n  top: 50%;\n  right: auto;\n  bottom: auto;\n  transform: translateY(-50%);\n}\n.center {\n  margin: 0 !important;\n  left: 50%;\n  top: 50%;\n  right: auto;\n  bottom: auto;\n  transform: translate(-50%, -50%);\n}\n.right {\n  margin-top: 0 !important;\n  margin-bottom: 0 !important;\n  left: auto;\n  top: 50%;\n  right: 0;\n  bottom: auto;\n  transform: translateY(-50%);\n}\n.bottom-left {\n  left: 0;\n  top: auto;\n  right: auto;\n  bottom: 0;\n}\n.bottom {\n  margin-left: 0 !important;\n  margin-right: 0 !important;\n  top: auto;\n  left: 50%;\n  right: auto;\n  bottom: 0;\n  transform: translateX(-50%);\n}\n.bottom-right {\n  left: auto;\n  top: auto;\n  right: 0;\n  bottom: 0;\n}\n", ""]);
+exports.push([module.i, "\n.top-left {\r\n  top: 0;\r\n  left: 0;\r\n  right: auto;\r\n  bottom: auto;\n}\n.top {\r\n  margin-left: 0 !important;\r\n  margin-right: 0 !important;\r\n  top: 0;\r\n  left: 50%;\r\n  right: auto;\r\n  bottom: auto;\r\n  transform: translateX(-50%);\n}\n.top-right {\r\n  top: 0;\r\n  right: 0;\r\n  left: auto;\r\n  bottom: auto;\n}\n.left {\r\n  margin-top: 0 !important;\r\n  margin-bottom: 0 !important;\r\n  left: 0;\r\n  top: 50%;\r\n  right: auto;\r\n  bottom: auto;\r\n  transform: translateY(-50%);\n}\n.center {\r\n  margin: 0 !important;\r\n  left: 50%;\r\n  top: 50%;\r\n  right: auto;\r\n  bottom: auto;\r\n  transform: translate(-50%, -50%);\n}\n.right {\r\n  margin-top: 0 !important;\r\n  margin-bottom: 0 !important;\r\n  left: auto;\r\n  top: 50%;\r\n  right: 0;\r\n  bottom: auto;\r\n  transform: translateY(-50%);\n}\n.bottom-left {\r\n  left: 0;\r\n  top: auto;\r\n  right: auto;\r\n  bottom: 0;\n}\n.bottom {\r\n  margin-left: 0 !important;\r\n  margin-right: 0 !important;\r\n  top: auto;\r\n  left: 50%;\r\n  right: auto;\r\n  bottom: 0;\r\n  transform: translateX(-50%);\n}\n.bottom-right {\r\n  left: auto;\r\n  top: auto;\r\n  right: 0;\r\n  bottom: 0;\n}\r\n", ""]);
 
 // exports
 
@@ -96542,8 +96542,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
