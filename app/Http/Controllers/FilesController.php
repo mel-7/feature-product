@@ -57,7 +57,7 @@ class FilesController extends Controller
         if($request->with_watermark == "true"){
             $watermark = Watermark::where('id', $request->selected_watermark)->first();
         }
-
+        
         // Do something on each files uploaded
         $files->each(function ($file, $key) use (&$watermark, &$companyId, &$userStorage, &$itemsArray, &$fileArray, &$request, &$uploadKey) {
             $userStorageDir = storage_path() . '/app' . $userStorage;
@@ -67,6 +67,7 @@ class FilesController extends Controller
             $extn = $file->getClientOriginalExtension();
             $slugTitle = Str::slug($title, '-');
             $path = $slugTitle."-".$uploadKey.".".$extn;
+            $webP = $slugTitle."-".$uploadKey.".webp";
 
             $jpgExtensions = array('jpeg', 'jpg', 'JPEG', 'JPG');
             $pngExtensions = array('png', 'PNG');
@@ -85,12 +86,14 @@ class FilesController extends Controller
 
                 $img->save($userStorageDir . '/original/' . $path); // Save to directory
 
+                $img->encode('webp', 20);
+
                 if($request->with_watermark == "true"){
                     if($watermark && $request->item_type != "panorama" && ($watermark->path != null || $watermark->path != "")){
                         $img->insert('storage/uploads/'.$companyId.'/watermark/'.$watermark->path, $watermark->position, $watermark->offset_space, $watermark->offset_space);
                     }
                 }
-                $img->save($userStorageDir . '/' . $path); // Save to directory
+                $img->save($userStorageDir . '/' . $webP); // Save to directory
             }
 
             /**
@@ -119,7 +122,7 @@ class FilesController extends Controller
                 'title' => $title,
                 'original_name' => $slugTitle."-".$uploadKey,
                 'disk' => 'uploads',
-                'path' => $path,
+                'path' => $webP,
                 'user_id' => auth()->id(),
                 'company_id' => $companyId,
                 'item_id' => null,
