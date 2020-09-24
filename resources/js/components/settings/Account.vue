@@ -81,7 +81,7 @@
   </v-row>
 </template>
 
-<script>
+<script> 
  import { required, name } from 'vee-validate/dist/rules';
 import {  ValidationObserver, ValidationProvider } from  'vee-validate/dist/vee-validate.full';
 

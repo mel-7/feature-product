@@ -51,12 +51,12 @@ class SettingsController extends Controller
         ], 200);
     }
 
-    public function getOrgUsers($id)
+    public function getOrgUsers($id)    
     {   
         if(Auth::user()->id > 1){
             $users = User::where('company_id', $id)->where('role', "<>", 1)->orderBy('role', 'asc')->orderBy('created_at', 'desc')->paginate(10);
         }else{
-            $users = User::where('company_id', $id)->orderBy('role', 'asc')->orderBy('created_at', 'desc')->paginate(10);
+            $users = User::where('company_id', $id)->orderBy('role', 'asc')->orderBy('role', 'asc')->orderBy('created_at', 'desc')->paginate(10);
         }
         return response()->json($users, 200);
     }
@@ -117,21 +117,33 @@ class SettingsController extends Controller
 
     public function saveOrgUser(Request $request)
     {
-        $this->validateOrgTeamRequest();
-       
+        $this->validateNewTeamRequest(); 
         // store request
         $product = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
             'phone' => $request->phone,
+            'status' => 1,
             'password' => Hash::make($request->password),
             'company_id' => Auth::user()->company_id
         ]);
+       
         // response
-        return response()->json([ 
-            'message' => 'Product has been created',
+        return response()->json([  
+            'message' => 'User has been created',
         ], 200);
+    }
+
+    public function validateNewTeamRequest()
+    {
+        return request()->validate([
+            'name' => ['required', 'min:3', 'max:50', 'string'],
+            'email' => ['sometimes', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'min:8'],
+            'phone' => [''],
+            'role' => ['integer'],
+        ]);
     }
 
     public function validateOrgTeamRequest()

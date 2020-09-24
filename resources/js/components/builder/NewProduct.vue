@@ -12,7 +12,7 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn text color="grey" @click.prevent="close">Cancel</v-btn>
-        <v-btn   :disabled="!valid" color="primary" @click.prevent="saveProduct">Create</v-btn>
+        <v-btn :disabled="!valid" color="primary" @click.prevent="saveProduct">Create</v-btn>
       </v-card-actions>
     </v-form>
   </v-card>
@@ -38,6 +38,7 @@ export default {
         slug: slugify(this.title),
       }; 
       
+      if(this.title == "" || this.title == null) { return false; }
       axios
         .post("/builder/product/store", data)
         .then((response) => { 
