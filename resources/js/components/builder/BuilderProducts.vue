@@ -227,7 +227,7 @@ export default {
     },
     searchButton(){ 
       if(this.searchProduct){
-          axios
+          axios 
             .post("/builder/products/searchProduct/" + this.searchProduct)
             .then((response) => {
               this.products = response.data.data;

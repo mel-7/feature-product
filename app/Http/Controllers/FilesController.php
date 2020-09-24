@@ -201,28 +201,25 @@ class FilesController extends Controller
     }
 
     // has static, used in UploadVideo component
-    public function getItemImages()
-    {
-        $files = Media_file::where(['user_id' => 1, 'file_type' => 'image'])->take(50)->get();
-        return response()->json($files, 200);
-    }
-
-    // has static, used in UploadVideo component
-    public function showImage($path)
-    {
-        $m = Media_file::where('path', $path)->firstOrFail();
-        if (isset($m)) {
-            $file = storage_path() . '/uploads/user-1/1/' . $path;
-            return response()->file($file, array('Content-Type' => 'image/jpeg'));
-        } else {
-            return abort('403');
-        }
-    }
+    // public function getItemImages()
+    // {
+    //     $files = Media_file::where(['user_id' => 1, 'file_type' => 'image'])->take(50)->get();
+    //     return response()->json($files, 200);
+    // } 
 
     public function getUserFilesByID($id)
     {
         $companyId = Auth::user()->company_id;
         $files = Media_file::where(['company_id' => $companyId])->orderBy('created_at', 'DESC')->paginate(200);
+        return response()->json($files, 200);
+    }
+
+    public function searchData($search)
+    {
+       
+        $company_id = Auth::user()->company_id;
+        $files = Media_file::where('company_id', $company_id)->where('title', 'like', '%'.$search.'%')->orWhere('path', 'like', '%'.$search.'%')->orderBy('title', 'asc')->paginate(200);
+        
         return response()->json($files, 200);
     }
 }

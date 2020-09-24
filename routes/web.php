@@ -82,6 +82,7 @@ Route::get('/files/fetch', 'FilesController@getItemImages')->name('fetch.item.fi
 Route::get('/display/file/{path}', 'FilesController@showImage')->name('show.file'); // has static, used in UploadVideo component
 
 Route::get('/user/files/{id}', 'FilesController@getUserFilesByID')->name('get.user.files');
+Route::post('/item/search/{any}', 'FilesController@searchData')->name('get.search.files');
 
 // Items Controller
 Route::get('/items/by-product/{id}', 'ItemsController@getItemsByProduct')->name('items.by.product');
