@@ -83,14 +83,9 @@
 
 <script>
 export default {
-  props: {
-    authUser: {
-      type: Object,
-      default: null,
-    },
-  },
   data() {
     return {
+      authUser: this.$authUser,
       dialogData: [],
       watermarkDialog: false,
       deleteDialog: false,

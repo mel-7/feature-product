@@ -3005,9 +3005,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["authUser"],
   data: function data() {
     return {
+      authUser: this.$authUser,
       baseUrl: window.location.origin,
       drawer: null,
       menu: false,
@@ -3718,12 +3718,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: {
-    authUser: {
-      type: Object,
-      "default": null
-    }
-  },
   components: {
     Hotspots: _edit_Hotspots__WEBPACK_IMPORTED_MODULE_1__["default"],
     ExteriorPanel: _edit_ExteriorPanel__WEBPACK_IMPORTED_MODULE_2__["default"],
@@ -3732,6 +3726,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   data: function data() {
     return {
+      authUser: this.$authUser,
       selected_panel_prop: "exterior",
       activateExterior: true,
       activateInterior: false,
@@ -4521,10 +4516,6 @@ var allHps = [];
       type: Object,
       "default": null
     },
-    authUser: {
-      type: Object,
-      "default": null
-    },
     selectedHotspotProp: {
       type: Object,
       "default": null
@@ -4537,6 +4528,7 @@ var allHps = [];
   },
   data: function data() {
     return {
+      authUser: this.$authUser,
       // UI
       isItemsLoaded: false,
       enableButton: [],
@@ -4562,7 +4554,7 @@ var allHps = [];
       mediaFilesSettings: {
         dialog: true,
         dialogStatus: false,
-        user: this.authUser,
+        user: this.$authUser,
         action: "replace",
         data: null
       },
@@ -5053,10 +5045,6 @@ __webpack_require__.r(__webpack_exports__);
       type: Number,
       "default": null
     },
-    authUser: {
-      type: Object,
-      "default": null
-    },
     currentPanel: {
       type: String,
       "default": ""
@@ -5067,6 +5055,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      authUser: this.$authUser,
       deleteDialog: false,
       editDialog: false,
       dialogHotspot: [],
@@ -5110,7 +5099,7 @@ __webpack_require__.r(__webpack_exports__);
       mediaFilesSettings: {
         dialog: true,
         dialogStatus: false,
-        user: this.authUser,
+        user: this.$authUser,
         action: "save",
         data: null,
         product: this.product,
@@ -5408,10 +5397,6 @@ var toSaveHotspot = [];
       type: String,
       "default": ""
     },
-    authUser: {
-      type: Object,
-      "default": null
-    },
     selectedInteriorHotspot: {
       type: Object,
       "default": null
@@ -5423,6 +5408,7 @@ var toSaveHotspot = [];
   },
   data: function data() {
     return {
+      authUser: this.$authUser,
       editingTitle: "",
       fetchedHotspots: [],
       toDelete: [],
@@ -5436,7 +5422,7 @@ var toSaveHotspot = [];
       mediaFilesSettings: {
         dialog: true,
         dialogStatus: false,
-        user: this.authUser,
+        user: this.$authUser,
         action: "save",
         data: null,
         product: this.product,
@@ -5729,10 +5715,6 @@ __webpack_require__.r(__webpack_exports__);
     product: {
       type: String,
       "default": ""
-    },
-    authUser: {
-      type: Object,
-      "default": null
     }
   },
   watch: {
@@ -5751,6 +5733,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      authUser: this.$authUser,
       deleteDialog: false,
       dialogAction: "save",
       videoDialog: false,
@@ -5761,7 +5744,7 @@ __webpack_require__.r(__webpack_exports__);
       mediaFilesSettings: {
         dialog: true,
         dialogStatus: false,
-        user: this.authUser,
+        user: this.$authUser,
         action: "save",
         data: null,
         product: this.product,
@@ -5962,14 +5945,9 @@ __webpack_require__.r(__webpack_exports__);
     ValidationProvider: vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_1__["ValidationProvider"],
     ValidationObserver: vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_1__["ValidationObserver"]
   },
-  props: {
-    authUser: {
-      type: Object,
-      "default": null
-    }
-  },
   data: function data() {
     return {
+      authUser: this.$authUser,
       valid: false,
       show1: false,
       passwordError: "",
@@ -6146,14 +6124,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: {
-    authUser: {
-      type: Object,
-      "default": null
-    }
-  },
   data: function data() {
     return {
+      authUser: this.$authUser,
       fetchedLogo: "",
       fetchedTitle: "",
       fetchedDescription: "",
@@ -6165,7 +6138,7 @@ __webpack_require__.r(__webpack_exports__);
       mediaFilesSettings: {
         dialog: true,
         dialogStatus: false,
-        user: this.authUser,
+        user: this.$authUser,
         action: "save",
         data: null,
         product: null,
@@ -6438,14 +6411,9 @@ __webpack_require__.r(__webpack_exports__);
     ValidationProvider: vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_1__["ValidationProvider"],
     ValidationObserver: vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_1__["ValidationObserver"]
   },
-  props: {
-    authUser: {
-      type: Object,
-      "default": null
-    }
-  },
   data: function data() {
     return {
+      authUser: this.$authUser,
       color: '',
       mode: 'vertical',
       snackbar: false,
@@ -6879,14 +6847,9 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     ValidationProvider: vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_0__["ValidationProvider"],
     ValidationObserver: vee_validate_dist_vee_validate_full__WEBPACK_IMPORTED_MODULE_0__["ValidationObserver"]
   },
-  props: {
-    authUser: {
-      type: Object,
-      "default": null
-    }
-  },
   data: function data() {
     return {
+      authUser: this.$authUser,
       // ui
       valid: true,
       loading: false,
@@ -6939,7 +6902,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       mediaFilesSettings: {
         dialog: true,
         dialogStatus: false,
-        user: this.authUser,
+        user: this.$authUser,
         action: "save",
         data: null,
         product: null,
@@ -7111,14 +7074,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: {
-    authUser: {
-      type: Object,
-      "default": null
-    }
-  },
   data: function data() {
     return {
+      authUser: this.$authUser,
       dialogData: [],
       watermarkDialog: false,
       deleteDialog: false,

@@ -96,10 +96,6 @@ export default {
       type: String,
       default: "",
     },
-    authUser: {
-      type: Object,
-      default: null,
-    },
     selectedInteriorHotspot: {
       type: Object,
       default: null,
@@ -111,6 +107,7 @@ export default {
   },
   data() {
     return {
+      authUser: this.$authUser,
       editingTitle: "",
 
       fetchedHotspots: [],
@@ -128,7 +125,7 @@ export default {
       mediaFilesSettings: {
         dialog: true,
         dialogStatus: false,
-        user: this.authUser,
+        user: this.$authUser,
         action: "save",
         data: null,
         product: this.product,

@@ -34,7 +34,7 @@
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                 @csrf
             </form>
-            <builder-navigation :auth-user="{{ Auth::user() }}"></builder-navigation>
+            <builder-navigation></builder-navigation>
             @yield('content')
         </v-app>
     </div>

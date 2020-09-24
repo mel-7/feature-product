@@ -90,14 +90,9 @@ export default {
       ValidationProvider,
       ValidationObserver,
     },
-  props: {
-    authUser: {
-      type: Object,
-      default: null,
-    },
-  },
   data() {
     return {
+      authUser: this.$authUser,
       valid: false,
       show1: false,
       passwordError: "",

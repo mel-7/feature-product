@@ -64,12 +64,6 @@ import ExteriorPanel from "./edit/ExteriorPanel";
 import InteriorPanel from "./edit/InteriorPanel";
 import VideoPanel from "./edit/VideoPanel";
 export default {
-  props: {
-    authUser: {
-      type: Object,
-      default: null,
-    }
-  },
   components: {
     Hotspots,
     ExteriorPanel,
@@ -78,6 +72,7 @@ export default {
   },
   data() {
     return {
+      authUser: this.$authUser,
       selected_panel_prop: "exterior",
       activateExterior: true,
       activateInterior: false,

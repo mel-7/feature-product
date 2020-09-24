@@ -52,14 +52,9 @@
 
 <script>
 export default {
-  props: {
-    authUser: {
-      type: Object,
-      default: null,
-    },
-  },
   data() {
     return {
+      authUser: this.$authUser,
       fetchedLogo: "",
       fetchedTitle: "",
       fetchedDescription: "",
@@ -74,7 +69,7 @@ export default {
       mediaFilesSettings: {
         dialog: true,
         dialogStatus: false,
-        user: this.authUser,
+        user: this.$authUser,
         action: "save",
         data: null,
         product: null,

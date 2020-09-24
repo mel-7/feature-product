@@ -72,10 +72,6 @@ export default {
       type: String,
       default: "",
     },
-    authUser: {
-      type: Object,
-      default: null,
-    },
   },
   watch: {
     deleteDialog: function (val) {
@@ -93,6 +89,7 @@ export default {
   },
   data() {
     return {
+      authUser: this.$authUser,
       deleteDialog: false,
       dialogAction: "save",
       videoDialog: false,
@@ -104,7 +101,7 @@ export default {
       mediaFilesSettings: {
         dialog: true,
         dialogStatus: false,
-        user: this.authUser,
+        user: this.$authUser,
         action: "save",
         data: null,
         product: this.product,
