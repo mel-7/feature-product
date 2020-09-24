@@ -86,7 +86,9 @@ var slideIndex = 1;
         
             if (data.dataItems == false) { $("body").remove(); return false; }
             if (data) { 
-            
+              
+              $("head").append('<meta property="og:image" content="'+ base_url+ '/storage/uploads/'+ data.dataItems[0].company_id +'/'+ data.dataItems[0].items[0].media_file.path +'">');
+
                 var imgs = []; 
                 var panaromicImg = [];
                
@@ -101,6 +103,7 @@ var slideIndex = 1;
                 let hpSlider = ''; 
                 var xx = 1; 
                 
+               
                 if(data.videos.length > 0){
                   $(".videos.img").show();
                 }
@@ -169,6 +172,8 @@ var slideIndex = 1;
                    hpSlider += '</div>';
                    hpSlider += '</div>';
            }); 
+
+          
 
                 $.each(data.dataItems, function(i, o) {  
               
@@ -305,7 +310,7 @@ var slideIndex = 1;
                         $(".content-action").attr("style","display:flex");
                     },
                     onComplete: function(){
-                      $(".lds-spinner").remove();
+                     // $(".lds-spinner").remove();
                       $(".center-con").show();
                       $(".icon-360").show();
                     }

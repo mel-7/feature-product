@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container"> 
-<div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+<!-- <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div> -->
     <div class="content-wrapper">
     
       <div class="exterior">
