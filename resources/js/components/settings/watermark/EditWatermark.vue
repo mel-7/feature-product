@@ -220,14 +220,9 @@ export default {
     ValidationProvider,
     ValidationObserver,
   },
-  props: {
-    authUser: {
-      type: Object,
-      default: null,
-    },
-  },
   data() {
     return {
+      authUser: this.$authUser,
       // ui
       valid: true,
       loading: false,
@@ -267,7 +262,7 @@ export default {
       mediaFilesSettings: {
         dialog: true,
         dialogStatus: false,
-        user: this.authUser,
+        user: this.$authUser,
         action: "save",
         data: null,
         product: null,

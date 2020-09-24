@@ -202,14 +202,9 @@ export default {
       ValidationProvider,
       ValidationObserver,
     },
-  props: {
-    authUser: {
-      type: Object,
-      default: null,
-    },
-  },
   data() {
     return {
+      authUser: this.$authUser,
       color: '',
       mode: 'vertical',
       snackbar: false,
@@ -225,7 +220,7 @@ export default {
       itemsPerPage: 10,
 
       dialogData: [],
-       userNewFormDialog: false,
+      userNewFormDialog: false,
       userFormDialog: false,
       deleteDialog: false,
       orgUsers: [], // Company Users

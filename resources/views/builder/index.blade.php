@@ -3,7 +3,7 @@
 @section('content')
 <v-main>
   <v-container>
-    <router-view :auth-user="{{ Auth::user() }}"></router-view>
+    <router-view></router-view>
   </v-container>
 </v-main>
 @endsection

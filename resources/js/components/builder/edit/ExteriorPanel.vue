@@ -154,10 +154,6 @@ export default {
       type: Object,
       default: null,
     },
-    authUser: {
-      type: Object,
-      default: null,
-    },
     selectedHotspotProp: {
       type: Object,
       default: null,
@@ -170,6 +166,7 @@ export default {
   },
   data() {
     return {
+      authUser: this.$authUser,
       // UI
 
       isItemsLoaded: false,
@@ -199,7 +196,7 @@ export default {
       mediaFilesSettings: {
         dialog: true,
         dialogStatus: false,
-        user: this.authUser,
+        user: this.$authUser,
         action: "replace",
         data: null,
       },

@@ -86,9 +86,9 @@
 
 <script>
 export default {
-  props: ["authUser"],
   data() {
     return {
+      authUser: this.$authUser,
       baseUrl: window.location.origin,
       drawer: null,
       menu: false,
