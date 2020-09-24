@@ -32,7 +32,11 @@ const router = new VueRouter({
 /**
  * Authenticated User Object
  */
-Vue.prototype.$authUser = JSON.parse(document.querySelector("meta[name='auth_user']").getAttribute('content'));
+let authMeta = document.querySelector("meta[name='auth_user']").getAttribute("content");
+if(authMeta.length){
+  Vue.prototype.$authUser = JSON.parse(authMeta);
+}
+// Vue.prototype.$authUser = JSON.parse(document.querySelector("meta[name='auth_user']").getAttribute('content'));
 // Vue.prototype.$authUser = document.querySelector("meta[name='auth_user']").getAttribute('content');
 
 /**

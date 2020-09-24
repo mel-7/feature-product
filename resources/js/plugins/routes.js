@@ -12,9 +12,11 @@ import Teams from "../components/settings/Teams";
 import Organization from "../components/settings/Organization";
 import Companies from "../components/settings/Companies";
 
-const authUser = JSON.parse(
-    document.querySelector("meta[name='auth_user']").getAttribute("content")
-);
+let authUser;
+let authMeta = document.querySelector("meta[name='auth_user']").getAttribute("content");
+if(authMeta.length){
+    authUser = JSON.parse(authMeta);
+}
 
 export const routes = [
     {
@@ -76,6 +78,17 @@ export const routes = [
         }
     },
     {
+        path: "/settings/companies/page/:page",
+        name: "PagedCompanies",
+        component: Companies,
+        props: true,
+        beforeEnter: (to, from, next) => {
+            if (authUser.role == 1) {
+                next();
+            }
+        }
+    },
+    {
         path: "/settings/account",
         name: "Account",
         component: Account,
@@ -89,7 +102,7 @@ export const routes = [
     },
     {
         path: "/settings/watermarks/page/:page",
-        name: "Watermarks",
+        name: "PagedWatermarks",
         component: Watermarks,
         props: true
     },
