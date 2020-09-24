@@ -84,21 +84,32 @@
           <h4 class="pb-2">User Form</h4>
         </v-card-title>
         <v-card-text>
+           <ValidationObserver ref="observer" >
           <form>
-            <v-text-field v-model="newname" outlined label="Name" required class="py-0" dense></v-text-field>
-            <v-text-field v-model="newphone" outlined label="Phone" required class="py-0" dense></v-text-field>
-            <v-text-field v-model="newemail" outlined label="Email" required class="py-0" dense></v-text-field>
+            <ValidationProvider v-slot="{ errors }" name="Name" rules="required|min:3">
+            <v-text-field v-model="newname" outlined label="Name" :error-messages="errors" required class="py-0" dense></v-text-field>
+             </ValidationProvider>
+            <ValidationProvider v-slot="{ errors }" name="Phone" rules="required|min:8">
+            <v-text-field v-model="newphone" outlined label="Phone" :error-messages="errors" required class="py-0" dense></v-text-field>
+            </ValidationProvider>
+            <ValidationProvider v-slot="{ errors }" name="Email" rules="required|email|min:10">
+            <v-text-field v-model="newemail" outlined label="Email" :error-messages="errors" required class="py-0" dense></v-text-field>
+             </ValidationProvider>
+            <ValidationProvider v-slot="{ errors }" name="Password" rules="required|min:8">
             <v-text-field
                 v-model="password"
+                :error-messages="errors"
                 :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" 
                 :type="show1 ? 'text' : 'password'"
                 outlined label="Password" required class="py-0" dense 
                 @click:append="show1 = !show1"
               ></v-text-field>
-            <!-- :hint="`${role.role}, ${role.value}`" -->
+               </ValidationProvider>
+          <ValidationProvider v-slot="{ errors }" name="Role" rules="required">
             <v-select
               v-model="newrole"
               :items="roleItems"
+              :error-messages="errors"
               item-text="role"
               item-value="value"
               label="Role"
@@ -110,11 +121,13 @@
               class="py-0"
               dense
             ></v-select>
+             </ValidationProvider>
             <div class="d-flex justify-end">
               <v-btn class="mr-1" text color="grey" @click="userNewFormDialog = false">cancel</v-btn>
               <v-btn class="primary" @click="saveUser('save')">Update</v-btn>
             </div>
           </form>
+           </ValidationObserver>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -166,11 +179,29 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-snackbar
+      v-model="snackbar" 
+      :color="color" 
+      :right="x === 'right'"
+      :timeout="timeout"
+      :top="y === 'top'"
+      :vertical="mode === 'vertical'"
+    >
+      {{ text }}  
+    </v-snackbar>
+
   </v-row>
 </template>
 
 <script>
+ import { required, name } from 'vee-validate/dist/rules';
+import {  ValidationObserver, ValidationProvider } from  'vee-validate/dist/vee-validate.full';
 export default {
+   components: {
+      ValidationProvider,
+      ValidationObserver,
+    },
   props: {
     authUser: {
       type: Object,
@@ -179,6 +210,14 @@ export default {
   },
   data() {
     return {
+      color: '',
+      mode: 'vertical',
+      snackbar: false,
+      text: '',
+      timeout: 5000,
+      x: '',
+      y: '',
+
       searchData: "",
       //pagination
       page: 1,
@@ -261,7 +300,8 @@ export default {
           console.log(error);
         });
     },
-    saveUser(action) {
+    saveUser(action) { 
+       let customValidate = true;
       let data = {};
       let route = "save";
       if (action == "update") {
@@ -276,16 +316,25 @@ export default {
           data.email = this.email;
         }
       }else{
+          this.$refs.observer.validate();
+
+         // if(this.password == null || this.password == "" || this.email == "" || this.email == null || this.newname == "" || this.newname == null) { return false; }
+        
           data = {
-          name: this.newname,
-          phone: this.newphone,
-          role: this.newrole.value,
-          email: this.newemail,
-          password: this.password
-        }; 
-      }
-     
-      
+                    name: this.newname,
+                    phone: this.newphone,
+                    role: this.newrole.value,
+                    email: this.newemail,
+                    password: this.password
+                }; 
+
+          $.each(data, function(key, value) {
+              if(value === "undefined" || value == "" || value == null){ customValidate = false; return false; }
+          });
+      } 
+       
+     if(!customValidate) { return false; }
+
       axios
         .post("/settings/team/" + route, data)
         .then((response) => {
@@ -294,17 +343,33 @@ export default {
           }else{
              this.userNewFormDialog = false;
           }
+          
           this.dialogData = [];
            var curPage = this.page;
           
           if(this.page > 1 && this.dialogData.length == 1){
              curPage = this.page-1
           }
+
+            // snackbar
+            this.snackbar = true;
+            this.color = "success";
+            this.x = "right";
+            this.y = "top";
+            this.text = "Success";
+
           this.getOrgUsers(curPage);
         })
         .catch((error) => {
-          console.log("Error Saving User");
-          console.log(error);
+            if (error.response) {  
+
+              // snackbar
+                this.snackbar = true;
+                this.color = "error";
+                this.x = "right";
+                this.y = "top";
+                this.text = error.response.data.errors.email[0]; 
+            }
         });
     },
     onPageChange() {

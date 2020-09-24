@@ -38,11 +38,12 @@ class WatermarksController extends Controller
         $uploadDate = Carbon::now()->format('YmdHis');
 
         // Set the previous default watermark to 0
-        if($request['default'] == true){
+        
+        if($request->default == true){ 
             $updateOldDefault = Watermark::where([
-                'default' => $request['default'],
-                'company_id' => $companyId])->first();
-            $updateOldDefault->update(['default' => 0]);
+                'default' => 1,
+                'company_id' => $companyId])->update(['default' => 0]);
+            
         }
 
         // Create Director if does not exist
