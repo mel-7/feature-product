@@ -524,7 +524,7 @@ var base_url = "{{URL::to('/')}}";
     <!-- slick slider -->
     <link rel="stylesheet" type="text/css" href="{{ asset('css/slick-carousel.css') }}"/>
     <link rel="stylesheet" type="text/css" href="{{ asset('css/slick.css') }}"/>
-    <!-- <link rel="stylesheet" href="{{ asset('css/pannellum.css') }}" />   -->
+    <link rel="stylesheet" href="{{ asset('css/pannellum.css') }}" />  
     @include('product.scripts')
 
   <!-- Scripts --> 
