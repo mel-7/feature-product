@@ -6247,7 +6247,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     editCompany: function editCompany(id) {
-      this.$router.push("/settings/watermark/edit/" + id);
+      this.$router.push("/restricted");
     },
     deleteCompany: function deleteCompany(w) {
       this.dialogData = [];
