@@ -396,8 +396,9 @@ z-index: 9;
   
   .slick-slide{ width: 230px !important;}
   .slick-track { min-width: 1000px;}
-  .video-slider{ margin-top: -175px; }
+  .video-slider{ margin-top: -175px; background: rgb(0 0 0 / 25%); }
   .display-videos-thumbnails{
+    position:absolute;
     visibility: hidden;
     width: 1300px;
     margin-left: 30px;}
