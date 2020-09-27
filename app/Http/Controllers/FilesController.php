@@ -79,6 +79,7 @@ class FilesController extends Controller
             // Check file if image or video
             if($request->item_type == 'video'){
                 $file->move('storage/uploads/'.$companyId.'/', $path); // add user id
+                $webP = $path;
             }else{
                 // File Optimization
                 // $img = Image::make($file)->fit(3840,2160); // UHD
