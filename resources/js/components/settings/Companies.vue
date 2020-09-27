@@ -121,7 +121,7 @@ export default {
         });
     },
     editCompany(id) {
-      this.$router.push("/settings/watermark/edit/" + id);
+      this.$router.push("/restricted");
     },
     deleteCompany(w) {
       this.dialogData = [];
