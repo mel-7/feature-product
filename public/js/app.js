@@ -3004,6 +3004,33 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -30455,39 +30482,50 @@ var render = function() {
                 )
               }),
               _vm._v(" "),
-              _c(
-                "v-subheader",
-                { staticClass: "mt-4 mt-auto grey--text text--darken-1" },
-                [_vm._v("Admin")]
-              ),
+              _vm.authUser.role == 1
+                ? _c(
+                    "v-subheader",
+                    { staticClass: "mt-4 mt-auto grey--text text--darken-1" },
+                    [_vm._v("Admin")]
+                  )
+                : _vm._e(),
               _vm._v(" "),
-              _vm._l(_vm.adminSettings, function(adminSetting) {
-                return _c(
-                  "v-list-item",
-                  {
-                    key: adminSetting.text,
-                    attrs: { link: "", to: adminSetting.location }
-                  },
-                  [
-                    _c(
-                      "v-list-item-action",
-                      [
-                        _c("v-icon", { attrs: { color: "grey darken-1" } }, [
-                          _vm._v(_vm._s(adminSetting.icon))
-                        ])
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "v-list-item-title",
-                      { staticClass: "grey--text text--darken-1" },
-                      [_vm._v(_vm._s(adminSetting.text))]
-                    )
-                  ],
-                  1
-                )
-              })
+              _vm.authUser.role == 1
+                ? _c(
+                    "div",
+                    _vm._l(_vm.adminSettings, function(adminSetting) {
+                      return _c(
+                        "v-list-item",
+                        {
+                          key: adminSetting.text,
+                          attrs: { link: "", to: adminSetting.location }
+                        },
+                        [
+                          _c(
+                            "v-list-item-action",
+                            { attrs: { tion: "" } },
+                            [
+                              _c(
+                                "v-icon",
+                                { attrs: { color: "grey darken-1" } },
+                                [_vm._v(_vm._s(adminSetting.icon))]
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-list-item-title",
+                            { staticClass: "grey--text text--darken-1" },
+                            [_vm._v(_vm._s(adminSetting.text))]
+                          )
+                        ],
+                        1
+                      )
+                    }),
+                    1
+                  )
+                : _vm._e()
             ],
             2
           )
@@ -97285,8 +97323,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.2\htdocs\spinner\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.2\htdocs\spinner\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

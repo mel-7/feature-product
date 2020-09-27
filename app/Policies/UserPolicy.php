@@ -32,13 +32,13 @@ class UserPolicy
 
     public function accessTeamAdmin(User $user)
     {
-        $allowedRoles = array(1, 4);
+        $allowedRoles = array(1, 3);
         return in_array($user->role, $allowedRoles);
     }
 
     public function accessTeamEditor(User $user)
     {
-        return $user->role === 5;
+        return $user->role === 4;
     }
 
     public function accessSuperAdmin(User $user)
