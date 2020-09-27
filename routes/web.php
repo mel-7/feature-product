@@ -61,6 +61,7 @@ Route::group(['middleware' => 'can:accessTeamAdmin, App\User', 'prefix'=>'settin
  * Builder Pages
  */
 Route::get('/dashboard', 'BuilderController@index')->name('builder.dashboard');
+Route::get('/restricted', 'BuilderController@index')->name('builder.dashboard');
 Route::get('/builder', 'BuilderController@index')->name('builder');
 Route::get('/builder/product/new', 'BuilderController@index')->name('builder.new.product');
 Route::get('/builder/product/edit/{id}', 'BuilderController@edit')->name('builder.edit.product'); //->middleware('can:accessCompanyPages');
