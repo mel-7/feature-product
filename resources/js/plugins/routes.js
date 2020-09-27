@@ -12,6 +12,8 @@ import Teams from "../components/settings/Teams";
 import Organization from "../components/settings/Organization";
 import Companies from "../components/settings/Companies";
 
+import RestrictedPage from "../components/RestrictedPage";
+
 let authUser;
 let authMeta = document.querySelector("meta[name='auth_user']").getAttribute("content");
 if(authMeta.length){
@@ -22,6 +24,10 @@ export const routes = [
     {
         path: "/",
         component: BuilderDashboard
+    },
+    {
+        path: "/restricted",
+        component: RestrictedPage
     },
     {
         path: "/dashboard",
@@ -85,6 +91,10 @@ export const routes = [
         beforeEnter: (to, from, next) => {
             if (authUser.role == 1) {
                 next();
+            }else {
+                next({
+                    name: "/restricted"
+                });
             }
         }
     },
